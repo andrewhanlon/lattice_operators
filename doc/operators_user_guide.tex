@@ -1,0 +1,124 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage[letterpaper,text={6.5in,9in},centering]{geometry}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{color}
+%\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{fancyvrb}
+\usepackage[hidelinks]{hyperref}
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4
+}
+
+%\setlength{\topmargin}{0pt}
+%\setlength{\textheight}{9true in}
+%\setlength{\oddsidemargin}{0 true in}
+%\setlength{\textwidth}{6.5 true in}
+\setlength{\unitlength}{1.25 true mm}
+\setlength{\fboxsep}{5 true mm}
+\renewcommand{\arraystretch}{1.4}
+\newcommand{\sigmond}{\texttt{sigmond} }
+\newcommand{\vb}{\texttt}
+\renewcommand\labelitemi{--}
+
+\begin{document}
+\title{\bf Operators Python Package}
+\author{Andrew D. Hanlon\\
+  Helmholtz-Institut Mainz\\
+  \texttt{ahanlon@uni-mainz.de}}
+\date{\today}
+\maketitle
+
+%\newpage
+
+\section{Quick Start}
+
+To help get started, let us go over a simple example that constructs a set of Delta like Baryon operator
+with momentum $\bm{P} = (0,0,1)$ and then outputs the Little group irrep decomposition.
+We start by first importing the operator module and the sympy package
+
+\begin{lstlisting}
+  from sympy import *
+  from operators.operators import *
+\end{lstlisting}
+
+Next, we need to construct some quark fields that will be used to construct the operator. Since our
+Delta operator will be constructed from quark fields of flavor 'u', we construct these as
+
+\begin{lstlisting}
+  u = QuarkField.create('u')
+\end{lstlisting}
+
+Note that the operator knows nothing of quark flavor, and the 'u' passed to create is just a name.
+Next, we need to create some indices
+
+\begin{lstlisting}
+  a = ColorIdx('a')
+  b = ColorIdx('b')
+  c = ColorIdx('c')
+
+  i = DiracIdx('i')
+  j = DiracIdx('j')
+  k = DiracIdx('k')
+\end{lstlisting}
+
+Then, we will construct a set of Delta operators (one for each spin index as follows)
+
+\begin{lstlisting}
+  Delta = Eijk(a,b,c) * u[a,i] * u[b,j] * u[c,k]
+\end{lstlisting}
+
+Note that the color index comes before the Dirac spin index in a quark field.
+Finally, we would like to put each of the operators into a list as follows
+
+\begin{lstlisting}
+ops = list()
+for i_int in range(4):
+  for j_int in range(i_int,4):
+    for k_int in range(j_int,4):
+      op = delta.subs({i:i_int,j:j_int,k:k_int})
+      ops.append(Operator(op, Momentum([0,0,1])))
+\end{lstlisting}
+
+Then, the list of operators represents a possible operator basis, which we pass into
+the class OperatorRepresentation, which will determin the irrep decomposition
+
+\begin{lstlisting}
+op_rep = OperatorRepresentation(*ops)
+
+print("\nMoving Delta:")
+print(op_rep.littleGroupContents(True, False))
+\end{lstlisting}
+
+The output of this code is
+
+\begin{lstlisting}
+6 G1 + 4 G2
+\end{lstlisting}
+
+which tells us that this basis contains 6 copies of the $G_1$ irrep and 4 copies of the $G_2$irrep.
+
+\end{document}
