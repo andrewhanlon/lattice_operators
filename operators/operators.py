@@ -291,6 +291,9 @@ class OperatorBasis:
     return OperatorBasis(*transformed_ops, grassmann_basis=self.grassmann_basis)
 
 
+#class GrassmannVector:
+
+
 
 # @ADH - In the future, I'd like support for indexed Operators
 class Operator:
@@ -311,6 +314,7 @@ class Operator:
 
     self._simplified = None
     self._coefficients = None
+    self._terms = None
 
   @property
   def momentum(self):
@@ -321,7 +325,10 @@ class Operator:
     return (self._momentum,)
 
   def getTerms(self):
-    return set(self.coefficients.keys())
+    if self._terms is None:
+      self._terms = set(self.coefficients.keys())
+
+    return self._terms
 
   @property
   def zero(self):
@@ -333,7 +340,6 @@ class Operator:
       self._coefficients = coefficients(self.simplified)
 
     return self._coefficients
-
 
   def projectMomentum(self, momentum):
     return self.__class__(self.operator, momentum)
@@ -519,10 +525,9 @@ class OperatorMul:
       raise ValueError("All objects passed to OperatorMul must be of type Operator")
 
     self._operators = operators
-    self._sort()
 
     self._coefficients = None
-    self._terms = None
+    self._basis = None
 
   def __new__(self, *operators):
     if not operators:
@@ -535,61 +540,33 @@ class OperatorMul:
 
     return object.__new__(self)
 
-  def _sort(self):
-
-    self._sorted_operators = sorted(self.operators)
-
-    # Now find parity flip
-    fermionic_ops = [op for op in self.operators if op.fermionic]
-    # Credit - https://coderwall.com/p/5a_hna/retrieving-the-permutation-used-to-un-sort-a-list
-    f_op_inds = [ (fermionic_ops[i],i) for i in range(len(fermionic_ops)) ]
-    f_op_inds.sort()
-    _, permutation = zip(*f_op_inds)
-
-    # Credit - https://stackoverflow.com/a/1504565/191474
-    # @ADH - First, I should probably use the more efficient one mentioned on
-    #        the post above.
-    #        Second, can I combine that with the sorting?
-    #        I.e. am I doing something twice that I don't need to?
-    #        Finally, is this all correct?
-    even = sum(
-        1 for (x,px) in enumerate(permutation)
-          for (y,py) in enumerate(permutation)
-          if x<y and px>py
-        )%2==0
-
-    self._parity = S.One
-    if not even:
-      self._parity = -S.One
-
-
   def getTerms(self):
-    if self._terms is None:
+    return self.basis.terms
+
+  def basis(self):
+    if self._basis is None:
       term_list = list()
-      for sorted_op in self.sorted_operators:
-        term_list.append(sorted_op.getTerms())
+      for op in self.operators:
+        term_list.append(op.getTerms())
 
-      self._terms = set(itertools.product(*term_list))
+      self._basis = GrassmannBasis(set(itertools.product(*term_list)), self.momenta)
 
-    return self._terms
+    return self._basis
+
 
   @property
   def coefficients(self):
     if self._coefficients is None:
-      coeffs = list()
-      for sorted_op in self.sorted_operators:
-        coeffs.append(sorted_op.coefficients)
+      terms = self.getTerms()
 
-      temp_terms = self.getTerms()
-      terms = list()
-      for term in temp_terms:
-        terms.append(tuple([self.momenta, term]))
-      terms = tuple(terms)
+      coeffs = list()
+      for op in self.operators:
+        coeffs.append(op.coefficients)
 
       coeffs_dict = defaultdict(int)
       for term in terms:
-        coeffs_dict[term] = self.parity
-        for op_term, coeff_term in zip(term[1], coeffs):
+        coeffs_dict[term] = self.basis.parity(term)
+        for op_term, coeff_term in zip(self.basis.original(term)[1], coeffs):
           coeffs_dict[term] *= coeff_term[op_term]
 
       self._coefficients = coeffs_dict
@@ -606,29 +583,13 @@ class OperatorMul:
     return self.number_of_quarks % 2 == 1
 
   @property
-  def parity(self):
-    return self._parity
-
-  @property
   def operators(self):
     return self._operators
-
-  @property
-  def sorted_operators(self):
-    return self._sorted_operators
 
   @property
   def momenta(self):
     mom_list = list()
     for operator in self.operators:
-      mom_list.append(operator.momentum)
-
-    return tuple(mom_list)
-
-  @property
-  def sorted_momenta(self):
-    mom_list = list()
-    for operator in self.sorted_operators:
       mom_list.append(operator.momentum)
 
     return tuple(mom_list)

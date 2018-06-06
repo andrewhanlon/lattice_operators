@@ -36,18 +36,6 @@ def main():
 
   sud_i = Baryon(s,u,d, i)
 
-  test_op = Operator(sud_i.subs(i,1))
-
-  '''
-  print(test_op.getTerms())
-  print('\n\n')
-  '''
-
-  test_op_rot = test_op.rotate(C4y)
-  print(test_op_rot.simplified)
-
-  sys.exit()
-
   lam_lam_ops = flavor_term(sud_i, sud_i)
 
   test_spin_zero_op(lam_lam_ops[0])
@@ -75,11 +63,22 @@ def main():
 
 def test_spin_zero_op(op0):
 
-  for op in op0.operators:
-    ops = list(op.sorted_operators)
-    print(ops[0].simplified)
+  op_terms = op0.getTerms()
 
-  print(len(op0.getTerms()))
+  rot_op = op0.rotate(C4y)
+
+  rot_op_terms = rot_op.getTerms()
+  print(len(rot_op_terms))
+
+  extra_terms = rot_op_terms - op_terms
+
+  zero_terms = set()
+  for term in extra_terms:
+    if term[1][0] == term[1][1]:
+      zero_terms.add(term[1])
+
+
+  
 
   #op = op0.projectMomentum(P0, P0)
   '''
