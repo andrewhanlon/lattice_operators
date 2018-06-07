@@ -291,9 +291,6 @@ class OperatorBasis:
     return OperatorBasis(*transformed_ops, grassmann_basis=self.grassmann_basis)
 
 
-#class GrassmannVector:
-
-
 
 # @ADH - In the future, I'd like support for indexed Operators
 class Operator:
@@ -320,10 +317,6 @@ class Operator:
   def momentum(self):
     return self._momentum
 
-  @property
-  def momenta(self):
-    return (self._momentum,)
-
   def getTerms(self):
     if self._terms is None:
       self._terms = set(self.coefficients.keys())
@@ -331,15 +324,17 @@ class Operator:
     return self._terms
 
   @property
-  def zero(self):
-    return self.simplified == S.Zero
-
-  @property
   def coefficients(self):
     if self._coefficients is None:
-      self._coefficients = coefficients(self.simplified)
+      self._coefficients = defaultdict(int)
+      for grassmann_term, coeff in coefficients(self.simplified).items():
+        self._coefficients[(self.momentum, grassmann_term)] = coeff
 
     return self._coefficients
+
+  @property
+  def zero(self):
+    return self.simplified == S.Zero
 
   def projectMomentum(self, momentum):
     return self.__class__(self.operator, momentum)
@@ -510,7 +505,57 @@ class Operator:
     return self.__add__(-other)
 
   def __neg__(self):
-    return Operator(-self.operator, self.momenta)
+    return Operator(-self.operator, self.momentum)
+
+'''
+# @ADH - WARNING WARNING WARNING - ASSUMES products are of Two Baryons!!!
+#      - FIX ME LATER!!!
+class GrassmannProductBasis:
+  
+  def __init__(self, product_terms):
+    self._terms = set()
+    self._original = defaultdict(int)
+    self._parity = defaultdict(int)
+
+    for product_term in product_terms:
+      if len(product_term) > 2:
+        raise ValueError("three and higher particle operators not currently supported")
+
+      # @ADH - ASSUMES Two Baryons!!
+      if product_term[0] == product_term[1]:
+        continue
+
+      str_rep1 = "{}__{}".format(product_term[0][0].__repr__(), product_term[0][1].__repr__())
+      str_rep2 = "{}__{}".format(product_term[1][0].__repr__(), product_term[1][1].__repr__())
+
+      if str_rep1 < str_rep2:
+        new_term = (product_term[1], product_term[0])
+        self._parity[new_term] = -S.One
+        self._original[new_term] = product_term
+
+        if new_term in self._terms:
+          raise ValueError('shit1')
+
+        self._terms.add(new_term)
+      else:
+        self._parity[product_term] = S.One
+        self._original[product_term] = product_term
+
+        if product_term in self._terms:
+          raise ValueError('shit2')
+
+        self._terms.add(product_term)
+
+  @property
+  def terms(self):
+    return self._terms
+
+  def original(self, term):
+    return self._original[term]
+
+  def parity(self, term):
+    return self._parity[term]
+'''
 
 
 class OperatorMul:
@@ -527,7 +572,9 @@ class OperatorMul:
     self._operators = operators
 
     self._coefficients = None
-    self._basis = None
+
+    self._raw_terms = None
+    self._terms = None
 
   def __new__(self, *operators):
     if not operators:
@@ -540,40 +587,96 @@ class OperatorMul:
 
     return object.__new__(self)
 
-  def getTerms(self):
-    return self.basis.terms
-
+  '''
+  @property
   def basis(self):
     if self._basis is None:
       term_list = list()
       for op in self.operators:
         term_list.append(op.getTerms())
 
-      self._basis = GrassmannBasis(set(itertools.product(*term_list)), self.momenta)
+      self._basis = GrassmannProductBasis(set(itertools.product(*term_list)))
 
     return self._basis
 
+  def getTerms(self):
+    return self.basis.terms
 
   @property
   def coefficients(self):
     if self._coefficients is None:
       terms = self.getTerms()
 
-      coeffs = list()
+      op_coeffs = list()
       for op in self.operators:
-        coeffs.append(op.coefficients)
+        op_coeffs.append(op.coefficients)
 
       coeffs_dict = defaultdict(int)
       for term in terms:
         coeffs_dict[term] = self.basis.parity(term)
-        for op_term, coeff_term in zip(self.basis.original(term)[1], coeffs):
-          coeffs_dict[term] *= coeff_term[op_term]
+        for op_term, op_coeff in zip(self.basis.original(term), op_coeffs):
+          coeffs_dict[term] *= op_coeff[op_term]
 
       self._coefficients = coeffs_dict
 
     return self._coefficients
+  '''
 
   
+  @property
+  def raw_terms(self):
+    if self._raw_terms is None:
+      term_list = list()
+      for op in self.operators:
+        term_list.append(op.getTerms())
+
+      self._raw_terms = set(itertools.product(*term_list))
+
+    return self._raw_terms
+
+  
+
+  # @ADH - ONLY WORKS ASSUMING TWO-BARYON OPERATORS
+  @property
+  def coefficients(self):
+    if self._coefficients is None:
+      op_coeffs = list()
+      for op in self.operators:
+        op_coeffs.append(op.coefficients)
+
+      coeffs_dict = defaultdict(int)
+
+      for term in self.raw_terms:
+        if term[0] == term[1]:
+          continue
+
+        str_rep1 = "{}__{}".format(term[0][0].__repr__(), term[0][1].__repr__())
+        str_rep2 = "{}__{}".format(term[1][0].__repr__(), term[1][1].__repr__())
+        
+        coeff = op_coeffs[0][term[0]] * op_coeffs[1][term[1]]
+
+        new_term = term
+        if str_rep1 < str_rep2:
+          coeff = -coeff
+          new_term = tuple([term[1], term[0]])
+
+        if new_term in coeffs_dict:
+          coeffs_dict[new_term] += coeff
+        else:
+          coeffs_dict[new_term] = coeff
+
+      self._coefficients = { k:v for k, v in coeffs_dict.items() if v }
+
+    return self._coefficients
+
+
+  def getTerms(self):
+    if self._terms is None:
+      self._terms = set(self.coefficients.keys())
+
+    return self._terms
+
+        
   @property
   def bosonic(self):
     return self.number_of_quarks % 2 == 0
@@ -797,7 +900,7 @@ class OperatorAdd:
       terms_list = list()
       for op in self.operators:
         for term in op.getTerms():
-          terms_list.append(tuple([op.momenta, term]))
+          terms_list.append(term)
 
       self._terms = set(terms_list)
 
@@ -813,7 +916,7 @@ class OperatorAdd:
           if term in operator.coefficients:
             coeffs[term] += operator.coefficients[term]
 
-      self._coefficients = coeffs
+      self._coefficients = { k:v for k, v in coeffs.items() if v }
 
     return self._coefficients
 

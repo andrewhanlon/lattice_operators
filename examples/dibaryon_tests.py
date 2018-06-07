@@ -39,7 +39,23 @@ def main():
   lam_lam_ops = flavor_term(sud_i, sud_i)
 
   test_spin_zero_op(lam_lam_ops[0])
-  #test_spin_one_ops(lam_lam_ops[1], lam_lam_ops[2], lam_lam_ops[3])
+
+  uud_i = Baryon(u,u,d, i)
+  ssd_i = Baryon(s,s,d, i)
+  dud_i = Baryon(d,u,d, i)
+  ssu_i = Baryon(s,s,u, i)
+  ssd_i = Baryon(s,s,d, i)
+
+  uud_ssd = flavor_term(uud_i, ssd_i)
+  dud_ssu = flavor_term(dud_i, ssu_i)
+  ssd_uud = flavor_term(ssd_i, uud_i)
+  ssu_dud = flavor_term(ssu_i, dud_i)
+
+  N_Xi_a_I0_S1 = uud_ssd[1] - dud_ssu[1] - ssd_uud[1] + ssu_dud[1]
+  N_Xi_a_I0_S2 = uud_ssd[2] - dud_ssu[2] - ssd_uud[2] + ssu_dud[2]
+  N_Xi_a_I0_S3 = uud_ssd[3] - dud_ssu[3] - ssd_uud[3] + ssu_dud[3]
+
+  test_spin_one_ops(N_Xi_a_I0_S1, N_Xi_a_I0_S2, N_Xi_a_I0_S3)
 
   '''
   uus_i = Baryon(u,u,s, i)
@@ -63,90 +79,51 @@ def main():
 
 def test_spin_zero_op(op0):
 
-  op_terms = op0.getTerms()
-
-  rot_op = op0.rotate(C4y)
-
-  rot_op_terms = rot_op.getTerms()
-  print(len(rot_op_terms))
-
-  extra_terms = rot_op_terms - op_terms
-
-  zero_terms = set()
-  for term in extra_terms:
-    if term[1][0] == term[1][1]:
-      zero_terms.add(term[1])
-
-
-  
-
-  #op = op0.projectMomentum(P0, P0)
-  '''
-  for term, coeff in op.coefficients.items():
-    print("{}: {}\n".format(term, coeff))
-  '''
-
-  '''
-  for term in op.getTerms():
-    print(term)
-    print('\n')
-  '''
-
-  '''
-  rot_op = op.rotate(C4y)
-  for term, coeff in rot_op.coefficients.items():
-    print("{}: {}\n".format(term, coeff))
-  '''
-
-  '''
-  for term in rot_op.getTerms():
-    print(term)
-    print('\n')
-  '''
-
-  sys.exit()
-
-  print("A1p (p_i^2 = 0)")
+  ''' Tested
+  print("A1+ (p_i^2 = 0)")
   A1p_op = op0.projectMomentum(P0, P0)
 
   op_rep = OperatorRepresentation(A1p_op)
   print("\t{}\n".format(op_rep.littleGroupContents(True)))
+  '''
+
+  ''' Tested
+  print("A1+ (p_i^2 = 1)")
+  A1p_op = op0.projectMomentum(P([0,0,1]), P([0,0,-1])) \
+      + op0.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      + op0.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      + op0.projectMomentum(P([0,0,-1]), P([0,0,1])) \
+      + op0.projectMomentum(P([0,-1,0]), P([0,1,0])) \
+      + op0.projectMomentum(P([-1,0,0]), P([1,0,0]))
+
+  op_rep = OperatorRepresentation(A1p_op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True)))
+  '''
+
   
 def test_spin_one_ops(op1, op2, op3):
 
-  print("A1p")
-  A1p_op = op_0.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op_0.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op_0.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op_0.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op_0.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op_0.projectMomentum(P([-1,0,0]), P([1,0,0]))
-
-  op_rep = OperatorRepresentation(A1p_op)
-  op_rep.basis.matrix
-  print("\t{}\n".format(op_rep.littleGroupContents(True)))
-
   print("T1p 1")
-  T1p_1_op = op_1.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op_1.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op_1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op_1.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op_1.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op_1.projectMomentum(P([-1,0,0]), P([1,0,0]))
+  T1p_1_op = op1.projectMomentum(P([0,0,1]), P([0,0,-1])) \
+      + op1.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      + op1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      + op1.projectMomentum(P([0,0,-1]), P([0,0,1])) \
+      + op1.projectMomentum(P([0,-1,0]), P([0,1,0])) \
+      + op1.projectMomentum(P([-1,0,0]), P([1,0,0]))
 
-  T1p_2_op = op_2.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op_2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op_2.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op_2.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op_2.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op_2.projectMomentum(P([-1,0,0]), P([1,0,0]))
+  T1p_2_op = op2.projectMomentum(P([0,0,1]), P([0,0,-1])) \
+      + op2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      + op2.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      + op2.projectMomentum(P([0,0,-1]), P([0,0,1])) \
+      + op2.projectMomentum(P([0,-1,0]), P([0,1,0])) \
+      + op2.projectMomentum(P([-1,0,0]), P([1,0,0]))
 
-  T1p_3_op = op_3.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op_3.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op_3.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op_3.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op_3.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op_3.projectMomentum(P([-1,0,0]), P([1,0,0]))
+  T1p_3_op = op3.projectMomentum(P([0,0,1]), P([0,0,-1])) \
+      + op3.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      + op3.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      + op3.projectMomentum(P([0,0,-1]), P([0,0,1])) \
+      + op3.projectMomentum(P([0,-1,0]), P([0,1,0])) \
+      + op3.projectMomentum(P([-1,0,0]), P([1,0,0]))
 
   op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
   print("\t{}\n".format(op_rep.littleGroupContents(True)))
