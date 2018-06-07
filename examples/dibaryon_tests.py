@@ -34,15 +34,14 @@ def main():
   d = QuarkField.create('d')
   s = QuarkField.create('s')
 
-  sud_i = Baryon(s,u,d, i)
-
-  lam_lam_ops = flavor_term(sud_i, sud_i)
-
-  test_spin_zero_op(lam_lam_ops[0])
-
   uud_i = Baryon(u,u,d, i)
-  ssd_i = Baryon(s,s,d, i)
   dud_i = Baryon(d,u,d, i)
+  uus_i = Baryon(u,u,s, i)
+  dus_i = Baryon(d,u,s, i)
+  uds_i = Baryon(u,d,s, i)
+  dds_i = Baryon(d,d,s, i)
+  sud_i = Baryon(s,u,d, i)
+  ssd_i = Baryon(s,s,d, i)
   ssu_i = Baryon(s,s,u, i)
   ssd_i = Baryon(s,s,d, i)
 
@@ -50,34 +49,48 @@ def main():
   dud_ssu = flavor_term(dud_i, ssu_i)
   ssd_uud = flavor_term(ssd_i, uud_i)
   ssu_dud = flavor_term(ssu_i, dud_i)
-
-  N_Xi_a_I0_S1 = uud_ssd[1] - dud_ssu[1] - ssd_uud[1] + ssu_dud[1]
-  N_Xi_a_I0_S2 = uud_ssd[2] - dud_ssu[2] - ssd_uud[2] + ssu_dud[2]
-  N_Xi_a_I0_S3 = uud_ssd[3] - dud_ssu[3] - ssd_uud[3] + ssu_dud[3]
-
-  test_spin_one_ops(N_Xi_a_I0_S1, N_Xi_a_I0_S2, N_Xi_a_I0_S3)
-
-  '''
-  uus_i = Baryon(u,u,s, i)
-  dds_i = Baryon(d,d,s, i)
-  dus_i = Baryon(d,u,s, i)
-  uds_i = Baryon(u,d,s, i)
-
-  uus_dds_ops = flavor_term(uus_i, dds_i)
-  dus_uds_ops = flavor_term(dus_i, uds_i)
-  dus_dus_ops = flavor_term(dus_i, dus_i)
-  uds_dus_ops = flavor_term(uds_i, dus_i)
-  uds_uds_ops = flavor_term(uds_i, uds_i)
-  dds_uus_ops = flavor_term(dds_i, uus_i)
-
-  sig_sig_0 = 2*uus_dds_ops[0] - dus_uds_ops[0] - dus_dus_ops[0] - uds_dus_ops[0] - uds_uds_ops[0] + 2*dds_uus_ops[0]
-  print(type(sig_sig_0))
-  '''
+  sud_sud = flavor_term(sud_i, sud_i)
 
 
+  L_L_s_I0_S0 = sud_sud[0]
+  L_L_s_I0_S1 = sud_sud[1]
+  L_L_s_I0_S2 = sud_sud[2]
+  L_L_s_I0_S3 = sud_sud[3]
+
+  N_X_a_I0_S0 = uud_ssd[0] - dud_ssu[0] - ssd_uud[0] + ssu_dud[0]
+  N_X_a_I0_S1 = uud_ssd[1] - dud_ssu[1] - ssd_uud[1] + ssu_dud[1]
+  N_X_a_I0_S2 = uud_ssd[2] - dud_ssu[2] - ssd_uud[2] + ssu_dud[2]
+  N_X_a_I0_S3 = uud_ssd[3] - dud_ssu[3] - ssd_uud[3] + ssu_dud[3]
+
+  test_spin_zero_op_atrest(L_L_s_I0_S0)
+  test_spin_one_ops_atrest(N_X_a_I0_S1, N_X_a_I0_S2, N_X_a_I0_S3)
+
+  test_spin_zero_ops_P001_A1(L_L_s_I0_S0)
+  test_spin_one_op_P001_A1(N_X_a_I0_S1, N_X_a_I0_S2, N_X_a_I0_S3)
 
 
-def test_spin_zero_op(op0):
+def test_spin_one_op_P001_A1(op1, op2, op3):
+  print("A1(2,1) (P_001)")
+
+def test_spin_zero_ops_P001_A1(op0):
+
+  print("A1(1,0) (P_001)")
+  A1_op = op0.projectMomentum(P([0,0,1]), P0)
+
+  op_rep = OperatorRepresentation(A1_op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True,False)))
+  
+  print("A1(2,1) (P_001)")
+  A1_op = op0.projectMomentum(P([0,1,1]), P([0,-1,0])) \
+      + op0.projectMomentum(P([0,-1,1]), P([0,1,0])) \
+      + op0.projectMomentum(P([1,0,1]), P([-1,0,0])) \
+      + op0.projectMomentum(P([-1,0,1]), P([1,0,0])) \
+
+  op_rep = OperatorRepresentation(A1_op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True,False)))
+  
+
+def test_spin_zero_op_atrest(op0):
 
   ''' Tested
   print("A1+ (p_i^2 = 0)")
@@ -101,8 +114,9 @@ def test_spin_zero_op(op0):
   '''
 
   
-def test_spin_one_ops(op1, op2, op3):
+def test_spin_one_ops_atrest(op1, op2, op3):
 
+  ''' Tested
   print("T1p 1")
   T1p_1_op = op1.projectMomentum(P([0,0,1]), P([0,0,-1])) \
       + op1.projectMomentum(P([0,1,0]), P([0,-1,0])) \
@@ -127,27 +141,30 @@ def test_spin_one_ops(op1, op2, op3):
 
   op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
   print("\t{}\n".format(op_rep.littleGroupContents(True)))
+  '''
 
 
+  ''' Tested
   print("T1p 2")
-  T1p_1_op = 3*op_1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op_1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op_1.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op_1.projectMomentum(P([0,0,1]), P([0,0,-1]))
+  T1p_1_op = 3*op1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - op1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - op1.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - op1.projectMomentum(P([0,0,1]), P([0,0,-1]))
 
-  T1p_2_op = 3*op_2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op_2.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op_2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op_2.projectMomentum(P([0,0,1]), P([0,0,-1]))
+  T1p_2_op = 3*op2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - op2.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - op2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - op2.projectMomentum(P([0,0,1]), P([0,0,-1]))
 
-  T1p_3_op = 3*op_3.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      - op_3.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op_3.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op_3.projectMomentum(P([0,0,1]), P([0,0,-1]))
+  T1p_3_op = 3*op3.projectMomentum(P([0,0,1]), P([0,0,-1])) \
+      - op3.projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - op3.projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - op3.projectMomentum(P([0,0,1]), P([0,0,-1]))
 
 
   op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
   print("\t{}\n".format(op_rep.littleGroupContents(True)))
+  '''
 
 
 def flavor_term(fl1_i, fl2_i):
