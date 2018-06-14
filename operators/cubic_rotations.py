@@ -415,6 +415,11 @@ class Momentum(Array):
   def __rmul(self, other):
     return Momentum([other * self.x, other * self.y, other * self.z])
 
+  def __div__(self, other):
+    return Momentum([self.x / other, self.y / other, self.z / other])
+
+  def __rdiv__(self, other):
+    return Momentum([self.x / other, self.y / other, self.z / other])
 
 
 P = Momentum
