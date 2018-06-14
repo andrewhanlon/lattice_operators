@@ -8,6 +8,7 @@ from sympy import eye, Integer, S
 from sympy import simplify
 from sympy import Add
 from sympy import Sum
+from sympy import expand
 
 from .cubic_rotations import spinor_representation, LittleGroup, E
 from .cubic_rotations import _GENERATORS as GENERATORS
@@ -671,7 +672,7 @@ class OperatorMul:
         else:
           coeffs_dict[new_term] = coeff
 
-      self._coefficients = { k:v for k, v in coeffs_dict.items() if v }
+      self._coefficients = { k:v for k, v in coeffs_dict.items() if expand(v) }  # @ADH - do you think expand is best here?
 
     return self._coefficients
 
@@ -926,7 +927,7 @@ class OperatorAdd:
           if term in operator.coefficients:
             coeffs[term] += operator.coefficients[term]
 
-      self._coefficients = { k:v for k, v in coeffs.items() if v }
+      self._coefficients = { k:v for k, v in coeffs.items() if expand(v) } # @ADH - do you think expand is best here?
 
     return self._coefficients
 
