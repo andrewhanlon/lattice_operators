@@ -499,7 +499,13 @@ class Operator:
 
       return Operator(self.operator + other.operator, self.momentum)
 
+    elif other == S.Zero:
+      return self
+
     raise TypeError("Can only add another Operator to an Operator with same momentum and number of quarks")
+
+  def __radd__(self, other):
+    return self.__add__(other)
 
   def __sub__(self, other):
     return self.__add__(-other)
@@ -746,6 +752,10 @@ class OperatorMul:
 
     return NotImplemented
 
+  def __radd__(self, other):
+    return self.__add__(other)
+
+
   def __mul__(self, other):
     if isinstance(other, self.__class__):
       return OperatorMul(*self.operators, *other.operators)
@@ -936,6 +946,10 @@ class OperatorAdd:
       return self
 
     return NotImplemented
+
+  def __radd__(self, other):
+    return self.__add__(other)
+
 
   def __mul__(self, other):
     add_ops = list()
