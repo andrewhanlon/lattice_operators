@@ -1,13 +1,8 @@
-import sys
-
 from sympy import Eijk
-from sympy import get_contraction_structure, get_indices
 from sympy import Array
 from sympy import sqrt
-from sympy import sympify
-from sympy import Integer
-from sympy import I
-from sympy import Matrix
+from sympy import S
+from sympy import *
 
 from context import operators
 
@@ -34,6 +29,7 @@ def main():
   d = QuarkField.create('d')
   s = QuarkField.create('s')
 
+  print("Forming single baryon operators")
   uud_i = Baryon(u,u,d, i)
   dud_i = Baryon(d,u,d, i)
   uus_i = Baryon(u,u,s, i)
@@ -45,126 +41,912 @@ def main():
   ssu_i = Baryon(s,s,u, i)
   ssd_i = Baryon(s,s,d, i)
 
+  print("Forming baryon-baryon flavor terms")
+  sud_sud = flavor_term(sud_i, sud_i)
+  uus_dds = flavor_term(uus_i, dds_i)
+  dus_uds = flavor_term(dus_i, uds_i)
+  dus_dus = flavor_term(dus_i, dus_i)
+  uds_dus = flavor_term(uds_i, dus_i)
+  uds_uds = flavor_term(uds_i, uds_i)
+  dds_uus = flavor_term(dds_i, uus_i)
   uud_ssd = flavor_term(uud_i, ssd_i)
   dud_ssu = flavor_term(dud_i, ssu_i)
   ssd_uud = flavor_term(ssd_i, uud_i)
   ssu_dud = flavor_term(ssu_i, dud_i)
-  sud_sud = flavor_term(sud_i, sud_i)
 
 
+  print("Forming the lambda-lambda flavor operators")
   L_L_s_I0_S0 = sud_sud[0]
   L_L_s_I0_S1 = sud_sud[1]
   L_L_s_I0_S2 = sud_sud[2]
   L_L_s_I0_S3 = sud_sud[3]
+  L_L_s_I0 = [L_L_s_I0_S0, L_L_s_I0_S1, L_L_s_I0_S2, L_L_s_I0_S3]
 
+  print("Forming the nucleon-xi flavor anti-symmetric operators")
   N_X_a_I0_S0 = uud_ssd[0] - dud_ssu[0] - ssd_uud[0] + ssu_dud[0]
   N_X_a_I0_S1 = uud_ssd[1] - dud_ssu[1] - ssd_uud[1] + ssu_dud[1]
   N_X_a_I0_S2 = uud_ssd[2] - dud_ssu[2] - ssd_uud[2] + ssu_dud[2]
   N_X_a_I0_S3 = uud_ssd[3] - dud_ssu[3] - ssd_uud[3] + ssu_dud[3]
+  N_X_a_I0 = [N_X_a_I0_S0, N_X_a_I0_S1, N_X_a_I0_S2, N_X_a_I0_S3]
 
-  test_spin_zero_op_atrest(L_L_s_I0_S0)
-  test_spin_one_ops_atrest(N_X_a_I0_S1, N_X_a_I0_S2, N_X_a_I0_S3)
+  #test_P0_A1p(L_L_s_I0, 0)  # PASSED
+  #test_P0_A1p(L_L_s_I0, 1)  # PASSED
+  #test_P0_A1p(L_L_s_I0, 2)  # PASSED
+  #test_P0_A1p(L_L_s_I0, 3)  # PASSED
 
-  test_spin_zero_ops_P001_A1(L_L_s_I0_S0)
-  test_spin_one_op_P001_A1(N_X_a_I0_S1, N_X_a_I0_S2, N_X_a_I0_S3)
+  #test_P0_T1p_Ls(N_X_a_I0, 0)  # PASSED
+  #test_P0_T1p_Ls(N_X_a_I0, 1)  # PASSED
+  #test_P0_T1p_Ls(N_X_a_I0, 2)  # PASSED
+  #test_P0_T1p_Ls(N_X_a_I0, 3)  # PASSED
+
+  #test_P0_T1p_Lp(N_X_a_I0)  # PASSED
+
+  #test_P1_A1_1_0_S0(L_L_s_I0, P([0,0,1]))  # PASSED
+  #test_P1_A1_1_0_S0(L_L_s_I0, P([0,-1,0]))  # PASSED
+  #test_P1_A1_1_0_S0(N_X_a_I0, P([0,0,1]))  # PASSED
+  #test_P1_A1_1_0_S0(N_X_a_I0, P([0,-1,0]))  # PASSED
+
+  #test_P1_A1_2_1_Ls(L_L_s_I0, P([0,0,1]))  # PASSED
+  #test_P1_A1_2_1_Ls(L_L_s_I0, P([0,-1,0]))  # PASSED
+  #test_P1_A1_2_1_Ls(N_X_a_I0, P([0,0,1]))  # PASSED
+  #test_P1_A1_2_1_Ls(N_X_a_I0, P([0,-1,0]))  # PASSED
+
+  #test_P1_A1_2_1_Lp(L_L_s_I0, P([0,0,1]))  # PASSED
+  #test_P1_A1_2_1_Lp(N_X_a_I0, P([0,0,1]))  # PASSED
 
 
-def test_spin_one_op_P001_A1(op1, op2, op3):
-  print("A1(2,1) (P_001)")
+  #test_P1_A2_1_0_S1(L_L_s_I0, P([0,0,1]))  # PASSED
+  #test_P1_A2_1_0_S1(L_L_s_I0, P([-1,0,0]))  # PASSED
+  #test_P1_A2_1_0_S1(N_X_a_I0, P([0,0,1]))  # PASSED
+  #test_P1_A2_1_0_S1(N_X_a_I0, P([-1,0,0]))  # PASSED
 
-def test_spin_zero_ops_P001_A1(op0):
+  #test_P1_A2_2_1_Ls(L_L_s_I0, P([0,0,1]))  # PASSED
+  #test_P1_A2_2_1_Ls(L_L_s_I0, P([-1,0,0]))  # PASSED
+  #test_P1_A2_2_1_Ls(N_X_a_I0, P([0,0,1]))  # PASSED
+  #test_P1_A2_2_1_Ls(N_X_a_I0, P([-1,0,0]))  # PASSED
 
-  print("A1(1,0) (P_001)")
-  A1_op = op0.projectMomentum(P([0,0,1]), P0)
+  #test_P1_A2_2_1_Lp(L_L_s_I0, P([0,0,1]))  # PASSED
+  #test_P1_A2_2_1_Lp(L_L_s_I0, P([-1,0,0]))  # PASSED
+  #test_P1_A2_2_1_Lp(N_X_a_I0, P([0,0,1]))  # PASSED
+  #test_P1_A2_2_1_Lp(N_X_a_I0, P([-1,0,0]))  # PASSED
 
-  op_rep = OperatorRepresentation(A1_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True,False)))
+
+  #test_P1_E2_1_0_S0(L_L_s_I0, P([0,0,1]))  # PASSED
+  #test_P1_E2_1_0_S0(L_L_s_I0, P([-1,0,0]))  # PASSED
+  #test_P1_E2_1_0_S0(N_X_a_I0, P([0,0,1]))  # PASSED
+  #test_P1_E2_1_0_S0(N_X_a_I0, P([-1,0,0]))  # PASSED
+
+
+  #test_P2_A1_2_0_S0(L_L_s_I0, P([0,1,1]))  # PASSED
+  #test_P2_A1_2_0_S0(L_L_s_I0, P([-1,1,0]))  # PASSED
+  #test_P2_A1_2_0_S0(N_X_a_I0, P([0,1,1]))  # PASSED
+  #test_P2_A1_2_0_S0(N_X_a_I0, P([-1,1,0]))  # PASSED
+
+  #test_P2_A1_1_1_S0(L_L_s_I0, P([0,1,0]), P([0,0,1]))  # PASSED
+  #test_P2_A1_1_1_S0(L_L_s_I0, P([0,1,0]), P([-1,0,0]))  # PASSED
+
+  #test_P2_A1_1_1_S1(L_L_s_I0, P([0,1,0]), P([0,0,1]))  # PASSED
+  #test_P2_A1_1_1_S1(L_L_s_I0, P([0,1,0]), P([-1,0,0]))  # PASSED
+
+
+  #test_P2_A2_2_0_S1(L_L_s_I0, P([0,1,1]))  # PASSED
+  #test_P2_A2_2_0_S1(L_L_s_I0, P([-1,0,1]))  # PASSED
+  #test_P2_A2_2_0_S1(N_X_a_I0, P([0,1,1]))  # PASSED
+  #test_P2_A2_2_0_S1(N_X_a_I0, P([-1,0,1]))  # PASSED
+
+  #test_P2_A2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_A2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([-1,0,0]))  # PASSED
+
+  #test_P2_A2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_A2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([-1,0,0]))  # PASSED
+
+  #test_P2_B1_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B1_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B1_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B1_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+
+  #test_P2_B1_1_1_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B1_1_1_S1(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED
+
+  #test_P2_B1_1_1_S0(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B1_1_1_S0(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED
   
-  print("A1(2,1) (P_001)")
-  A1_op = op0.projectMomentum(P([0,1,1]), P([0,-1,0])) \
-      + op0.projectMomentum(P([0,-1,1]), P([0,1,0])) \
-      + op0.projectMomentum(P([1,0,1]), P([-1,0,0])) \
-      + op0.projectMomentum(P([-1,0,1]), P([1,0,0])) \
 
-  op_rep = OperatorRepresentation(A1_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True,False)))
-  
+  #test_P2_B2_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B2_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
 
-def test_spin_zero_op_atrest(op0):
+  #test_P2_B2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,-1,0]))  # PASSED
 
-  ''' Tested
-  print("A1+ (p_i^2 = 0)")
-  A1p_op = op0.projectMomentum(P0, P0)
+  #test_P2_B2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
+  #test_P2_B2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED
+
+  #test_P3_A1_3_0_S0(L_L_s_I0, P([1,1,1]))  # PASSED
+  #test_P3_A1_3_0_S0(L_L_s_I0, P([1,-1,1]))  # PASSED
+  #test_P3_A1_3_0_S0(N_X_a_I0, P([1,1,1]))  # PASSED
+  #test_P3_A1_3_0_S0(N_X_a_I0, P([1,-1,1]))  # PASSED
+
+  #test_P3_A1_2_1_S0(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
+  #test_P3_A1_2_1_S0(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+  #test_P3_A1_2_1_S0(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
+  #test_P3_A1_2_1_S0(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+
+  #test_P3_A1_2_1_S1(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))
+  #test_P3_A1_2_1_S1(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))
+  #test_P3_A1_2_1_S1(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))
+  #test_P3_A1_2_1_S1(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))
+
+  #test_P3_A2_3_0_S1(L_L_s_I0, P([1,1,1]))  # PASSED
+  #test_P3_A2_3_0_S1(L_L_s_I0, P([-1,1,1]))  # PASSED
+  #test_P3_A2_3_0_S1(N_X_a_I0, P([1,1,1]))  # PASSED
+  #test_P3_A2_3_0_S1(N_X_a_I0, P([-1,1,1])) # PASSED
+
+  #test_P3_A2_2_1_Ls(L_L_s_I0, P([1,1,1]))  # PASSED
+  #test_P3_A2_2_1_Ls(L_L_s_I0, P([-1,1,1]))  # PASSED
+  #test_P3_A2_2_1_Ls(N_X_a_I0, P([1,1,1]))  # PASSED
+  #test_P3_A2_2_1_Ls(N_X_a_I0, P([-1,1,1]))  # PASSED
+
+  #test_P3_A2_2_1_Lp(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
+  #test_P3_A2_2_1_Lp(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+  #test_P3_A2_2_1_Lp(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
+  #test_P3_A2_2_1_Lp(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+
+  #test_P4_A1_Fs(L_L_s_I0, P([0,0,2]))  # PASSED
+  #test_P4_A1_Fs(L_L_s_I0, P([2,0,0]))  # PASSED
+
+  #test_P4_A2_Fa(N_X_a_I0, P([0,0,2]))  # PASSED
+  #test_P4_A2_Fa(N_X_a_I0, P([2,0,0]))  # PASSED
+
+  #test_P4_E1_Fa(N_X_a_I0, P([0,0,2]))  # PASSED
+  #test_P4_E1_Fa(N_X_a_I0, P([2,0,0]))  # PASSED
+
+
+
+# P=000 tests
+def test_P0_A1p(ops, n=0):
+  print("P=000 A1+, (pi^2 = {})".format(n))
+
+  if n == 0:
+    A1p_op = ops[0].projectMomentum(P0, P0)
+
+  elif n == 1:
+    A1p_op = ops[0].projectMomentum(P([0,0,1]), P([0,0,-1])) \
+        + ops[0].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+        + ops[0].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+        + ops[0].projectMomentum(P([0,0,-1]), P([0,0,1])) \
+        + ops[0].projectMomentum(P([0,-1,0]), P([0,1,0])) \
+        + ops[0].projectMomentum(P([-1,0,0]), P([1,0,0]))
+
+  elif n == 2:
+    A1p_op = ops[0].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
+        + ops[0].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
+        + ops[0].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
+        + ops[0].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
+        + ops[0].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
+        + ops[0].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
+        + ops[0].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
+        + ops[0].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
+        + ops[0].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
+        + ops[0].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
+        + ops[0].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
+        + ops[0].projectMomentum(P([-1,1,0]), P([1,-1,0]))
+
+  elif n == 3:
+    A1p_op = ops[0].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
+        + ops[0].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
+        + ops[0].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
+        + ops[0].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
+        + ops[0].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
+        + ops[0].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
+        + ops[0].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
+        + ops[0].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
+
+  else:
+    print("pi^2 = {} not implemented".format(n))
+    return
 
   op_rep = OperatorRepresentation(A1p_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True)))
-  '''
+  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
 
-  ''' Tested
-  print("A1+ (p_i^2 = 1)")
-  A1p_op = op0.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op0.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op0.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op0.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op0.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op0.projectMomentum(P([-1,0,0]), P([1,0,0]))
 
-  op_rep = OperatorRepresentation(A1p_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True)))
-  '''
+def test_P0_T1p_Ls(ops, n=0):
+  print("P=000 T1+ (S-wave), (pi^2 = {})".format(n))
 
+  if n == 0:
+    T1p_1_op = ops[1].projectMomentum(P([0,0,0]), P([0,0,0]))
+    T1p_2_op = ops[2].projectMomentum(P([0,0,0]), P([0,0,0]))
+    T1p_3_op = ops[3].projectMomentum(P([0,0,0]), P([0,0,0]))
+
+  elif n == 1:
+    T1p_1_op = ops[1].projectMomentum(P([0,0,1]), P([0,0,-1])) \
+        + ops[1].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+        + ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+        + ops[1].projectMomentum(P([0,0,-1]), P([0,0,1])) \
+        + ops[1].projectMomentum(P([0,-1,0]), P([0,1,0])) \
+        + ops[1].projectMomentum(P([-1,0,0]), P([1,0,0]))
+
+    T1p_2_op = ops[2].projectMomentum(P([0,0,1]), P([0,0,-1])) \
+        + ops[2].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+        + ops[2].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+        + ops[2].projectMomentum(P([0,0,-1]), P([0,0,1])) \
+        + ops[2].projectMomentum(P([0,-1,0]), P([0,1,0])) \
+        + ops[2].projectMomentum(P([-1,0,0]), P([1,0,0]))
+
+    T1p_3_op = ops[3].projectMomentum(P([0,0,1]), P([0,0,-1])) \
+        + ops[3].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+        + ops[3].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+        + ops[3].projectMomentum(P([0,0,-1]), P([0,0,1])) \
+        + ops[3].projectMomentum(P([0,-1,0]), P([0,1,0])) \
+        + ops[3].projectMomentum(P([-1,0,0]), P([1,0,0]))
+
+  elif n == 2:
+    T1p_1_op = ops[1].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
+        + ops[1].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
+        + ops[1].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
+        + ops[1].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
+        + ops[1].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
+        + ops[1].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
+        + ops[1].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
+        + ops[1].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
+        + ops[1].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
+        + ops[1].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
+        + ops[1].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
+        + ops[1].projectMomentum(P([-1,1,0]), P([1,-1,0]))
+
+    T1p_2_op = ops[2].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
+        + ops[2].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
+        + ops[2].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
+        + ops[2].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
+        + ops[2].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
+        + ops[2].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
+        + ops[2].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
+        + ops[2].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
+        + ops[2].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
+        + ops[2].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
+        + ops[2].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
+        + ops[2].projectMomentum(P([-1,1,0]), P([1,-1,0]))
+
+    T1p_3_op = ops[3].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
+        + ops[3].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
+        + ops[3].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
+        + ops[3].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
+        + ops[3].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
+        + ops[3].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
+        + ops[3].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
+        + ops[3].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
+        + ops[3].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
+        + ops[3].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
+        + ops[3].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
+        + ops[3].projectMomentum(P([-1,1,0]), P([1,-1,0]))
+
+  elif n == 3:
+    T1p_1_op = ops[1].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
+        + ops[1].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
+        + ops[1].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
+        + ops[1].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
+        + ops[1].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
+        + ops[1].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
+        + ops[1].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
+        + ops[1].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
+
+    T1p_2_op = ops[2].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
+        + ops[2].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
+        + ops[2].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
+        + ops[2].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
+        + ops[2].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
+        + ops[2].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
+        + ops[2].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
+        + ops[2].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
+
+    T1p_3_op = ops[3].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
+        + ops[3].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
+        + ops[3].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
+        + ops[3].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
+        + ops[3].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
+        + ops[3].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
+        + ops[3].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
+        + ops[3].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
+
+  else:
+    print("pi^2 = {} not implemented".format(n))
+    return
+
+  op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
+
+
+def test_P0_T1p_Lp(ops):
+  print("P=000 T1+ (S-wave), (pi^2 = 1)")
   
-def test_spin_one_ops_atrest(op1, op2, op3):
+  T1p_1_op = 3*ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - ops[1].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - ops[1].projectMomentum(P([0,0,1]), P([0,0,-1]))
 
-  ''' Tested
-  print("T1p 1")
-  T1p_1_op = op1.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op1.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op1.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op1.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op1.projectMomentum(P([-1,0,0]), P([1,0,0]))
+  T1p_2_op = 3*ops[2].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - ops[2].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - ops[2].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - ops[2].projectMomentum(P([0,0,1]), P([0,0,-1]))
 
-  T1p_2_op = op2.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op2.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op2.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op2.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op2.projectMomentum(P([-1,0,0]), P([1,0,0]))
-
-  T1p_3_op = op3.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      + op3.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      + op3.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      + op3.projectMomentum(P([0,0,-1]), P([0,0,1])) \
-      + op3.projectMomentum(P([0,-1,0]), P([0,1,0])) \
-      + op3.projectMomentum(P([-1,0,0]), P([1,0,0]))
-
-  op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True)))
-  '''
-
-
-  ''' Tested
-  print("T1p 2")
-  T1p_1_op = 3*op1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op1.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op1.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op1.projectMomentum(P([0,0,1]), P([0,0,-1]))
-
-  T1p_2_op = 3*op2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op2.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op2.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op2.projectMomentum(P([0,0,1]), P([0,0,-1]))
-
-  T1p_3_op = 3*op3.projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      - op3.projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - op3.projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - op3.projectMomentum(P([0,0,1]), P([0,0,-1]))
+  T1p_3_op = 3*ops[3].projectMomentum(P([0,0,1]), P([0,0,-1])) \
+      - ops[3].projectMomentum(P([1,0,0]), P([-1,0,0])) \
+      - ops[3].projectMomentum(P([0,1,0]), P([0,-1,0])) \
+      - ops[3].projectMomentum(P([0,0,1]), P([0,0,-1]))
 
 
   op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True)))
-  '''
+  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
+
+
+# P^2=1 A1 tests
+def test_P1_A1_1_0_S0(ops, Ptot):
+
+  if Ptot.psq != 1:
+    print("Total P != 1! Skipping test")
+    return
+
+  print("P^2 = 1 A1 S0 (p1^2 = 1, p2^2 = 0)")
+  op = ops[0].projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  
+def test_P1_A1_2_1_Ls(ops, Ptot):
+
+  if Ptot.psq != 1:
+    print("Total P != 1! Skipping test")
+    return
+
+  print("P^2 = 1 A1 S-wave (p1^2 = 2, p2^2 = 1)")
+  op = S.Zero
+  if Ptot.x == 0:
+    px = P([1,0,0])
+    op += ops[0].projectMomentum(Ptot+px, -px) + ops[0].projectMomentum(Ptot-px, px)
+
+  if Ptot.y == 0:
+    py = P([0,1,0])
+    op += ops[0].projectMomentum(Ptot+py, -py) + ops[0].projectMomentum(Ptot-py, py)
+
+  if Ptot.z == 0:
+    pz = P([0,0,1])
+    op += ops[0].projectMomentum(Ptot+pz, -pz) + ops[0].projectMomentum(Ptot-pz, pz)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P1_A1_2_1_Lp(ops, Ptot):
+
+  if Ptot.psq != 1:
+    print("Total P != 1! Skipping test")
+    return
+
+  print("P^2 = 1 A1 P-wave (p1^2 = 2, p2^2 = 1)")
+  op = S.Zero
+  if Ptot.x == 0:
+    p = P([1,0,0]) * Ptot
+    op += ops[1].projectMomentum(Ptot+p, -p) - ops[1].projectMomentum(Ptot-p, p)
+
+  if Ptot.y == 0:
+    p = P([0,1,0]) * Ptot
+    op += ops[2].projectMomentum(Ptot+p, -p) - ops[2].projectMomentum(Ptot-p, p)
+
+  if Ptot.z == 0:
+    p = P([0,0,1]) * Ptot
+    op += ops[3].projectMomentum(Ptot+p, -p) - ops[3].projectMomentum(Ptot-p, p)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+# P=001 A2 tests
+def test_P1_A2_1_0_S1(ops, Ptot):
+  if Ptot.psq != 1:
+    print("Total P != 1! Skipping test")
+    return
+
+  print("P^2 = 1 A2 S1 (p1^2 = 1, p2^2 = 0)")
+  if Ptot.x != 0:
+    op = ops[1].projectMomentum(Ptot, P0)
+  elif Ptot.y != 0:
+    op = ops[2].projectMomentum(Ptot, P0)
+  elif Ptot.z != 0:
+    op = ops[3].projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P1_A2_2_1_Ls(ops, Ptot):
+  if Ptot.psq != 1:
+    print("Total P != 1! Skipping test")
+    return
+
+  px = P([1,0,0])
+  py = P([0,1,0])
+  pz = P([0,0,1])
+
+  print("P^2 = 1 A2 (S-wave), (p1^2 = 2, p2^2 = 1)")
+  if Ptot.x != 0:
+    op = ops[1].projectMomentum(Ptot+py, -py) + ops[1].projectMomentum(Ptot-py, py) \
+        + ops[1].projectMomentum(Ptot+pz, -pz) + ops[1].projectMomentum(Ptot-pz, pz)
+
+  elif Ptot.y != 0:
+    op = ops[2].projectMomentum(Ptot+px, -px) + ops[2].projectMomentum(Ptot-px, px) \
+        + ops[2].projectMomentum(Ptot+pz, -pz) + ops[2].projectMomentum(Ptot-pz, pz)
+
+  elif Ptot.z != 0:
+    op = ops[3].projectMomentum(Ptot+px, -px) + ops[3].projectMomentum(Ptot-px, px) \
+        + ops[3].projectMomentum(Ptot+py, -py) + ops[3].projectMomentum(Ptot-py, py)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P1_A2_2_1_Lp(ops, Ptot):
+  if Ptot.psq != 1:
+    print("Total P != 1! Skipping test")
+    return
+
+  px = P([1,0,0])
+  py = P([0,1,0])
+  pz = P([0,0,1])
+
+  print("P^2 = 1 A2 (P-wave), (p1^2 = 2, p2^2 = 1)")
+  if Ptot.x != 0:
+    op = ops[2].projectMomentum(Ptot+py, -py) - ops[2].projectMomentum(Ptot-py, py) \
+        + ops[3].projectMomentum(Ptot+pz, -pz) - ops[3].projectMomentum(Ptot-pz, pz)
+
+  elif Ptot.y != 0:
+    op = ops[1].projectMomentum(Ptot+px, -px) - ops[1].projectMomentum(Ptot-px, px) \
+        + ops[3].projectMomentum(Ptot+pz, -pz) - ops[3].projectMomentum(Ptot-pz, pz)
+
+  elif Ptot.z != 0:
+    op = ops[1].projectMomentum(Ptot+px, -px) - ops[1].projectMomentum(Ptot-px, px) \
+        + ops[2].projectMomentum(Ptot+py, -py) - ops[2].projectMomentum(Ptot-py, py)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+# P=001 E tests
+def test_P1_E2_1_0_S0(ops, Ptot):
+  if Ptot.psq != 1:
+    print("Total P != 1! Skipping test")
+    return
+
+  print("P^2 = 1 E2 (p1^2 = 1, p2^2 = 0")
+
+  if Ptot.x != 0:
+    op1 = ops[2].projectMomentum(Ptot, P0)
+    op2 = ops[3].projectMomentum(Ptot, P0)
+
+  elif Ptot.y != 0:
+    op1 = ops[1].projectMomentum(Ptot, P0)
+    op2 = ops[3].projectMomentum(Ptot, P0)
+
+  elif Ptot.z != 0:
+    op1 = ops[1].projectMomentum(Ptot, P0)
+    op2 = ops[2].projectMomentum(Ptot, P0)
+
+
+  op_rep = OperatorRepresentation(op1, op2)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+# P=011 A1 tests
+def test_P2_A1_2_0_S0(ops, Ptot):
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 A1 S0 (p1^2 = 2, p2^2 = 0)")
+  op = ops[0].projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P2_A1_1_1_S0(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 A1 S0 (p1^2 = 1, p2^2 = 1)")
+  op = ops[0].projectMomentum(p1, p2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P2_A1_1_1_S1(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 A1 S1 (p1^2 = 1, p2^2 = 1)")
+
+  p = p1*p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(p1, p2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+# P=011 A2 tests
+def test_P2_A2_2_0_S1(ops, Ptot):
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 A2 S1 (p1^2 = 2, p2^2 = 0)")
+
+  op = S.Zero
+  if Ptot.x != 0:
+    op += Ptot.x * ops[1]
+
+  if Ptot.y != 0:
+    op += Ptot.y * ops[2]
+
+  if Ptot.z != 0:
+    op += Ptot.z * ops[3]
+
+  op = op.projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P2_A2_1_1_Fs(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 A2 Fs (p1^2 = 1, p2^2 = 1)")
+
+  p = p1 - p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(p1, p2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P2_A2_1_1_Fa(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 A2 Fa (p1^2 = 1, p2^2 = 1)")
+
+  p = p1 + p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(p1, p2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P2_B1_2_0_S1(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 B1 S1 (p1^2 = 2, p2^2 = 0)")
+
+  p = p1*p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P2_B1_1_1_S1(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 B1 S1 (p1^2 = 1, p2^2 = 1)")
+
+  p = p1*p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(p1, p2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P2_B1_1_1_S0(ops, p1, p2):
+
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 B1 S1 (p1^2 = 1, p2^2 = 1)")
+
+  op = ops[0].projectMomentum(p1,p2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P2_B2_2_0_S1(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 B2 S1 (p1^2 = 2, p2^2 = 0)")
+
+  p = p1 - p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P2_B2_1_1_Fs(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 B2 Fs (p1^2 = 1, p2^2 = 1)")
+
+  p = p1 + p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(p1, p2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P2_B2_1_1_Fa(ops, p1, p2):
+  Ptot = p1 + p2
+  if Ptot.psq != 2:
+    print("Total P != 2! Skipping test")
+    return
+
+  print("P^2 = 2 B2 Fa (p1^2 = 1, p2^2 = 1)")
+
+  p = p1 - p2
+  op = S.Zero
+  if p.x != 0:
+    op += p.x * ops[1]
+
+  if p.y != 0:
+    op += p.y * ops[2]
+
+  if p.z != 0:
+    op += p.z * ops[3]
+
+  op = op.projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P3_A1_3_0_S0(ops, Ptot):
+  if Ptot.psq != 3:
+    print("Total P != 3! Skipping test")
+    return
+
+  print("P^2 = 3 A1 S0 (p1^2 = 3, p2^2 = 0)")
+  op = ops[0].projectMomentum(Ptot, P0)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P3_A1_2_1_S0(ops, p1, p2, p3):
+  Ptot = p1 + p2 + p3
+  if Ptot.psq != 3:
+    print("Total P != 3! Skipping test")
+    return
+
+  print("P^2 = 3 A1 S0 (p1^2 = 2, p2^2 = 1)")
+
+  op = ops[0].projectMomentum(Ptot - p1, p1) \
+      + ops[0].projectMomentum(Ptot - p2, p2) \
+      + ops[0].projectMomentum(Ptot - p3, p3)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+def test_P3_A1_2_1_S1(ops, p1, p2, p3):
+  Ptot = p1 + p2 + p3
+  if Ptot.psq != 3:
+    print("Total P != 3! Skipping test")
+    return
+
+  print("P^2 = 3 A1 S1 (p1^2 = 2, p2^2 = 1)")
+  print("Not Implemented")
+
+  return
+
+def test_P3_A2_3_0_S1(ops, Ptot):
+  if Ptot.psq != 3:
+    print("Total P != 3! Skipping test")
+    return
+
+  op = Ptot.x * ops[1].projectMomentum(Ptot, P0) \
+      + Ptot.y * ops[2].projectMomentum(Ptot, P0) \
+      + Ptot.z * ops[3].projectMomentum(Ptot, P0)
+
+  print("P^2 = 3 A2 S1 (p1^2 = 3, p2^2 = 0)")
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P3_A2_2_1_Ls(ops, Ptot):
+  if Ptot.psq != 3:
+    print("Total P != 3! Skipping test")
+    return
+
+  print("P^2 = 3 A2 Ls (p1^2 = 2, p2^2 = 1)")
+  p1 = Momentum([Ptot.x, 0, 0])
+  p2 = Momentum([0, Ptot.y, 0])
+  p3 = Momentum([0, 0, Ptot.z])
+
+  op = Ptot.x * ops[1].projectMomentum(Ptot - p1, p1) \
+      + Ptot.x * ops[1].projectMomentum(Ptot - p2, p2) \
+      + Ptot.x * ops[1].projectMomentum(Ptot - p3, p3) \
+      + Ptot.y * ops[2].projectMomentum(Ptot - p1, p1) \
+      + Ptot.y * ops[2].projectMomentum(Ptot - p2, p2) \
+      + Ptot.y * ops[2].projectMomentum(Ptot - p3, p3) \
+      + Ptot.z * ops[3].projectMomentum(Ptot - p1, p1) \
+      + Ptot.z * ops[3].projectMomentum(Ptot - p2, p2) \
+      + Ptot.z * ops[3].projectMomentum(Ptot - p3, p3)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+
+
+def test_P3_A2_2_1_Lp(ops, p1, p2, p3):
+  Ptot = p1 + p2 + p3
+  if Ptot.psq != 3:
+    print("Total P != 3! Skipping test")
+    return
+
+  print("P^2 = 3 A2 Lp (p1^2 = 2, p2^2 = 1)")
+
+  op = (p1*3 - p1 - p2 - p3).x * ops[1].projectMomentum(Ptot-p1, p1) \
+      + (p1*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p1, p1) \
+      + (p1*3 - p1 - p2 - p3).z * ops[3].projectMomentum(Ptot-p1, p1) \
+      + (p2*3 - p1 - p2 - p3).x * ops[1].projectMomentum(Ptot-p2, p2) \
+      + (p2*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p2, p2) \
+      + (p2*3 - p1 - p2 - p3).z * ops[3].projectMomentum(Ptot-p2, p2) \
+      + (p3*3 - p1 - p2 - p3).x * ops[1].projectMomentum(Ptot-p3, p3) \
+      + (p3*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p3, p3) \
+      + (p3*3 - p1 - p2 - p3).z * ops[3].projectMomentum(Ptot-p3, p3)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P4_A1_Fs(ops, Ptot):
+  if Ptot.psq != 4:
+    print("Total P != 4! Skipping test")
+    return
+
+  print("P^2 = 4 A1 Fs (p1^2 = 1, p2^2 = 1)")
+
+  op = ops[0].projectMomentum(Ptot/2, Ptot/2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P4_A2_Fa(ops, Ptot):
+  if Ptot.psq != 4:
+    print("Total P != 4! Skipping test")
+    return
+
+  print("P^2 = 4 A2 Fa (p1^2 = 1, p2^2 = 1)")
+
+  if Ptot.x != 0:
+    op = Ptot.x * ops[1]
+
+  elif Ptot.y != 0:
+    op = Ptot.y * ops[2]
+
+  elif Ptot.z != 0:
+    op = Ptot.z * ops[3]
+
+  op = op.projectMomentum(Ptot/2, Ptot/2)
+
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+def test_P4_E1_Fa(ops, Ptot):
+  if Ptot.psq != 4:
+    print("Total P != 4! Skipping test")
+    return
+
+  print("P^2 = 4 E1 Fa (p1^2 = 1, p2^2 = 1)")
+
+  if Ptot.x != 0:
+    op1 = ops[2].projectMomentum(Ptot/2, Ptot/2)
+    op2 = ops[3].projectMomentum(Ptot/2, Ptot/2)
+
+  elif Ptot.y != 0:
+    op1 = ops[1].projectMomentum(Ptot/2, Ptot/2)
+    op2 = ops[3].projectMomentum(Ptot/2, Ptot/2)
+
+  elif Ptot.z != 0:
+    op1 = ops[1].projectMomentum(Ptot/2, Ptot/2)
+    op2 = ops[2].projectMomentum(Ptot/2, Ptot/2)
+
+  op_rep = OperatorRepresentation(op1, op2)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
 
 
 def flavor_term(fl1_i, fl2_i):
