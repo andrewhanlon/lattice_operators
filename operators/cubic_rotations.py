@@ -391,10 +391,30 @@ class Momentum(Array):
   def __ne__(self, other):
     return not self.__eq__(other)
 
+  def __neg__(self):
+    return Momentum([-self.x, -self.y, -self.z])
+
   def __add__(self, other):
     if isinstance(other, self.__class__):
       return Momentum([self.x + other.x, self.y + other.y, self.z + other.z])
     return NotImplemented
+  
+  def __sub__(self, other):
+    return self.__add__(-other)
+
+  def __mul__(self, other):
+    if isinstance(other, self.__class__):
+      px = self.y*other.z - self.z*other.y
+      py = self.z*other.x - self.x*other.z
+      pz = self.x*other.y - other.y*self.x
+      return Momentum([px, py, pz])
+
+    else:
+      return Momentum([self.x * other, self.y * other, self.z * other])
+
+  def __rmul(self, other):
+    return Momentum([other * self.x, other * self.y, other * self.z])
+
 
 
 P = Momentum
