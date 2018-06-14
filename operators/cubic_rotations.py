@@ -406,7 +406,7 @@ class Momentum(Array):
     if isinstance(other, self.__class__):
       px = self.y*other.z - self.z*other.y
       py = self.z*other.x - self.x*other.z
-      pz = self.x*other.y - other.y*self.x
+      pz = self.x*other.y - self.y*other.x
       return Momentum([px, py, pz])
 
     else:
