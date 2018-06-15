@@ -171,10 +171,10 @@ def main():
   #test_P3_A1_2_1_S0(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
   #test_P3_A1_2_1_S0(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
 
-  #test_P3_A1_2_1_S1(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))
-  #test_P3_A1_2_1_S1(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))
-  #test_P3_A1_2_1_S1(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))
-  #test_P3_A1_2_1_S1(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))
+  #test_P3_A1_2_1_S1(L_L_s_I0, P([1,1,1]))  # PASSED
+  #test_P3_A1_2_1_S1(L_L_s_I0, P([-1,1,-1]))  # PASSED
+  #test_P3_A1_2_1_S1(N_X_a_I0, P([1,1,1]))  # PASSED
+  #test_P3_A1_2_1_S1(N_X_a_I0, P([-1,1,-1]))  # PASSED
 
   #test_P3_A2_3_0_S1(L_L_s_I0, P([1,1,1]))  # PASSED
   #test_P3_A2_3_0_S1(L_L_s_I0, P([-1,1,1]))  # PASSED
@@ -821,16 +821,24 @@ def test_P3_A1_2_1_S0(ops, p1, p2, p3):
   print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
 
 
-def test_P3_A1_2_1_S1(ops, p1, p2, p3):
-  Ptot = p1 + p2 + p3
+def test_P3_A1_2_1_S1(ops, Ptot):
   if Ptot.psq != 3:
     print("Total P != 3! Skipping test")
     return
 
+  p1 = P([Ptot.x,0,0])
+  p2 = P([0,Ptot.y,0])
+  p3 = P([0,0,Ptot.z])
   print("P^2 = 3 A1 S1 (p1^2 = 2, p2^2 = 1)")
-  print("Not Implemented")
+  op = p2.y*ops[2].projectMomentum(Ptot-p3,p3) \
+      - p3.z*ops[3].projectMomentum(Ptot-p2,p2) \
+      - p1.x*ops[1].projectMomentum(Ptot-p3,p3) \
+      + p3.z*ops[3].projectMomentum(Ptot-p1,p1) \
+      + p1.x*ops[1].projectMomentum(Ptot-p2,p2) \
+      - p2.y*ops[2].projectMomentum(Ptot-p1,p1)
 
-  return
+  op_rep = OperatorRepresentation(op)
+  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
 
 def test_P3_A2_3_0_S1(ops, Ptot):
   if Ptot.psq != 3:
