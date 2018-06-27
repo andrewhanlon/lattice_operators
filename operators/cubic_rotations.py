@@ -22,33 +22,39 @@ class Angle(Enum):
   INV_THIRD = -3
   INV_QUARTER = -4
 
+  def __str__(self):
+    return str(self.value)
+
 @unique
 class Axis(Enum):
-  X = auto()
-  Y = auto()
-  Z = auto()
+  x = auto()
+  y = auto()
+  z = auto()
+  a = auto()
+  b = auto()
+  c = auto()
+  d = auto()
+  e = auto()
+  f = auto()
   A = auto()
   B = auto()
   C = auto()
   D = auto()
-  E = auto()
-  F = auto()
-  ALPHA = auto()
-  BETA = auto()
-  GAMMA = auto()
-  DELTA = auto()
+
+  def __str__(self):
+    return str(self.name)
+
 
 # @ADH - Force rotations to be in _POINT_GROUP ??
 class CubicRotation:
 
-  def __init__(self, rotation_angle, rotation_axis=Axis.Z, parity=False):
+  def __init__(self, rotation_angle, rotation_axis=Axis.z, parity=False):
     self._rotation_angle = rotation_angle
     self._parity = parity
     self._matrix = None
 
-    if rotation_angle == Angle.E:
-      self._rotation_axis = Axis.Z
-    else:
+    self._rotation_axis = None
+    if rotation_angle != Angle.E:
       self._rotation_axis = rotation_axis
 
   @property
@@ -104,14 +110,18 @@ class CubicRotation:
     return NotImplemented
         
   def __str__(self):
-    return _ROTATIONS[self]
+    if self.angle == Angle.E:
+      _str = "E" 
+    else:
+      _str = "C{}{}".format(self.angle, self.axis)
+
+    if self.parity:
+      _str = "I" + _str[1:]
+
+    return _str
 
   def __repr__(self):
-    repr_str = "{}_{}".format(self.angle, self.axis)
-    if self.parity:
-      repr_str += "_I"
-
-    return repr_str
+    return self.__str__()
 
   def __hash__(self):
     return hash(self.__repr__())
@@ -145,108 +155,108 @@ class CubicRotation:
     return NotImplemented
 
 
-E      = CubicRotation(Angle.E,           Axis.Z,     False)
-C2x    = CubicRotation(Angle.HALF,        Axis.X,     False)
-C2y    = CubicRotation(Angle.HALF,        Axis.Y,     False)
-C2z    = CubicRotation(Angle.HALF,        Axis.Z,     False)
-C2a    = CubicRotation(Angle.HALF,        Axis.A,     False)
-C2b    = CubicRotation(Angle.HALF,        Axis.B,     False)
-C2c    = CubicRotation(Angle.HALF,        Axis.C,     False)
-C2d    = CubicRotation(Angle.HALF,        Axis.D,     False)
-C2e    = CubicRotation(Angle.HALF,        Axis.E,     False)
-C2f    = CubicRotation(Angle.HALF,        Axis.F,     False)
-C3a    = CubicRotation(Angle.THIRD,       Axis.ALPHA, False)
-C3b    = CubicRotation(Angle.THIRD,       Axis.BETA,  False)
-C3c    = CubicRotation(Angle.THIRD,       Axis.GAMMA, False)
-C3d    = CubicRotation(Angle.THIRD,       Axis.DELTA, False)
-C3ai   = CubicRotation(Angle.INV_THIRD,   Axis.ALPHA, False)
-C3bi   = CubicRotation(Angle.INV_THIRD,   Axis.BETA,  False)
-C3ci   = CubicRotation(Angle.INV_THIRD,   Axis.GAMMA, False)
-C3di   = CubicRotation(Angle.INV_THIRD,   Axis.DELTA, False)
-C4x    = CubicRotation(Angle.QUARTER,     Axis.X,     False)
-C4y    = CubicRotation(Angle.QUARTER,     Axis.Y,     False)
-C4z    = CubicRotation(Angle.QUARTER,     Axis.Z,     False)
-C4xi   = CubicRotation(Angle.INV_QUARTER, Axis.X,     False)
-C4yi   = CubicRotation(Angle.INV_QUARTER, Axis.Y,     False)
-C4zi   = CubicRotation(Angle.INV_QUARTER, Axis.Z,     False)
-Is     = CubicRotation(Angle.E,           Axis.Z,     True)
-I_C2x  = CubicRotation(Angle.HALF,        Axis.X,     True)
-I_C2y  = CubicRotation(Angle.HALF,        Axis.Y,     True)
-I_C2z  = CubicRotation(Angle.HALF,        Axis.Z,     True)
-I_C2a  = CubicRotation(Angle.HALF,        Axis.A,     True)
-I_C2b  = CubicRotation(Angle.HALF,        Axis.B,     True)
-I_C2c  = CubicRotation(Angle.HALF,        Axis.C,     True)
-I_C2d  = CubicRotation(Angle.HALF,        Axis.D,     True)
-I_C2e  = CubicRotation(Angle.HALF,        Axis.E,     True)
-I_C2f  = CubicRotation(Angle.HALF,        Axis.F,     True)
-I_C3a  = CubicRotation(Angle.THIRD,       Axis.ALPHA, True)
-I_C3b  = CubicRotation(Angle.THIRD,       Axis.BETA,  True)
-I_C3c  = CubicRotation(Angle.THIRD,       Axis.GAMMA, True)
-I_C3d  = CubicRotation(Angle.THIRD,       Axis.DELTA, True)
-I_C3ai = CubicRotation(Angle.INV_THIRD,   Axis.ALPHA, True)
-I_C3bi = CubicRotation(Angle.INV_THIRD,   Axis.BETA,  True)
-I_C3ci = CubicRotation(Angle.INV_THIRD,   Axis.GAMMA, True)
-I_C3di = CubicRotation(Angle.INV_THIRD,   Axis.DELTA, True)
-I_C4x  = CubicRotation(Angle.QUARTER,     Axis.X,     True)
-I_C4y  = CubicRotation(Angle.QUARTER,     Axis.Y,     True)
-I_C4z  = CubicRotation(Angle.QUARTER,     Axis.Z,     True)
-I_C4xi = CubicRotation(Angle.INV_QUARTER, Axis.X,     True)
-I_C4yi = CubicRotation(Angle.INV_QUARTER, Axis.Y,     True)
-I_C4zi = CubicRotation(Angle.INV_QUARTER, Axis.Z,     True)
+E    = CubicRotation(Angle.E,           Axis.z, False)
+C2x  = CubicRotation(Angle.HALF,        Axis.x, False)
+C2y  = CubicRotation(Angle.HALF,        Axis.y, False)
+C2z  = CubicRotation(Angle.HALF,        Axis.z, False)
+C2a  = CubicRotation(Angle.HALF,        Axis.a, False)
+C2b  = CubicRotation(Angle.HALF,        Axis.b, False)
+C2c  = CubicRotation(Angle.HALF,        Axis.c, False)
+C2d  = CubicRotation(Angle.HALF,        Axis.d, False)
+C2e  = CubicRotation(Angle.HALF,        Axis.e, False)
+C2f  = CubicRotation(Angle.HALF,        Axis.f, False)
+C3A  = CubicRotation(Angle.THIRD,       Axis.A, False)
+C3B  = CubicRotation(Angle.THIRD,       Axis.B, False)
+C3C  = CubicRotation(Angle.THIRD,       Axis.C, False)
+C3D  = CubicRotation(Angle.THIRD,       Axis.D, False)
+C3Ai = CubicRotation(Angle.INV_THIRD,   Axis.A, False)
+C3Bi = CubicRotation(Angle.INV_THIRD,   Axis.B, False)
+C3Ci = CubicRotation(Angle.INV_THIRD,   Axis.C, False)
+C3Di = CubicRotation(Angle.INV_THIRD,   Axis.D, False)
+C4x  = CubicRotation(Angle.QUARTER,     Axis.x, False)
+C4y  = CubicRotation(Angle.QUARTER,     Axis.y, False)
+C4z  = CubicRotation(Angle.QUARTER,     Axis.z, False)
+C4xi = CubicRotation(Angle.INV_QUARTER, Axis.x, False)
+C4yi = CubicRotation(Angle.INV_QUARTER, Axis.y, False)
+C4zi = CubicRotation(Angle.INV_QUARTER, Axis.z, False)
+Is   = CubicRotation(Angle.E,           Axis.z, True)
+I2x  = CubicRotation(Angle.HALF,        Axis.x, True)
+I2y  = CubicRotation(Angle.HALF,        Axis.y, True)
+I2z  = CubicRotation(Angle.HALF,        Axis.z, True)
+I2a  = CubicRotation(Angle.HALF,        Axis.a, True)
+I2b  = CubicRotation(Angle.HALF,        Axis.b, True)
+I2c  = CubicRotation(Angle.HALF,        Axis.c, True)
+I2d  = CubicRotation(Angle.HALF,        Axis.d, True)
+I2e  = CubicRotation(Angle.HALF,        Axis.e, True)
+I2f  = CubicRotation(Angle.HALF,        Axis.f, True)
+I3A  = CubicRotation(Angle.THIRD,       Axis.A, True)
+I3B  = CubicRotation(Angle.THIRD,       Axis.B, True)
+I3C  = CubicRotation(Angle.THIRD,       Axis.C, True)
+I3D  = CubicRotation(Angle.THIRD,       Axis.D, True)
+I3Ai = CubicRotation(Angle.INV_THIRD,   Axis.A, True)
+I3Bi = CubicRotation(Angle.INV_THIRD,   Axis.B, True)
+I3Ci = CubicRotation(Angle.INV_THIRD,   Axis.C, True)
+I3Di = CubicRotation(Angle.INV_THIRD,   Axis.D, True)
+I4x  = CubicRotation(Angle.QUARTER,     Axis.x, True)
+I4y  = CubicRotation(Angle.QUARTER,     Axis.y, True)
+I4z  = CubicRotation(Angle.QUARTER,     Axis.z, True)
+I4xi = CubicRotation(Angle.INV_QUARTER, Axis.x, True)
+I4yi = CubicRotation(Angle.INV_QUARTER, Axis.y, True)
+I4zi = CubicRotation(Angle.INV_QUARTER, Axis.z, True)
 
 # @ADH - These need to be done for each LittleGroup...
-_GENERATORS = {
-    E:      [],
-    C2x:    [C4x,  C4x],
-    C2y:    [C4y,  C4y],
-    C2z:    [C4z,  C4z],
-    C2a:    [C2y,  C4z],
-    C2b:    [C2x,  C4z],
-    C2c:    [C4y,  C2z],
-    C2d:    [C2z,  C4y],
-    C2e:    [C2z,  C4x],
-    C2f:    [C2y,  C4x],
-    C3a:    [C4yi, C4z],
-    C3b:    [C4y,  C4zi],
-    C3c:    [C4yi, C4zi],
-    C3d:    [C4y,  C4z],
-    C3ai:   [C4zi, C4y],
-    C3bi:   [C4z,  C4yi],
-    C3ci:   [C4z,  C4y],
-    C3di:   [C4zi, C4yi],
-    C4x:    [C4zi, C4y, C4z],
-    C4y:    [],
-    C4z:    [],
-    C4xi:   "invert",
-    C4yi:   "invert",
-    C4zi:   "invert",
-    Is:     [],
-    I_C2x:  [Is, C2x],
-    I_C2y:  [Is, C2y],
-    I_C2z:  [Is, C2z],
-    I_C2a:  [Is, C2a],
-    I_C2b:  [Is, C2b],
-    I_C2c:  [Is, C2c],
-    I_C2d:  [Is, C2d],
-    I_C2e:  [Is, C2e],
-    I_C2f:  [Is, C2f],
-    I_C3a:  [Is, C3a],
-    I_C3b:  [Is, C3b],
-    I_C3c:  [Is, C3c],
-    I_C3d:  [Is, C3d],
-    I_C3ai: [Is, C3ai],
-    I_C3bi: [Is, C3bi],
-    I_C3ci: [Is, C3ci],
-    I_C3di: [Is, C3di],
-    I_C4x:  [Is, C4x],
-    I_C4y:  [Is, C4y],
-    I_C4z:  [Is, C4z],
-    I_C4xi: [Is, C4xi],
-    I_C4yi: [Is, C4yi],
-    I_C4zi: [Is, C4zi]
+_Oh_GENERATORS = {
+    E:    [],
+    C2x:  [C4x,  C4x],
+    C2y:  [C4y,  C4y],
+    C2z:  [C4z,  C4z],
+    C2a:  [C2y,  C4z],
+    C2b:  [C2x,  C4z],
+    C2c:  [C4y,  C2z],
+    C2d:  [C2z,  C4y],
+    C2e:  [C2z,  C4x],
+    C2f:  [C2y,  C4x],
+    C3A:  [C4yi, C4z],
+    C3B:  [C4y,  C4zi],
+    C3C:  [C4yi, C4zi],
+    C3D:  [C4y,  C4z],
+    C3Ai: [C4zi, C4y],
+    C3Bi: [C4z,  C4yi],
+    C3Ci: [C4z,  C4y],
+    C3Di: [C4zi, C4yi],
+    C4x:  [C4zi, C4y, C4z],
+    C4y:  [],
+    C4z:  [],
+    C4xi: "invert",
+    C4yi: "invert",
+    C4zi: "invert",
+    Is:   [],
+    I2x:  [Is, C2x],
+    I2y:  [Is, C2y],
+    I2z:  [Is, C2z],
+    I2a:  [Is, C2a],
+    I2b:  [Is, C2b],
+    I2c:  [Is, C2c],
+    I2d:  [Is, C2d],
+    I2e:  [Is, C2e],
+    I2f:  [Is, C2f],
+    I3A:  [Is, C3A],
+    I3B:  [Is, C3B],
+    I3C:  [Is, C3C],
+    I3D:  [Is, C3D],
+    I3Ai: [Is, C3Ai],
+    I3Bi: [Is, C3Bi],
+    I3Ci: [Is, C3Ci],
+    I3Di: [Is, C3Di],
+    I4x:  [Is, C4x],
+    I4y:  [Is, C4y],
+    I4z:  [Is, C4z],
+    I4xi: [Is, C4xi],
+    I4yi: [Is, C4yi],
+    I4zi: [Is, C4zi]
 }
 
-
+# @ADH - Remove this
 _ROTATIONS = {
     E:      "E",
     C2x:    "C_{2x}",
@@ -258,14 +268,14 @@ _ROTATIONS = {
     C2d:    "C_{2d}",
     C2e:    "C_{2e}",
     C2f:    "C_{2f}",
-    C3a:    "C_{3A}",
-    C3b:    "C_{3B}",
-    C3c:    "C_{3Y}",
-    C3d:    "C_{3D}",
-    C3ai:   "C_{3A}^{-1}",
-    C3bi:   "C_{3B}^{-1}",
-    C3ci:   "C_{3Y}^{-1}",
-    C3di:   "C_{3D}^{-1}",
+    C3A:    "C_{3A}",
+    C3B:    "C_{3B}",
+    C3C:    "C_{3Y}",
+    C3D:    "C_{3D}",
+    C3Ai:   "C_{3A}^{-1}",
+    C3Bi:   "C_{3B}^{-1}",
+    C3Ci:   "C_{3Y}^{-1}",
+    C3Di:   "C_{3D}^{-1}",
     C4x:    "C_{4x}",
     C4y:    "C_{4y}",
     C4z:    "C_{4z}",
@@ -273,29 +283,29 @@ _ROTATIONS = {
     C4yi:   "C_{4y}^{-1}",
     C4zi:   "C_{4z}^{-1}",
     Is:      "I_S",
-    I_C2x:  "I_S C_{2x}",
-    I_C2y:  "I_S C_{2y}",
-    I_C2z:  "I_S C_{2z}",
-    I_C2a:  "I_S C_{2a}",
-    I_C2b:  "I_S C_{2b}",
-    I_C2c:  "I_S C_{2c}",
-    I_C2d:  "I_S C_{2d}",
-    I_C2e:  "I_S C_{2e}",
-    I_C2f:  "I_S C_{2f}",
-    I_C3a:  "I_S C_{3A}",
-    I_C3b:  "I_S C_{3B}",
-    I_C3c:  "I_S C_{3Y}",
-    I_C3d:  "I_S C_{3D}",
-    I_C3ai: "I_S C_{3A}^{-1}",
-    I_C3bi: "I_S C_{3B}^{-1}",
-    I_C3ci: "I_S C_{3Y}^{-1}",
-    I_C3di: "I_S C_{3D}^{-1}",
-    I_C4x:  "I_S C_{4x}",
-    I_C4y:  "I_S C_{4y}",
-    I_C4z:  "I_S C_{4z}",
-    I_C4xi: "I_S C_{4x}^{-1}",
-    I_C4yi: "I_S C_{4y}^{-1}",
-    I_C4zi: "I_S C_{4z}^{-1}"
+    I2x:  "I_S C_{2x}",
+    I2y:  "I_S C_{2y}",
+    I2z:  "I_S C_{2z}",
+    I2a:  "I_S C_{2a}",
+    I2b:  "I_S C_{2b}",
+    I2c:  "I_S C_{2c}",
+    I2d:  "I_S C_{2d}",
+    I2e:  "I_S C_{2e}",
+    I2f:  "I_S C_{2f}",
+    I3A:  "I_S C_{3A}",
+    I3B:  "I_S C_{3B}",
+    I3C:  "I_S C_{3Y}",
+    I3D:  "I_S C_{3D}",
+    I3Ai: "I_S C_{3A}^{-1}",
+    I3Bi: "I_S C_{3B}^{-1}",
+    I3Ci: "I_S C_{3Y}^{-1}",
+    I3Di: "I_S C_{3D}^{-1}",
+    I4x:  "I_S C_{4x}",
+    I4y:  "I_S C_{4y}",
+    I4z:  "I_S C_{4z}",
+    I4xi: "I_S C_{4x}^{-1}",
+    I4yi: "I_S C_{4y}^{-1}",
+    I4zi: "I_S C_{4z}^{-1}"
 }
 
 
@@ -310,14 +320,14 @@ _EULER_ANGLES = {
     C2d:  (     pi,   pi/2,      0),
     C2e:  (   pi/2,   pi/2,   pi/2),
     C2f:  (  -pi/2,   pi/2,  -pi/2),
-    C3a:  (     pi,   pi/2,  -pi/2),
-    C3b:  (      0,   pi/2,  -pi/2),
-    C3c:  (    -pi,   pi/2,   pi/2),
-    C3d:  (      0,   pi/2,   pi/2),
-    C3ai: (  -pi/2,   pi/2,      0),
-    C3bi: (  -pi/2,   pi/2,     pi),
-    C3ci: (   pi/2,   pi/2,      0),
-    C3di: (   pi/2,   pi/2,    -pi),
+    C3A:  (     pi,   pi/2,  -pi/2),
+    C3B:  (      0,   pi/2,  -pi/2),
+    C3C:  (    -pi,   pi/2,   pi/2),
+    C3D:  (      0,   pi/2,   pi/2),
+    C3Ai: (  -pi/2,   pi/2,      0),
+    C3Bi: (  -pi/2,   pi/2,     pi),
+    C3Ci: (   pi/2,   pi/2,      0),
+    C3Di: (   pi/2,   pi/2,    -pi),
     C4x:  (  -pi/2,   pi/2,   pi/2),
     C4y:  (      0,   pi/2,      0),
     C4z:  (   pi/4,      0,   pi/4),
@@ -327,6 +337,7 @@ _EULER_ANGLES = {
 }
 
 
+# @ADH - Use something other than _ROTATIONS for this
 _OCTAHEDRAL_GROUP = SortedSet([cubic_rotation for cubic_rotation in _ROTATIONS.keys() if not cubic_rotation.parity])
 _POINT_GROUP = SortedSet([cubic_rotation for cubic_rotation in _ROTATIONS.keys()])
 
@@ -505,36 +516,36 @@ _LITTLE_GROUPS = {
 
 # Conjugacy Classes
 Oh_1  = frozenset([E])
-Oh_2  = frozenset([C3a, C3b, C3c, C3d, C3ai, C3bi, C3ci, C3di])
+Oh_2  = frozenset([C3A, C3B, C3C, C3D, C3Ai, C3Bi, C3Ci, C3Di])
 Oh_3  = frozenset([C2x, C2y, C2z])
 Oh_4  = frozenset([C4x, C4y, C4z, C4xi, C4yi, C4zi])
 Oh_5  = frozenset([C2a, C2b, C2c, C2d, C2e, C2f])
 Oh_6  = frozenset([Is])
-Oh_7  = frozenset([I_C3a, I_C3b, I_C3c, I_C3d, I_C3ai, I_C3bi, I_C3ci, I_C3di])
-Oh_8  = frozenset([I_C2x, I_C2y, I_C2z])
-Oh_9  = frozenset([I_C4x, I_C4y, I_C4z, I_C4xi, I_C4yi, I_C4zi])
-Oh_10 = frozenset([I_C2a, I_C2b, I_C2c, I_C2d, I_C2e, I_C2f])
+Oh_7  = frozenset([I3A, I3B, I3C, I3D, I3Ai, I3Bi, I3Ci, I3Di])
+Oh_8  = frozenset([I2x, I2y, I2z])
+Oh_9  = frozenset([I4x, I4y, I4z, I4xi, I4yi, I4zi])
+Oh_10 = frozenset([I2a, I2b, I2c, I2d, I2e, I2f])
 
 C4v_1 = frozenset([E])
 C4v_2 = frozenset([C2z])
 C4v_3 = frozenset([C4z, C4zi])
-C4v_4 = frozenset([I_C2x, I_C2y])
-C4v_5 = frozenset([I_C2a, I_C2b])
+C4v_4 = frozenset([I2x, I2y])
+C4v_5 = frozenset([I2a, I2b])
 
 C2v_1 = frozenset([E])
 C2v_2 = frozenset([C2e])
-C2v_3 = frozenset([I_C2f])
-C2v_4 = frozenset([I_C2x])
+C2v_3 = frozenset([I2f])
+C2v_4 = frozenset([I2x])
 
 C3v_1 = frozenset([E])
-C3v_2 = frozenset([C3d, C3di])
-C3v_3 = frozenset([I_C2b, I_C2d, I_C2f])
+C3v_2 = frozenset([C3D, C3Di])
+C3v_3 = frozenset([I2b, I2d, I2f])
 
 Cs012_1 = frozenset([E])
-Cs012_2 = frozenset([I_C2x])
+Cs012_2 = frozenset([I2x])
 
 Cs112_1 = frozenset([E])
-Cs112_2 = frozenset([I_C2b])
+Cs112_2 = frozenset([I2b])
 
 _CHARACTERS = {
     ("Oh",  "A1g", Oh_1):  1,
@@ -876,73 +887,73 @@ g3 = MatrixSymbol('g3', 4, 4)
 
 _rotation_map = {
     Angle.HALF: {
-        Axis.X: g2*g3,
-        Axis.Y: g3*g1,
-        Axis.Z: g1*g2,
-        Axis.A:  1/sqrt(2)*(g2*g3 + g3*g1),
-        Axis.B:  1/sqrt(2)*(g2*g3 - g3*g1),
-        Axis.C:  1/sqrt(2)*(g2*g3 + g1*g2),
-        Axis.D: -1/sqrt(2)*(g2*g3 - g1*g2),
-        Axis.E:  1/sqrt(2)*(g3*g1 + g1*g2),
-        Axis.F:  1/sqrt(2)*(g3*g1 - g1*g2)
+        Axis.x: g2*g3,
+        Axis.y: g3*g1,
+        Axis.z: g1*g2,
+        Axis.a:  1/sqrt(2)*(g2*g3 + g3*g1),
+        Axis.b:  1/sqrt(2)*(g2*g3 - g3*g1),
+        Axis.c:  1/sqrt(2)*(g2*g3 + g1*g2),
+        Axis.d: -1/sqrt(2)*(g2*g3 - g1*g2),
+        Axis.e:  1/sqrt(2)*(g3*g1 + g1*g2),
+        Axis.f:  1/sqrt(2)*(g3*g1 - g1*g2)
     },
     Angle.THIRD: {
-        Axis.ALPHA: (I - g2*g3 - g3*g1 + g1*g2)/2,
-        Axis.BETA:  (I - g2*g3 + g3*g1 - g1*g2)/2,
-        Axis.GAMMA: (I + g2*g3 - g3*g1 - g1*g2)/2,
-        Axis.DELTA: (I + g2*g3 + g3*g1 + g1*g2)/2
+        Axis.A: (I - g2*g3 - g3*g1 + g1*g2)/2,
+        Axis.B: (I - g2*g3 + g3*g1 - g1*g2)/2,
+        Axis.C: (I + g2*g3 - g3*g1 - g1*g2)/2,
+        Axis.D: (I + g2*g3 + g3*g1 + g1*g2)/2
     },
     Angle.INV_THIRD: {
-        Axis.ALPHA: (I + g2*g3 + g3*g1 - g1*g2)/2,
-        Axis.BETA:  (I + g2*g3 - g3*g1 + g1*g2)/2,
-        Axis.GAMMA: (I - g2*g3 + g3*g1 + g1*g2)/2,
-        Axis.DELTA: (I - g2*g3 - g3*g1 - g1*g2)/2
+        Axis.A: (I + g2*g3 + g3*g1 - g1*g2)/2,
+        Axis.B: (I + g2*g3 - g3*g1 + g1*g2)/2,
+        Axis.C: (I - g2*g3 + g3*g1 + g1*g2)/2,
+        Axis.D: (I - g2*g3 - g3*g1 - g1*g2)/2
     },
     Angle.QUARTER: {
-        Axis.X: 1/sqrt(2)*(I + g2*g3),
-        Axis.Y: 1/sqrt(2)*(I + g3*g1),
-        Axis.Z: 1/sqrt(2)*(I + g1*g2)
+        Axis.x: 1/sqrt(2)*(I + g2*g3),
+        Axis.y: 1/sqrt(2)*(I + g3*g1),
+        Axis.z: 1/sqrt(2)*(I + g1*g2)
     },
     Angle.INV_QUARTER: {
-        Axis.X: 1/sqrt(2)*(I - g2*g3),
-        Axis.Y: 1/sqrt(2)*(I - g3*g1),
-        Axis.Z: 1/sqrt(2)*(I - g1*g2)
+        Axis.x: 1/sqrt(2)*(I - g2*g3),
+        Axis.y: 1/sqrt(2)*(I - g3*g1),
+        Axis.z: 1/sqrt(2)*(I - g1*g2)
     }
 }
 
 _conjugate_rotation_map = {
     Angle.HALF: {
-        Axis.X: -g2*g3,
-        Axis.Y: -g3*g1,
-        Axis.Z: -g1*g2,
-        Axis.A: -1/sqrt(2)*(g2*g3 + g3*g1),
-        Axis.B: -1/sqrt(2)*(g2*g3 - g3*g1),
-        Axis.C: -1/sqrt(2)*(g2*g3 + g1*g2),
-        Axis.D:  1/sqrt(2)*(g2*g3 - g1*g2),
-        Axis.E: -1/sqrt(2)*(g3*g1 + g1*g2),
-        Axis.F: -1/sqrt(2)*(g3*g1 - g1*g2)
+        Axis.x: -g2*g3,
+        Axis.y: -g3*g1,
+        Axis.z: -g1*g2,
+        Axis.a: -1/sqrt(2)*(g2*g3 + g3*g1),
+        Axis.b: -1/sqrt(2)*(g2*g3 - g3*g1),
+        Axis.c: -1/sqrt(2)*(g2*g3 + g1*g2),
+        Axis.d:  1/sqrt(2)*(g2*g3 - g1*g2),
+        Axis.e: -1/sqrt(2)*(g3*g1 + g1*g2),
+        Axis.f: -1/sqrt(2)*(g3*g1 - g1*g2)
     },
     Angle.THIRD: {
-        Axis.ALPHA: (I + g2*g3 + g3*g1 - g1*g2)/2,
-        Axis.BETA:  (I + g2*g3 - g3*g1 + g1*g2)/2,
-        Axis.GAMMA: (I - g2*g3 + g3*g1 + g1*g2)/2,
-        Axis.DELTA: (I - g2*g3 - g3*g1 - g1*g2)/2
+        Axis.A: (I + g2*g3 + g3*g1 - g1*g2)/2,
+        Axis.B: (I + g2*g3 - g3*g1 + g1*g2)/2,
+        Axis.C: (I - g2*g3 + g3*g1 + g1*g2)/2,
+        Axis.D: (I - g2*g3 - g3*g1 - g1*g2)/2
     },
     Angle.INV_THIRD: {
-        Axis.ALPHA: (I - g2*g3 - g3*g1 + g1*g2)/2,
-        Axis.BETA:  (I - g2*g3 + g3*g1 - g1*g2)/2,
-        Axis.GAMMA: (I + g2*g3 - g3*g1 - g1*g2)/2,
-        Axis.DELTA: (I + g2*g3 + g3*g1 + g1*g2)/2
+        Axis.A: (I - g2*g3 - g3*g1 + g1*g2)/2,
+        Axis.B: (I - g2*g3 + g3*g1 - g1*g2)/2,
+        Axis.C: (I + g2*g3 - g3*g1 - g1*g2)/2,
+        Axis.D: (I + g2*g3 + g3*g1 + g1*g2)/2
     },
     Angle.QUARTER: {
-        Axis.X: 1/sqrt(2)*(I - g2*g3),
-        Axis.Y: 1/sqrt(2)*(I - g3*g1),
-        Axis.Z: 1/sqrt(2)*(I - g1*g2)
+        Axis.x: 1/sqrt(2)*(I - g2*g3),
+        Axis.y: 1/sqrt(2)*(I - g3*g1),
+        Axis.z: 1/sqrt(2)*(I - g1*g2)
     },
     Angle.INV_QUARTER: {
-        Axis.X: 1/sqrt(2)*(I + g2*g3),
-        Axis.Y: 1/sqrt(2)*(I + g3*g1),
-        Axis.Z: 1/sqrt(2)*(I + g1*g2)
+        Axis.x: 1/sqrt(2)*(I + g2*g3),
+        Axis.y: 1/sqrt(2)*(I + g3*g1),
+        Axis.z: 1/sqrt(2)*(I + g1*g2)
     }
 }
 
