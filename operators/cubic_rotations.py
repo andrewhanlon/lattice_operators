@@ -205,7 +205,7 @@ I4yi = CubicRotation(Angle.INV_QUARTER, Axis.y, True)
 I4zi = CubicRotation(Angle.INV_QUARTER, Axis.z, True)
 
 # @ADH - These need to be done for each LittleGroup...
-_Oh_GENERATORS = {
+_GENERATORS = {
     E:    [],
     C2x:  [C4x,  C4x],
     C2y:  [C4y,  C4y],

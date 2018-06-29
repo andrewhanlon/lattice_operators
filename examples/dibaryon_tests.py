@@ -32,10 +32,10 @@ def main():
   print("Forming single baryon operators")
   uud_i = Baryon(u,u,d, i)
   dud_i = Baryon(d,u,d, i)
-  uus_i = Baryon(u,u,s, i)
-  dus_i = Baryon(d,u,s, i)
-  uds_i = Baryon(u,d,s, i)
-  dds_i = Baryon(d,d,s, i)
+  #uus_i = Baryon(u,u,s, i)
+  #dus_i = Baryon(d,u,s, i)
+  #uds_i = Baryon(u,d,s, i)
+  #dds_i = Baryon(d,d,s, i)
   sud_i = Baryon(s,u,d, i)
   ssd_i = Baryon(s,s,d, i)
   ssu_i = Baryon(s,s,u, i)
@@ -43,12 +43,12 @@ def main():
 
   print("Forming baryon-baryon flavor terms")
   sud_sud = flavor_term(sud_i, sud_i)
-  uus_dds = flavor_term(uus_i, dds_i)
-  dus_uds = flavor_term(dus_i, uds_i)
-  dus_dus = flavor_term(dus_i, dus_i)
-  uds_dus = flavor_term(uds_i, dus_i)
-  uds_uds = flavor_term(uds_i, uds_i)
-  dds_uus = flavor_term(dds_i, uus_i)
+  #uus_dds = flavor_term(uus_i, dds_i)
+  #dus_uds = flavor_term(dus_i, uds_i)
+  #dus_dus = flavor_term(dus_i, dus_i)
+  #uds_dus = flavor_term(uds_i, dus_i)
+  #uds_uds = flavor_term(uds_i, uds_i)
+  #dds_uus = flavor_term(dds_i, uus_i)
   uud_ssd = flavor_term(uud_i, ssd_i)
   dud_ssu = flavor_term(dud_i, ssu_i)
   ssd_uud = flavor_term(ssd_i, uud_i)
@@ -200,6 +200,9 @@ def main():
   #test_P4_E1_Fa(N_X_a_I0, P([0,0,2]))  # PASSED
   #test_P4_E1_Fa(N_X_a_I0, P([2,0,0]))  # PASSED
 
+
+  test_equiv_P1_E2_1_0_S0(L_L_s_I0)
+  #test_equiv_P1_A1_1_0_S0(L_L_s_I0)
 
 
 # P=000 tests
@@ -954,6 +957,47 @@ def test_P4_E1_Fa(ops, Ptot):
 
   op_rep = OperatorRepresentation(op1, op2)
   print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+
+# Equivalent Momentum checks
+def test_equiv_P1_E2_1_0_S0(ops):
+
+  print("Testing Equivalent: P^2 = 1 E2 (p1^2 = 1, p2^2 = 0")
+
+  pz = P([0,0,1])
+  py = P([0,1,0])
+
+  op1_z = ops[2].projectMomentum(pz, P0)
+  op1_y = ops[1].projectMomentum(py, P0)
+
+  op1_z_to_y = op1_z.rotate(C4xi)
+
+  op1_y_coeffs = op1_y.coefficients
+  op1_z_to_y_coeffs = op1_z_to_y.coefficients
+
+  for term, coeff in op1_y_coeffs.items():
+    print("{} == {}".format(coeff, op1_z_to_y_coeffs[term]))
+
+
+def test_equiv_P1_A1_1_0_S0(ops):
+
+
+  print("Testing Equivalent: P^2 = 1 A1 S0 (p1^2 = 1, p2^2 = 0)")
+
+  pz = P([0,0,1])
+  py = P([0,1,0])
+
+  op_z = ops[0].projectMomentum(pz, P0)
+  op_y = ops[0].projectMomentum(py, P0)
+
+  op_z_to_y = op_z.rotate(C4xi)
+
+  op_y_coeffs = op_y.coefficients
+  op_z_coeffs = op_z.coefficients
+  op_z_to_y_coeffs = op_z_to_y.coefficients
+
+  print(op_y_coeffs == op_z_to_y_coeffs)
+
+
 
 
 
