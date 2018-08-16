@@ -114,6 +114,7 @@ class OperatorRepresentation:
       #print(lgIrrep)
       occurences = S.Zero
       for element in self.little_group.elements:
+        #print(element)
         occurences += self.getCharacter(element, use_generators) * conjugate(self.little_group.getCharacter(lgIrrep, element))
 
       occurences = simplify(occurences)   # @ADH - I don't like that this was necessary
