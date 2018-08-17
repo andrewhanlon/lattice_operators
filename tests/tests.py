@@ -10,6 +10,7 @@ from operators.tensors import Gamma
 import operators.grassmann as gr
 from operators.grassmann import perform_contractions
 
+'''
 g = Gamma()
 
 C5p = Array(g.chargeConj * g.five * g.parityPlus)
@@ -43,14 +44,26 @@ sud_sud = Eijk(a1,b1,c1) * u[a1,i1] * C5p[i1,j1] * d[b1,j1] * s[c1,k1] * C5p[k1,
 op = Operator(sud_sud)
 print(op.simplified)
 
-'''
 op_rot = op.rotate(C4y)
 for term in op_rot.getTerms():
   print(term)
   print('\n')
 
-'''
 
 #op_rep = OperatorRepresentation(op)
 #print(op_rep.littleGroupContents(True))
 
+'''
+
+'''
+x = P([1,0,0])
+
+print(I2f*x)
+print(I2x*x)
+'''
+
+Rref = EulerRotation(pi/2, pi/4, -pi/2)
+
+rot = Rref.inverse() * I2x * Rref
+
+print(rot)

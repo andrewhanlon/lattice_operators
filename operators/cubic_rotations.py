@@ -45,6 +45,92 @@ class Axis(Enum):
     return str(self.name)
 
 
+# Uses the y-convention Euler angles
+class EulerRotation:
+
+  def __init__(self, alpha, beta, gamma, parity=False):
+    self._alpha = alpha
+    self._beta = beta
+    self._gamma = gamma
+    self._parity = parity
+
+    self._matrix = None
+
+  @property
+  def alpha(self):
+    return self._alpha
+
+  @property
+  def beta(self):
+    return self._beta
+
+  @property
+  def gamma(self):
+    return self._gamma
+
+  @property
+  def parity(self):
+    return self._parity
+
+  @property
+  def matrix(self):
+    if self._matrix is None:
+      a, b, c = self.alpha, self.beta, self.gamma
+
+      rot_mat = Matrix([
+          [cos(a)*cos(b)*cos(c) - sin(a)*sin(c), -cos(a)*cos(b)*sin(c) - sin(a)*cos(c), cos(a)*sin(b)],
+          [sin(a)*cos(b)*cos(c) + cos(a)*sin(c), -sin(a)*cos(b)*sin(c) + cos(a)*cos(c), sin(a)*sin(b)],
+          [       -sin(b)*cos(c)               ,              sin(b)*sin(c)           ,    cos(b)    ]
+      ])
+
+      if self.parity:
+        rot_mat *= -1
+
+      self._matrix = rot_mat
+
+    return self._matrix
+
+  def inverse(self):
+    mat_inv = self.matrix.inv()
+    for rotation in _POINT_GROUP:
+      if mat_inv == rotation.matrix:
+        return rotation
+
+    return mat_inv
+
+  def __mul__(self, other):
+    if isinstance(other, self.__class__) or isinstance(other, CubicRotation):
+      res_mat = self.matrix * other.matrix
+      for rotation in _POINT_GROUP:
+        if res_mat == rotation.matrix:
+          return rotation
+
+      return res_mat
+
+    elif isinstance(other, Matrix):
+      res_mat = self.matrix * other
+      for rotation in _POINT_GROUP:
+        if res_mat == rotation.matrix:
+          return rotation
+
+      return res_mat
+
+    elif isinstance(other, Momentum):
+      return Momentum(tensorcontraction(tensorproduct(self.matrix, other), (1,2)))
+
+    return NotImplemented
+
+  def __rmul__(self, other):
+    if isinstance(other, Matrix):
+      res_mat = other * self.matrix
+      for rotation in _POINT_GROUP:
+        if res_mat == rotation.matrix:
+          return rotation
+
+      return res_mat
+
+
+
 # @ADH - Force rotations to be in _POINT_GROUP ??
 class CubicRotation:
 
@@ -96,18 +182,35 @@ class CubicRotation:
     return None
 
   def __mul__(self, other):
-    if isinstance(other, self.__class__):
+    if isinstance(other, self.__class__) or isinstance(other, EulerRotation):
       res_mat = self.matrix * other.matrix
       for rotation in _POINT_GROUP:
         if res_mat == rotation.matrix:
           return rotation
 
-      return None
+      return res_mat
+
+    elif isinstance(other, Matrix):
+      res_mat = self.matrix * other
+      for rotation in _POINT_GROUP:
+        if res_mat == rotation.matrix:
+          return rotation
+
+      return res_mat
 
     elif isinstance(other, Momentum):
       return Momentum(tensorcontraction(tensorproduct(self.matrix, other), (1,2)))
 
     return NotImplemented
+
+  def __rmul__(self, other):
+    if isinstance(other, Matrix):
+      res_mat = other * self.matrix
+      for rotation in _POINT_GROUP:
+        if res_mat == rotation.matrix:
+          return rotation
+
+      return res_mat
         
   def __str__(self):
     if self.angle == Angle.E:
