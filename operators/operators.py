@@ -79,7 +79,8 @@ class OperatorRepresentation:
       raise ValueError("Must provide at least one basis operator")
 
     self._basis = OperatorBasis(*operators)
-    self._little_group = LittleGroup(self.basis.bosonic, self.basis.momentum)
+    if self.basis.momentum is not None:
+      self._little_group = LittleGroup(self.basis.bosonic, self.basis.momentum)
 
     self._rep_matrices = dict()
     self._characters = dict()
@@ -106,9 +107,12 @@ class OperatorRepresentation:
 
   @property
   def little_group(self):
-    return self._little_group
+    try:
+      return self._little_group
+    except AttributeError:
+      return None
 
-  def littleGroupContents(self, nice=False, use_generators=True):
+  def littleGroupContents(self, nice=False, use_generators=False):
     contents = dict()
     for lgIrrep in self.little_group.irreps:
       #print(lgIrrep)
@@ -136,7 +140,7 @@ class OperatorRepresentation:
 
     return contents
 
-  def getCharacter(self, lg_element, use_generators=True):
+  def getCharacter(self, lg_element, use_generators=False):
 
     if lg_element in self._characters:
       return self._characters[lg_element]
@@ -149,7 +153,8 @@ class OperatorRepresentation:
       self._characters[lg_element] = char
       return char
 
-  def getRepresentationMatrix(self, lg_element, use_generators=True):
+  # @ADH - Fix use of generators (only works for P=0)
+  def getRepresentationMatrix(self, lg_element, use_generators=False):
 
     if lg_element in self._rep_matrices:
       return self._rep_matrices[lg_element]
@@ -201,13 +206,14 @@ class OperatorBasis:
     same_type = all(in_op.bosonic == in_operators[0].bosonic for in_op in in_operators)
     same_mom = all(in_op.momentum == in_operators[0].momentum for in_op in in_operators)
 
-    if not same_type or not same_mom:
-      raise ValueError("All basis vectors must have same total momentum and be of same particle type")
-
     self._operators = in_operators
-    self._bosonic = in_operators[0].bosonic
-    self._fermionic = in_operators[0].fermionic
-    self._momentum = in_operators[0].momentum
+
+    if same_type:
+      self._bosonic = in_operators[0].bosonic
+      self._fermionic = in_operators[0].fermionic
+
+    if same_mom:
+      self._momentum = in_operators[0].momentum
 
     self._grassmann_basis = grassmann_basis
     if grassmann_basis is None:
@@ -218,7 +224,10 @@ class OperatorBasis:
 
   @property
   def momentum(self):
-    return self._momentum
+    try:
+      return self._momentum
+    except AttributeError:
+      return None
 
   @property
   def operators(self):
@@ -263,11 +272,17 @@ class OperatorBasis:
 
   @property
   def bosonic(self):
-    return self._bosonic
+    try:
+      return self._bosonic
+    except AttributeError:
+      return None
 
   @property
   def fermionic(self):
-    return self._fermionic
+    try:
+      return self._fermionic
+    except AttributeError:
+      return None
 
   @property
   def grassmann_basis(self):
@@ -285,10 +300,10 @@ class OperatorBasis:
       self._operators = SortedSet()
       return self._operators
 
-  def rotate(self, lg_element):
+  def rotate(self, element):
     transformed_ops = list()
     for operator in self.operators:
-      transformed_ops.append(operator.rotate(lg_element))
+      transformed_ops.append(operator.rotate(element))
 
     return OperatorBasis(*transformed_ops, grassmann_basis=self.grassmann_basis)
 
@@ -359,10 +374,9 @@ class Operator:
       return expr.func(*args)
 
   def rotate(self, element):
-    if self.momentum is None:
-      trans_momentum = None
-    else:
-      trans_momentum = element * self.momentum
+    trans_momentum = self.momentum
+    if trans_momentum is not None:
+      trans_momentum = element * trans_momentum
 
     trans_operator = Operator._rotate(element, self.operator)
 

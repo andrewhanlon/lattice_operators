@@ -1,256 +1,1069 @@
 from sympy import Eijk
 from sympy import Array
-from sympy import sqrt
 from sympy import S
-from sympy import *
+from sympy import simplify
 
 from context import operators
 
-from operators.operators import QuarkField, DiracIdx, ColorIdx, OperatorRepresentation, Operator, OperatorBasis
+from operators.operators import DiracIdx, ColorIdx, OperatorRepresentation, Operator
+from operators.cubic_rotations import _POINT_GROUP, P, P0
 from operators.cubic_rotations import *
 from operators.tensors import Gamma
-import operators.grassmann as gr
 
 from pprint import pprint
 
-g = Gamma()
+def test_P1_A1(ops, more_ops=[]):
 
-C5p = Array(g.chargeConj * g.five * g.parityPlus)
-C1p = Array(g.chargeConj * g.one * g.parityPlus)
-C2p = Array(g.chargeConj * g.two * g.parityPlus)
-C3p = Array(g.chargeConj * g.three * g.parityPlus)
+  print("P1 A1 equivalent momentum test...")
+  fails = 0
 
-i = DiracIdx('i')
-j = DiracIdx('j')
+  ops_1 = list()
+  ops_1.extend(P1_A1_A1_1_0(ops, P([0,0,1])))
+  ops_1.extend(P1_A1_A1_1_0(ops, P([0,1,0])))
+  ops_1.extend(P1_A1_A1_1_0(ops, P([1,0,0])))
+  ops_1.extend(P1_A1_A1_1_0(ops, P([0,0,-1])))
+  ops_1.extend(P1_A1_A1_1_0(ops, P([0,-1,0])))
+  ops_1.extend(P1_A1_A1_1_0(ops, P([-1,0,0])))
 
+  op1_rep = OperatorRepresentation(*ops_1)
 
-def main():
-  u = QuarkField.create('u')
-  d = QuarkField.create('d')
-  s = QuarkField.create('s')
+  ops_2 = list()
+  ops_2.extend(P1_A1_A1_2_1(ops, P([0,0,1])))
+  ops_2.extend(P1_A1_A1_2_1(ops, P([0,1,0])))
+  ops_2.extend(P1_A1_A1_2_1(ops, P([1,0,0])))
+  ops_2.extend(P1_A1_A1_2_1(ops, P([0,0,-1])))
+  ops_2.extend(P1_A1_A1_2_1(ops, P([0,-1,0])))
+  ops_2.extend(P1_A1_A1_2_1(ops, P([-1,0,0])))
 
-  print("Forming single baryon operators")
-  uud_i = Baryon(u,u,d, i)
-  dud_i = Baryon(d,u,d, i)
-  #uus_i = Baryon(u,u,s, i)
-  #dus_i = Baryon(d,u,s, i)
-  #uds_i = Baryon(u,d,s, i)
-  #dds_i = Baryon(d,d,s, i)
-  sud_i = Baryon(s,u,d, i)
-  ssd_i = Baryon(s,s,d, i)
-  ssu_i = Baryon(s,s,u, i)
-  ssd_i = Baryon(s,s,d, i)
+  op2_rep = OperatorRepresentation(*ops_2)
 
-  print("Forming baryon-baryon flavor terms")
-  sud_sud = flavor_term(sud_i, sud_i)
-  #uus_dds = flavor_term(uus_i, dds_i)
-  #dus_uds = flavor_term(dus_i, uds_i)
-  #dus_dus = flavor_term(dus_i, dus_i)
-  #uds_dus = flavor_term(uds_i, dus_i)
-  #uds_uds = flavor_term(uds_i, uds_i)
-  #dds_uus = flavor_term(dds_i, uus_i)
-  uud_ssd = flavor_term(uud_i, ssd_i)
-  dud_ssu = flavor_term(dud_i, ssu_i)
-  ssd_uud = flavor_term(ssd_i, uud_i)
-  ssu_dud = flavor_term(ssu_i, dud_i)
+  ops_3 = list()
+  ops_3.extend(P1_A1_E2_2_1(ops, P([0,0,1])))
+  ops_3.extend(P1_A1_E2_2_1(ops, P([0,1,0])))
+  ops_3.extend(P1_A1_E2_2_1(ops, P([1,0,0])))
+  ops_3.extend(P1_A1_E2_2_1(ops, P([0,0,-1])))
+  ops_3.extend(P1_A1_E2_2_1(ops, P([0,-1,0])))
+  ops_3.extend(P1_A1_E2_2_1(ops, P([-1,0,0])))
 
+  op3_rep = OperatorRepresentation(*ops_3)
 
-  print("Forming the lambda-lambda flavor operators")
-  L_L_s_I0_S0 = sud_sud[0]
-  L_L_s_I0_S1 = sud_sud[1]
-  L_L_s_I0_S2 = sud_sud[2]
-  L_L_s_I0_S3 = sud_sud[3]
-  L_L_s_I0 = [L_L_s_I0_S0, L_L_s_I0_S1, L_L_s_I0_S2, L_L_s_I0_S3]
+  if more_ops:
+    ops_4 = list()
+    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,0,1])))
+    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,1,0])))
+    ops_4.extend(P1_A1_E2_2_1(more_ops, P([1,0,0])))
+    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,0,-1])))
+    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,-1,0])))
+    ops_4.extend(P1_A1_E2_2_1(more_ops, P([-1,0,0])))
 
-  print("Forming the nucleon-xi flavor anti-symmetric operators")
-  N_X_a_I0_S0 = uud_ssd[0] - dud_ssu[0] - ssd_uud[0] + ssu_dud[0]
-  N_X_a_I0_S1 = uud_ssd[1] - dud_ssu[1] - ssd_uud[1] + ssu_dud[1]
-  N_X_a_I0_S2 = uud_ssd[2] - dud_ssu[2] - ssd_uud[2] + ssu_dud[2]
-  N_X_a_I0_S3 = uud_ssd[3] - dud_ssu[3] - ssd_uud[3] + ssu_dud[3]
-  N_X_a_I0 = [N_X_a_I0_S0, N_X_a_I0_S1, N_X_a_I0_S2, N_X_a_I0_S3]
+    op4_rep = OperatorRepresentation(*ops_4)
 
-  #test_P0_A1p(L_L_s_I0, 0)  # PASSED
-  #test_P0_A1p(L_L_s_I0, 1)  # PASSED
-  #test_P0_A1p(L_L_s_I0, 2)  # PASSED
-  #test_P0_A1p(L_L_s_I0, 3)  # PASSED
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    if more_ops:
+      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+      #pprint(op4_mat)
 
-  #test_P0_T1p_Ls(N_X_a_I0, 0)  # PASSED
-  #test_P0_T1p_Ls(N_X_a_I0, 1)  # PASSED
-  #test_P0_T1p_Ls(N_X_a_I0, 2)  # PASSED
-  #test_P0_T1p_Ls(N_X_a_I0, 3)  # PASSED
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
 
-  #test_P0_T1p_Ld_1(N_X_a_I0)  # PASSED
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
 
-  #test_P0_T1p_LE_2(N_X_a_I0)  # PASSED
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
 
-  #test_P0_T1p_LT2_2(N_X_a_I0)  # PASSED
+    if more_ops:
+      if op1_mat != op4_mat:
+        print("{}: op1 != op4".format(element))
+        fails += 1
 
-  #test_P1_A1_1_0_S0(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_A1_1_0_S0(L_L_s_I0, P([0,-1,0]))  # PASSED
-  #test_P1_A1_1_0_S0(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_A1_1_0_S0(N_X_a_I0, P([0,-1,0]))  # PASSED
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
 
-  #test_P1_A1_2_1_Ls(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_A1_2_1_Ls(L_L_s_I0, P([0,-1,0]))  # PASSED
-  #test_P1_A1_2_1_Ls(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_A1_2_1_Ls(N_X_a_I0, P([0,-1,0]))  # PASSED
+def test_P1_A2(ops, more_ops=[]):
 
-  #test_P1_A1_2_1_Lp(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_A1_2_1_Lp(N_X_a_I0, P([0,0,1]))  # PASSED
+  print("P1 A2 equivalent momentum test...")
+  fails = 0
 
+  ops_1 = list()
+  ops_1.extend(P1_A2_A1_1_0(ops, P([0,0,1])))
+  ops_1.extend(P1_A2_A1_1_0(ops, P([0,1,0])))
+  ops_1.extend(P1_A2_A1_1_0(ops, P([1,0,0])))
+  ops_1.extend(P1_A2_A1_1_0(ops, P([0,0,-1])))
+  ops_1.extend(P1_A2_A1_1_0(ops, P([0,-1,0])))
+  ops_1.extend(P1_A2_A1_1_0(ops, P([-1,0,0])))
 
-  #test_P1_A2_1_0_S1(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_A2_1_0_S1(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_A2_1_0_S1(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_A2_1_0_S1(N_X_a_I0, P([-1,0,0]))  # PASSED
+  op1_rep = OperatorRepresentation(*ops_1)
 
-  #test_P1_A2_2_1_Ls(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_A2_2_1_Ls(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_A2_2_1_Ls(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_A2_2_1_Ls(N_X_a_I0, P([-1,0,0]))  # PASSED
+  ops_2 = list()
+  ops_2.extend(P1_A2_A1_2_1(ops, P([0,0,1])))
+  ops_2.extend(P1_A2_A1_2_1(ops, P([0,1,0])))
+  ops_2.extend(P1_A2_A1_2_1(ops, P([1,0,0])))
+  ops_2.extend(P1_A2_A1_2_1(ops, P([0,0,-1])))
+  ops_2.extend(P1_A2_A1_2_1(ops, P([0,-1,0])))
+  ops_2.extend(P1_A2_A1_2_1(ops, P([-1,0,0])))
 
-  #test_P1_A2_2_1_Lp(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_A2_2_1_Lp(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_A2_2_1_Lp(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_A2_2_1_Lp(N_X_a_I0, P([-1,0,0]))  # PASSED
+  op2_rep = OperatorRepresentation(*ops_2)
 
-  #test_P1_B1_2_1_S0(L_L_s_I0, P([0,0,1]))  # PASSED B1
-  #test_P1_B1_2_1_S0(L_L_s_I0, P([-1,0,0]))  # PASSED B1
-  #test_P1_B1_2_1_S0(N_X_a_I0, P([0,0,1]))  # PASSED B1
-  #test_P1_B1_2_1_S0(N_X_a_I0, P([-1,0,0]))  # PASSED B1
+  ops_3 = list()
+  ops_3.extend(P1_A2_E2_2_1(ops, P([0,0,1])))
+  ops_3.extend(P1_A2_E2_2_1(ops, P([0,1,0])))
+  ops_3.extend(P1_A2_E2_2_1(ops, P([1,0,0])))
+  ops_3.extend(P1_A2_E2_2_1(ops, P([0,0,-1])))
+  ops_3.extend(P1_A2_E2_2_1(ops, P([0,-1,0])))
+  ops_3.extend(P1_A2_E2_2_1(ops, P([-1,0,0])))
 
-  #test_P1_B1_2_1_S1(L_L_s_I0, P([0,0,1]))  # PASSED B1
-  #test_P1_B1_2_1_S1(L_L_s_I0, P([-1,0,0]))  # PASSED B1
-  #test_P1_B1_2_1_S1(N_X_a_I0, P([0,0,1]))  # PASSED B1
-  #test_P1_B1_2_1_S1(N_X_a_I0, P([-1,0,0]))  # PASSED B1
+  op3_rep = OperatorRepresentation(*ops_3)
 
-  #test_P1_B2_2_1_LB1(L_L_s_I0, P([0,0,1]))  # PASSED B2
-  #test_P1_B2_2_1_LB1(L_L_s_I0, P([-1,0,0]))  # PASSED B2
-  #test_P1_B2_2_1_LB1(N_X_a_I0, P([0,0,1]))  # PASSED B2
-  #test_P1_B2_2_1_LB1(N_X_a_I0, P([-1,0,0]))  # PASSED B2
+  if more_ops:
+    ops_4 = list()
+    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,0,1])))
+    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,1,0])))
+    ops_4.extend(P1_A2_E2_2_1(more_ops, P([1,0,0])))
+    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,0,-1])))
+    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,-1,0])))
+    ops_4.extend(P1_A2_E2_2_1(more_ops, P([-1,0,0])))
 
-  #test_P1_B2_2_1_LE2(L_L_s_I0, P([0,0,1]))  # PASSED B2
-  #test_P1_B2_2_1_LE2(L_L_s_I0, P([-1,0,0]))  # PASSED B2
-  #test_P1_B2_2_1_LE2(N_X_a_I0, P([0,0,1]))  # PASSED B2
-  #test_P1_B2_2_1_LE2(N_X_a_I0, P([-1,0,0]))  # PASSED B2
+    op4_rep = OperatorRepresentation(*ops_4)
 
-  #test_P1_E2_1_0_S0(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_1_0_S0(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_E2_1_0_S0(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_1_0_S0(N_X_a_I0, P([-1,0,0]))  # PASSED
-
-  #test_P1_E2_2_1_S0(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S0(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_E2_2_1_S0(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S0(N_X_a_I0, P([-1,0,0]))  # PASSED
-
-  #test_P1_E2_2_1_S1_A1(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S1_A1(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_E2_2_1_S1_A1(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S1_A1(N_X_a_I0, P([-1,0,0]))  # PASSED
-
-  #test_P1_E2_2_1_S1_B1(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S1_B1(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_E2_2_1_S1_B1(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S1_B1(N_X_a_I0, P([-1,0,0]))  # PASSED
-
-  #test_P1_E2_2_1_S1_E2(L_L_s_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S1_E2(L_L_s_I0, P([-1,0,0]))  # PASSED
-  #test_P1_E2_2_1_S1_E2(N_X_a_I0, P([0,0,1]))  # PASSED
-  #test_P1_E2_2_1_S1_E2(N_X_a_I0, P([-1,0,0]))  # PASSED
-
-  #test_P2_A1_2_0_S0(L_L_s_I0, P([0,1,1]))  # PASSED
-  #test_P2_A1_2_0_S0(L_L_s_I0, P([-1,1,0]))  # PASSED
-  #test_P2_A1_2_0_S0(N_X_a_I0, P([0,1,1]))  # PASSED
-  #test_P2_A1_2_0_S0(N_X_a_I0, P([-1,1,0]))  # PASSED
-
-  #test_P2_A1_1_1_S0(L_L_s_I0, P([0,1,0]), P([0,0,1]))  # PASSED
-  #test_P2_A1_1_1_S0(L_L_s_I0, P([0,1,0]), P([-1,0,0]))  # PASSED
-
-  #test_P2_A1_1_1_S1(L_L_s_I0, P([0,1,0]), P([0,0,1]))  # PASSED
-  #test_P2_A1_1_1_S1(L_L_s_I0, P([0,1,0]), P([-1,0,0]))  # PASSED
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    if more_ops:
+      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+      #pprint(op4_mat)
 
 
-  #test_P2_A2_2_0_S1(L_L_s_I0, P([0,1,1]))  # PASSED
-  #test_P2_A2_2_0_S1(L_L_s_I0, P([-1,0,1]))  # PASSED
-  #test_P2_A2_2_0_S1(N_X_a_I0, P([0,1,1]))  # PASSED
-  #test_P2_A2_2_0_S1(N_X_a_I0, P([-1,0,1]))  # PASSED
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      pprint(op1_mat)
+      pprint(op2_mat)
+      fails += 1
 
-  #test_P2_A2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED
-  #test_P2_A2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([-1,0,0]))  # PASSED
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      pprint(op1_mat)
+      pprint(op3_mat)
+      fails += 1
 
-  #test_P2_A2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
-  #test_P2_A2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([-1,0,0]))  # PASSED
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      pprint(op2_mat)
+      pprint(op3_mat)
+      fails += 1
 
-  #test_P2_B1_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #test_P2_B1_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #test_P2_B1_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #test_P2_B1_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
+    if more_ops:
+      if op1_mat != op4_mat:
+        print("{}: op1 != op4".format(element))
+        pprint(op1_mat)
+        pprint(op4_mat)
+        fails += 1
 
-  #test_P2_B1_1_1_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #test_P2_B1_1_1_S1(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B2
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
 
-  #test_P2_B1_1_1_S0(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #test_P2_B1_1_1_S0(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B2
-  
+def test_P1_B1(ops, more_ops=[]):
 
-  #test_P2_B2_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
-  #test_P2_B2_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
+  print("P1 B1 equivalent momentum test...")
+  fails = 0
 
-  #test_P2_B2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
-  #test_P2_B2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B1
+  ops_1 = list()
+  ops_1.extend(P1_B1_B1_2_1(ops, P([0,0,1])))
+  ops_1.extend(P1_B1_B1_2_1(ops, P([0,1,0])))
+  ops_1.extend(P1_B1_B1_2_1(ops, P([1,0,0])))
+  ops_1.extend(P1_B1_B1_2_1(ops, P([0,0,-1])))
+  ops_1.extend(P1_B1_B1_2_1(ops, P([0,-1,0])))
+  ops_1.extend(P1_B1_B1_2_1(ops, P([-1,0,0])))
 
-  #test_P2_B2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
-  #test_P2_B2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B1
+  op1_rep = OperatorRepresentation(*ops_1)
 
-  #test_P3_A1_3_0_S0(L_L_s_I0, P([1,1,1]))  # PASSED
-  #test_P3_A1_3_0_S0(L_L_s_I0, P([1,-1,1]))  # PASSED
-  #test_P3_A1_3_0_S0(N_X_a_I0, P([1,1,1]))  # PASSED
-  #test_P3_A1_3_0_S0(N_X_a_I0, P([1,-1,1]))  # PASSED
+  ops_2 = list()
+  ops_2.extend(P1_B1_E2_2_1(ops, P([0,0,1])))
+  ops_2.extend(P1_B1_E2_2_1(ops, P([0,1,0])))
+  ops_2.extend(P1_B1_E2_2_1(ops, P([1,0,0])))
+  ops_2.extend(P1_B1_E2_2_1(ops, P([0,0,-1])))
+  ops_2.extend(P1_B1_E2_2_1(ops, P([0,-1,0])))
+  ops_2.extend(P1_B1_E2_2_1(ops, P([-1,0,0])))
 
-  #test_P3_A1_2_1_S0(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #test_P3_A1_2_1_S0(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
-  #test_P3_A1_2_1_S0(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #test_P3_A1_2_1_S0(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+  op2_rep = OperatorRepresentation(*ops_2)
 
-  #test_P3_A1_2_1_S1(L_L_s_I0, P([1,1,1]))  # PASSED
-  #test_P3_A1_2_1_S1(L_L_s_I0, P([-1,1,-1]))  # PASSED
-  #test_P3_A1_2_1_S1(N_X_a_I0, P([1,1,1]))  # PASSED
-  #test_P3_A1_2_1_S1(N_X_a_I0, P([-1,1,-1]))  # PASSED
+  if more_ops:
+    ops_3 = list()
+    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,0,1])))
+    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,1,0])))
+    ops_3.extend(P1_B1_E2_2_1(more_ops, P([1,0,0])))
+    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,0,-1])))
+    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,-1,0])))
+    ops_3.extend(P1_B1_E2_2_1(more_ops, P([-1,0,0])))
 
-  #test_P3_A2_3_0_S1(L_L_s_I0, P([1,1,1]))  # PASSED
-  #test_P3_A2_3_0_S1(L_L_s_I0, P([-1,1,1]))  # PASSED
-  #test_P3_A2_3_0_S1(N_X_a_I0, P([1,1,1]))  # PASSED
-  #test_P3_A2_3_0_S1(N_X_a_I0, P([-1,1,1])) # PASSED
+    op3_rep = OperatorRepresentation(*ops_3)
 
-  #test_P3_A2_2_1_Ls(L_L_s_I0, P([1,1,1]))  # PASSED
-  #test_P3_A2_2_1_Ls(L_L_s_I0, P([-1,1,1]))  # PASSED
-  #test_P3_A2_2_1_Ls(N_X_a_I0, P([1,1,1]))  # PASSED
-  #test_P3_A2_2_1_Ls(N_X_a_I0, P([-1,1,1]))  # PASSED
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    if more_ops:
+      op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+      #pprint(op3_mat)
 
-  #test_P3_A2_2_1_Lp(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #test_P3_A2_2_1_Lp(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
-  #test_P3_A2_2_1_Lp(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #test_P3_A2_2_1_Lp(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
 
-  #test_P4_A1_Fs(L_L_s_I0, P([0,0,2]))  # PASSED
-  #test_P4_A1_Fs(L_L_s_I0, P([2,0,0]))  # PASSED
+    if more_ops:
+      if op1_mat != op3_mat:
+        print("{}: op1 != op3".format(element))
+        fails += 1
 
-  #test_P4_A2_Fa(N_X_a_I0, P([0,0,2]))  # PASSED
-  #test_P4_A2_Fa(N_X_a_I0, P([2,0,0]))  # PASSED
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
 
-  #test_P4_E1_Fa(N_X_a_I0, P([0,0,2]))  # PASSED
-  #test_P4_E1_Fa(N_X_a_I0, P([2,0,0]))  # PASSED
+def test_P1_B2(ops, more_ops=[]):
+
+  print("P1 B2 equivalent momentum test...")
+  fails = 0
+
+  ops_1 = list()
+  ops_1.extend(P1_B2_B1_2_1(ops, P([0,0,1])))
+  ops_1.extend(P1_B2_B1_2_1(ops, P([0,1,0])))
+  ops_1.extend(P1_B2_B1_2_1(ops, P([1,0,0])))
+  ops_1.extend(P1_B2_B1_2_1(ops, P([0,0,-1])))
+  ops_1.extend(P1_B2_B1_2_1(ops, P([0,-1,0])))
+  ops_1.extend(P1_B2_B1_2_1(ops, P([-1,0,0])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P1_B2_E2_2_1(ops, P([0,0,1])))
+  ops_2.extend(P1_B2_E2_2_1(ops, P([0,1,0])))
+  ops_2.extend(P1_B2_E2_2_1(ops, P([1,0,0])))
+  ops_2.extend(P1_B2_E2_2_1(ops, P([0,0,-1])))
+  ops_2.extend(P1_B2_E2_2_1(ops, P([0,-1,0])))
+  ops_2.extend(P1_B2_E2_2_1(ops, P([-1,0,0])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  if more_ops:
+    ops_3 = list()
+    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,0,1])))
+    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,1,0])))
+    ops_3.extend(P1_B2_E2_2_1(more_ops, P([1,0,0])))
+    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,0,-1])))
+    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,-1,0])))
+    ops_3.extend(P1_B2_E2_2_1(more_ops, P([-1,0,0])))
+
+    op3_rep = OperatorRepresentation(*ops_3)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    if more_ops:
+      op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+      #pprint(op3_mat)
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
+
+    if more_ops:
+      if op1_mat != op3_mat:
+        print("{}: op1 != op3".format(element))
+        fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
+
+def test_P1_E2(ops, more_ops=[]):
+
+  print("P1 E2 equivalent momentum test...")
+  fails = 0
+
+  ops_1 = list()
+  ops_1.extend(P1_E2_A1_1_0(ops, P([0,0,1])))
+  ops_1.extend(P1_E2_A1_1_0(ops, P([0,1,0])))
+  ops_1.extend(P1_E2_A1_1_0(ops, P([1,0,0])))
+  ops_1.extend(P1_E2_A1_1_0(ops, P([0,0,-1])))
+  ops_1.extend(P1_E2_A1_1_0(ops, P([0,-1,0])))
+  ops_1.extend(P1_E2_A1_1_0(ops, P([-1,0,0])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,0,1])))
+  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,1,0])))
+  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([1,0,0])))
+  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,0,-1])))
+  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,-1,0])))
+  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([-1,0,0])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  ops_3 = list()
+  ops_3.extend(P1_E2_A1_2_1(ops, P([0,0,1])))
+  ops_3.extend(P1_E2_A1_2_1(ops, P([0,1,0])))
+  ops_3.extend(P1_E2_A1_2_1(ops, P([1,0,0])))
+  ops_3.extend(P1_E2_A1_2_1(ops, P([0,0,-1])))
+  ops_3.extend(P1_E2_A1_2_1(ops, P([0,-1,0])))
+  ops_3.extend(P1_E2_A1_2_1(ops, P([-1,0,0])))
+
+  op3_rep = OperatorRepresentation(*ops_3)
+
+  ops_4 = list()
+  ops_4.extend(P1_E2_B1_2_1(ops, P([0,0,1])))
+  ops_4.extend(P1_E2_B1_2_1(ops, P([0,1,0])))
+  ops_4.extend(P1_E2_B1_2_1(ops, P([1,0,0])))
+  ops_4.extend(P1_E2_B1_2_1(ops, P([0,0,-1])))
+  ops_4.extend(P1_E2_B1_2_1(ops, P([0,-1,0])))
+  ops_4.extend(P1_E2_B1_2_1(ops, P([-1,0,0])))
+
+  op4_rep = OperatorRepresentation(*ops_4)
+
+  ops_5 = list()
+  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,0,1])))
+  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,1,0])))
+  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([1,0,0])))
+  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,0,-1])))
+  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,-1,0])))
+  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([-1,0,0])))
+
+  op5_rep = OperatorRepresentation(*ops_5)
+
+  if more_ops:
+    ops_6 = list()
+    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,0,1])))
+    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,1,0])))
+    ops_6.extend(P1_E2_A1_1_0(more_ops, P([1,0,0])))
+    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,0,-1])))
+    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,-1,0])))
+    ops_6.extend(P1_E2_A1_1_0(more_ops, P([-1,0,0])))
+
+    op6_rep = OperatorRepresentation(*ops_6)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op4_mat)
+    op5_mat = op5_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op5_mat)
+    if more_ops:
+      op6_mat = op6_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+      #pprint(op6_mat)
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      pprint(op1_mat)
+      pprint(op2_mat)
+      fails += 1
+
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
+
+    if op1_mat != op4_mat:
+      print("{}: op1 != op4".format(element))
+      fails += 1
+
+    if op1_mat != op5_mat:
+      print("{}: op1 != op5".format(element))
+      fails += 1
+      pprint(op1_mat)
+      pprint(op5_mat)
+
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
+
+    if op2_mat != op4_mat:
+      print("{}: op2 != op4".format(element))
+      fails += 1
+
+    if op2_mat != op5_mat:
+      print("{}: op2 != op5".format(element))
+      fails += 1
+
+    if op3_mat != op4_mat:
+      print("{}: op3 != op4".format(element))
+      fails += 1
+
+    if op3_mat != op5_mat:
+      print("{}: op3 != op5".format(element))
+      fails += 1
+
+    if op4_mat != op5_mat:
+      print("{}: op4 != op5".format(element))
+      fails += 1
+
+    if more_ops:
+      if op1_mat != op6_mat:
+        print("{}: op1 != op6".format(element))
+        fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
 
 
-  #test_equiv_P1_E2_1_0_S0(L_L_s_I0)
-  #test_equiv_P1_A1_1_0_S0(L_L_s_I0)
+def test_P2_A1(ops_sym, ops_asym):
+  print("P2 A1 equivalent momentum test...")
+  fails = 0
+
+  ops_1 = list()
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,1,1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,-1,-1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,1,-1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,-1,1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,0,1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,0,-1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,0,-1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,0,1])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,1,0])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,-1,0])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,-1,0])))
+  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,1,0])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,1,1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,-1,-1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,1,-1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,-1,1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,0,1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,0,-1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,0,-1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,0,1])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,1,0])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,-1,0])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,-1,0])))
+  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,1,0])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  ops_3 = list()
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,1,1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,-1,-1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,1,-1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,-1,1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,0,1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,0,-1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,0,-1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,0,1])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,1,0])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,-1,0])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,-1,0])))
+  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,1,0])))
+
+  op3_rep = OperatorRepresentation(*ops_3)
+
+  ops_4 = list()
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,1,1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,-1,-1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,1,-1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,-1,1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,0,1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,0,-1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,0,-1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,0,1])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,1,0])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,-1,0])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,-1,0])))
+  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,1,0])))
+
+  op4_rep = OperatorRepresentation(*ops_4)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op4_mat)
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
+
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
+
+    if op1_mat != op4_mat:
+      print("{}: op1 != op4".format(element))
+      fails += 1
+
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
+
+    if op2_mat != op4_mat:
+      print("{}: op2 != op4".format(element))
+      fails += 1
+
+    if op3_mat != op4_mat:
+      print("{}: op3 != op4".format(element))
+      fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
 
 
-# P=000 tests
-def test_P0_A1p(ops, n=0):
-  print("P=000 A1+, (pi^2 = {})".format(n))
+def test_P2_A2(ops_sym, ops_asym):
+  print("P2 A2 equivalent momentum test...")
+  fails = 0
 
+  ops_1 = list()
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,1,1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,-1,-1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,1,-1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,-1,1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,0,1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,0,-1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,0,-1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,0,1])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,1,0])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,-1,0])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,-1,0])))
+  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,1,0])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,1,1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,-1,-1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,1,-1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,-1,1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,0,1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,0,-1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,0,-1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,0,1])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,1,0])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,-1,0])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,-1,0])))
+  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,1,0])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  ops_3 = list()
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,1,1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,-1,-1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,1,-1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,-1,1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,0,1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,0,-1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,0,-1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,0,1])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,1,0])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,-1,0])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,-1,0])))
+  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,1,0])))
+
+  op3_rep = OperatorRepresentation(*ops_3)
+
+  ops_4 = list()
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,1,1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,-1,-1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,1,-1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,-1,1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,0,1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,0,-1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,0,-1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,0,1])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,1,0])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,-1,0])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,-1,0])))
+  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,1,0])))
+
+  op4_rep = OperatorRepresentation(*ops_4)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op4_mat)
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
+
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
+
+    if op1_mat != op4_mat:
+      print("{}: op1 != op4".format(element))
+      fails += 1
+
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
+
+    if op2_mat != op4_mat:
+      print("{}: op2 != op4".format(element))
+      fails += 1
+
+    if op3_mat != op4_mat:
+      print("{}: op3 != op4".format(element))
+      fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
+
+
+
+def test_P2_B1(ops_sym, ops_asym):
+  print("P2 B1 equivalent momentum test...")
+  fails = 0
+
+  ops_1 = list()
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,1,1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,-1,-1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,1,-1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,-1,1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,0,1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,0,-1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,0,-1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,0,1])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,1,0])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,-1,0])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,-1,0])))
+  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,1,0])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,1,1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,-1,-1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,1,-1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,-1,1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,0,1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,0,-1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,0,-1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,0,1])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,1,0])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,-1,0])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,-1,0])))
+  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,1,0])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  ops_3 = list()
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,1,1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,-1,-1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,1,-1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,-1,1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,0,1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,0,-1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,0,-1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,0,1])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,1,0])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,-1,0])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,-1,0])))
+  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,1,0])))
+
+  op3_rep = OperatorRepresentation(*ops_3)
+
+  ops_4 = list()
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,1,1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,-1,-1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,1,-1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,-1,1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,0,1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,0,-1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,0,-1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,0,1])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,1,0])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,-1,0])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,-1,0])))
+  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,1,0])))
+
+  op4_rep = OperatorRepresentation(*ops_4)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op4_mat)
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
+
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
+
+    if op1_mat != op4_mat:
+      print("{}: op1 != op4".format(element))
+      fails += 1
+
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
+
+    if op2_mat != op4_mat:
+      print("{}: op2 != op4".format(element))
+      fails += 1
+
+    if op3_mat != op4_mat:
+      print("{}: op3 != op4".format(element))
+      fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
+
+
+
+def test_P2_B2(ops_sym, ops_asym):
+
+  print("P2 B2 equivalent momentum test...")
+  fails = 0
+
+  ops_1 = list()
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,1,1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,-1,-1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,1,-1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,-1,1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,0,1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,0,-1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,0,-1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,0,1])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,1,0])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,-1,0])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,-1,0])))
+  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,1,0])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,1,1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,-1,-1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,1,-1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,-1,1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,0,1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,0,-1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,0,-1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,0,1])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,1,0])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,-1,0])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,-1,0])))
+  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,1,0])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  ops_3 = list()
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,1,1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,-1,-1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,1,-1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,-1,1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,0,1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,0,-1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,0,-1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,0,1])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,1,0])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,-1,0])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,-1,0])))
+  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,1,0])))
+
+  op3_rep = OperatorRepresentation(*ops_3)
+
+  ops_4 = list()
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,1,1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,-1,-1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,1,-1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,-1,1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,0,1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,0,-1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,0,-1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,0,1])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,1,0])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,-1,0])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,-1,0])))
+  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,1,0])))
+
+  op4_rep = OperatorRepresentation(*ops_4)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op4_mat)
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
+
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
+
+    if op1_mat != op4_mat:
+      print("{}: op1 != op4".format(element))
+      fails += 1
+
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
+
+    if op2_mat != op4_mat:
+      print("{}: op2 != op4".format(element))
+      fails += 1
+
+    if op3_mat != op4_mat:
+      print("{}: op3 != op4".format(element))
+      fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
+
+
+def test_P3_A1(ops, more_ops=[]):
+  print("P3 A1 equivalent momentum test...")
+  fails = 0
+
+  ops_1 = list()
+  ops_1.extend(P3_A1_A1_3_0(ops, P([1,1,1])))
+  ops_1.extend(P3_A1_A1_3_0(ops, P([1,1,-1])))
+  ops_1.extend(P3_A1_A1_3_0(ops, P([1,-1,1])))
+  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,1,1])))
+  ops_1.extend(P3_A1_A1_3_0(ops, P([1,-1,-1])))
+  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,1,-1])))
+  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,-1,1])))
+  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,-1,-1])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P3_A1_A1_2_1(ops, P([1,1,1])))
+  ops_2.extend(P3_A1_A1_2_1(ops, P([1,1,-1])))
+  ops_2.extend(P3_A1_A1_2_1(ops, P([1,-1,1])))
+  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,1,1])))
+  ops_2.extend(P3_A1_A1_2_1(ops, P([1,-1,-1])))
+  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,1,-1])))
+  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,-1,1])))
+  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,-1,-1])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  ops_3 = list()
+  ops_3.extend(P3_A1_E2_2_1(ops, P([1,1,1])))
+  ops_3.extend(P3_A1_E2_2_1(ops, P([1,1,-1])))
+  ops_3.extend(P3_A1_E2_2_1(ops, P([1,-1,1])))
+  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,1,1])))
+  ops_3.extend(P3_A1_E2_2_1(ops, P([1,-1,-1])))
+  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,1,-1])))
+  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,-1,1])))
+  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,-1,-1])))
+
+  op3_rep = OperatorRepresentation(*ops_3)
+
+  if more_ops:
+    ops_4 = list()
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,1,1])))
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,1,-1])))
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,-1,1])))
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,1,1])))
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,-1,-1])))
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,1,-1])))
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,-1,1])))
+    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,-1,-1])))
+
+    op4_rep = OperatorRepresentation(*ops_4)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    if more_ops:
+      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+      #pprint(op4_mat)
+
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
+
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
+
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
+
+    if more_ops:
+      if op1_mat != op4_mat:
+        print("{}: op1 != op4".format(element))
+        fails += 1
+
+      if op2_mat != op4_mat:
+        print("{}: op2 != op4".format(element))
+        fails += 1
+
+      if op3_mat != op4_mat:
+        print("{}: op3 != op4".format(element))
+        fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
+
+
+def test_P3_A2(ops, more_ops=[]):
+  print("P3 A1 equivalent momentum test...")
+  fails = 0
+
+  ops_1 = list()
+  ops_1.extend(P3_A2_A1_3_0(ops, P([1,1,1])))
+  ops_1.extend(P3_A2_A1_3_0(ops, P([1,1,-1])))
+  ops_1.extend(P3_A2_A1_3_0(ops, P([1,-1,1])))
+  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,1,1])))
+  ops_1.extend(P3_A2_A1_3_0(ops, P([1,-1,-1])))
+  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,1,-1])))
+  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,-1,1])))
+  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,-1,-1])))
+
+  op1_rep = OperatorRepresentation(*ops_1)
+
+  ops_2 = list()
+  ops_2.extend(P3_A2_A1_2_1(ops, P([1,1,1])))
+  ops_2.extend(P3_A2_A1_2_1(ops, P([1,1,-1])))
+  ops_2.extend(P3_A2_A1_2_1(ops, P([1,-1,1])))
+  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,1,1])))
+  ops_2.extend(P3_A2_A1_2_1(ops, P([1,-1,-1])))
+  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,1,-1])))
+  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,-1,1])))
+  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,-1,-1])))
+
+  op2_rep = OperatorRepresentation(*ops_2)
+
+  ops_3 = list()
+  ops_3.extend(P3_A2_E2_2_1(ops, P([1,1,1])))
+  ops_3.extend(P3_A2_E2_2_1(ops, P([1,1,-1])))
+  ops_3.extend(P3_A2_E2_2_1(ops, P([1,-1,1])))
+  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,1,1])))
+  ops_3.extend(P3_A2_E2_2_1(ops, P([1,-1,-1])))
+  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,1,-1])))
+  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,-1,1])))
+  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,-1,-1])))
+
+  op3_rep = OperatorRepresentation(*ops_3)
+
+  if more_ops:
+    ops_4 = list()
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,1,1])))
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,1,-1])))
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,-1,1])))
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,1,1])))
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,-1,-1])))
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,1,-1])))
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,-1,1])))
+    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,-1,-1])))
+
+  op4_rep = OperatorRepresentation(*ops_4)
+
+  for element in _POINT_GROUP:
+    #print(element)
+    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op1_mat)
+    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op2_mat)
+    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+    #pprint(op3_mat)
+    if more_ops:
+      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
+      #pprint(op4_mat)
+
+    if op1_mat != op2_mat:
+      print("{}: op1 != op2".format(element))
+      fails += 1
+
+    if op1_mat != op3_mat:
+      print("{}: op1 != op3".format(element))
+      fails += 1
+
+    if op2_mat != op3_mat:
+      print("{}: op2 != op3".format(element))
+      fails += 1
+
+    if more_ops:
+      if op1_mat != op4_mat:
+        print("{}: op1 != op4".format(element))
+        fails += 1
+
+  if fails:
+    print("TEST FAILED")
+  else:
+    print("TEST PASSED")
+
+
+
+def P0_A1p(ops, n=0):
   if n == 0:
     A1p_op = ops[0].projectMomentum(P0, P0)
 
@@ -287,16 +1100,13 @@ def test_P0_A1p(ops, n=0):
         + ops[0].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
 
   else:
-    print("pi^2 = {} not implemented".format(n))
+    print("P0_A1p: pi^2 = {} not implemented".format(n))
     return
 
-  op_rep = OperatorRepresentation(A1p_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
+  return [A1p_op]
 
 
-def test_P0_T1p_Ls(ops, n=0):
-  print("P=000 T1+ (S-wave), (pi^2 = {})".format(n))
-
+def P0_T1p_A1p(ops, n=0):
   if n == 0:
     T1p_1_op = ops[1].projectMomentum(P([0,0,0]), P([0,0,0]))
     T1p_2_op = ops[2].projectMomentum(P([0,0,0]), P([0,0,0]))
@@ -393,15 +1203,13 @@ def test_P0_T1p_Ls(ops, n=0):
         + ops[3].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
 
   else:
-    print("pi^2 = {} not implemented".format(n))
+    print("P0_T1p_A1p: pi^2 = {} not implemented".format(n))
     return
 
-  op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
+  return [T1p_1_op, T1p_2_op, T1p_3_op]
 
 
-def test_P0_T1p_Ld_1(ops):
-  print("P=000 T1+ (D-wave), (pi^2 = 1)")
+def P0_T1p_Ep_1(ops):
   
   T1p_1_op = 3*ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
       - ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
@@ -418,16 +1226,18 @@ def test_P0_T1p_Ld_1(ops):
       - ops[3].projectMomentum(P([0,1,0]), P([0,-1,0])) \
       - ops[3].projectMomentum(P([0,0,1]), P([0,0,-1]))
 
-
-  op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
+  return [T1p_1_op, T1p_2_op, T1p_3_op]
 
 
-def test_P0_T1p_LE_2(ops):
-  print("P=000 T1+ (E), (pi^2 = 2)")
+# @ADH - Consider other k_{i1} and k_{i2}?
+def P0_T1p_Ep_2(ops):
 
-  T1p_1_op = 3*(ops[1].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-      + ops[1].projectMomentum(P([0,1,-1]), P([0,-1,1]))) \
+  k11 = P([0,1,0]); k12 = P([0,0,1])
+  k21 = P([1,0,0]); k22 = P([0,0,1])
+  k31 = P([1,0,0]); k32 = P([0,1,0])
+
+  T1p_1_op = 3*(ops[1].projectMomentum(k11 + k12, -k11 - k12) \
+      + ops[1].projectMomentum(k11 - k12, -k11 + k12)) \
       - (ops[1].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
          + ops[1].projectMomentum(P([1,-1,0]), P([-1,1,0]))) \
       - (ops[1].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
@@ -435,8 +1245,8 @@ def test_P0_T1p_LE_2(ops):
       - (ops[1].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
          + ops[1].projectMomentum(P([0,1,-1]), P([0,-1,1])))
 
-  T1p_2_op = 3*(ops[2].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-      + ops[2].projectMomentum(P([1,0,-1]), P([-1,0,1]))) \
+  T1p_2_op = 3*(ops[2].projectMomentum(k21 + k22, -k21 - k22) \
+      + ops[2].projectMomentum(k21 - k22, -k21 + k22)) \
       - (ops[2].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
          + ops[2].projectMomentum(P([1,-1,0]), P([-1,1,0]))) \
       - (ops[2].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
@@ -444,8 +1254,8 @@ def test_P0_T1p_LE_2(ops):
       - (ops[2].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
          + ops[2].projectMomentum(P([0,1,-1]), P([0,-1,1])))
 
-  T1p_3_op = 3*(ops[3].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-      + ops[3].projectMomentum(P([-1,1,0]), P([1,-1,0]))) \
+  T1p_3_op = 3*(ops[3].projectMomentum(k31 + k32, -k31 - k32) \
+      + ops[3].projectMomentum(k31 - k32, -k31 + k32)) \
       - (ops[3].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
          + ops[3].projectMomentum(P([1,-1,0]), P([-1,1,0]))) \
       - (ops[3].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
@@ -453,52 +1263,49 @@ def test_P0_T1p_LE_2(ops):
       - (ops[3].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
          + ops[3].projectMomentum(P([0,1,-1]), P([0,-1,1])))
 
-  op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
+  return [T1p_1_op, T1p_2_op, T1p_3_op]
+
+# @ADH - Consider other k_{i1} and k_{i2}?
+def P0_T1p_T2p_2(ops):
+  px = P([1,0,0]); py = P([0,1,0]); pz = P([0,0,1])
+
+  k11 = P([0,1,0]); k12 = P([0,0,1])
+  k21 = P([1,0,0]); k22 = P([0,0,1])
+  k31 = P([1,0,0]); k32 = P([0,1,0])
+
+  T1p_1_op = ops[2].projectMomentum(px + k11, -px - k11) \
+      - ops[2].projectMomentum(px - k11, -px + k11) \
+      + ops[3].projectMomentum(px + k12, -px - k12) \
+      - ops[3].projectMomentum(px - k12, -px + k12)
+
+  T1p_2_op = ops[1].projectMomentum(py + k21, -py - k21) \
+      - ops[1].projectMomentum(py - k21, -py + k21) \
+      + ops[3].projectMomentum(py + k22, -py - k22) \
+      - ops[3].projectMomentum(py - k22, -py + k22)
+
+  T1p_3_op = ops[1].projectMomentum(pz + k31, -pz - k31) \
+      - ops[1].projectMomentum(pz - k31, -pz + k31) \
+      + ops[2].projectMomentum(pz + k32, -pz - k32) \
+      - ops[2].projectMomentum(pz - k32, -pz + k32)
+
+  return [T1p_1_op, T1p_2_op, T1p_3_op]
 
 
-def test_P0_T1p_LT2_2(ops):
-  print("P=000 T1+ (T2), (pi^2 = 2)")
-
-  T1p_1_op = ops[2].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-      - ops[2].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
-      + ops[3].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-      - ops[3].projectMomentum(P([1,0,-1]), P([-1,0,1]))
-
-  T1p_2_op = ops[1].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-      - ops[1].projectMomentum(P([-1,1,0]), P([1,-1,0])) \
-      + ops[3].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-      - ops[3].projectMomentum(P([0,1,-1]), P([0,-1,1]))
-
-  T1p_3_op = ops[1].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-      - ops[1].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
-      + ops[2].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-      - ops[2].projectMomentum(P([0,-1,1]), P([0,1,-1]))
-
-  op_rep = OperatorRepresentation(T1p_1_op, T1p_2_op, T1p_3_op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, True)))
-
-
-# P^2=1 A1 tests
-def test_P1_A1_1_0_S0(ops, Ptot):
-
+def P1_A1_A1_1_0(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 1 A1 S0 (p1^2 = 1, p2^2 = 0)")
   op = ops[0].projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
   
-def test_P1_A1_2_1_Ls(ops, Ptot):
+def P1_A1_A1_2_1(ops, Ptot):
 
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 1 A1 S-wave (p1^2 = 2, p2^2 = 1)")
   op = S.Zero
   if Ptot.x == 0:
     px = P([1,0,0])
@@ -512,17 +1319,15 @@ def test_P1_A1_2_1_Ls(ops, Ptot):
     pz = P([0,0,1])
     op += ops[0].projectMomentum(Ptot+pz, -pz) + ops[0].projectMomentum(Ptot-pz, pz)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P1_A1_2_1_Lp(ops, Ptot):
+def P1_A1_E2_2_1(ops, Ptot):
 
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 1 A1 P-wave (p1^2 = 2, p2^2 = 1)")
   op = S.Zero
   if Ptot.x == 0:
     p = P([1,0,0]) * Ptot
@@ -536,63 +1341,56 @@ def test_P1_A1_2_1_Lp(ops, Ptot):
     p = P([0,0,1]) * Ptot
     op += ops[3].projectMomentum(Ptot+p, -p) - ops[3].projectMomentum(Ptot-p, p)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-# P=001 A2 tests
-def test_P1_A2_1_0_S1(ops, Ptot):
+def P1_A2_A1_1_0(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 1 A2 S1 (p1^2 = 1, p2^2 = 0)")
   if Ptot.x != 0:
-    op = ops[1].projectMomentum(Ptot, P0)
+    op = Ptot.x * ops[1].projectMomentum(Ptot, P0)
   elif Ptot.y != 0:
-    op = ops[2].projectMomentum(Ptot, P0)
+    op = Ptot.y * ops[2].projectMomentum(Ptot, P0)
   elif Ptot.z != 0:
-    op = ops[3].projectMomentum(Ptot, P0)
+    op = Ptot.z * ops[3].projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P1_A2_2_1_Ls(ops, Ptot):
+def P1_A2_A1_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
   px = P([1,0,0])
   py = P([0,1,0])
   pz = P([0,0,1])
 
-  print("P^2 = 1 A2 (S-wave), (p1^2 = 2, p2^2 = 1)")
   if Ptot.x != 0:
-    op = ops[1].projectMomentum(Ptot+py, -py) + ops[1].projectMomentum(Ptot-py, py) \
-        + ops[1].projectMomentum(Ptot+pz, -pz) + ops[1].projectMomentum(Ptot-pz, pz)
+    op = Ptot.x * (ops[1].projectMomentum(Ptot+py, -py) + ops[1].projectMomentum(Ptot-py, py) \
+        + ops[1].projectMomentum(Ptot+pz, -pz) + ops[1].projectMomentum(Ptot-pz, pz))
 
   elif Ptot.y != 0:
-    op = ops[2].projectMomentum(Ptot+px, -px) + ops[2].projectMomentum(Ptot-px, px) \
-        + ops[2].projectMomentum(Ptot+pz, -pz) + ops[2].projectMomentum(Ptot-pz, pz)
+    op = Ptot.y * (ops[2].projectMomentum(Ptot+px, -px) + ops[2].projectMomentum(Ptot-px, px) \
+        + ops[2].projectMomentum(Ptot+pz, -pz) + ops[2].projectMomentum(Ptot-pz, pz))
 
   elif Ptot.z != 0:
-    op = ops[3].projectMomentum(Ptot+px, -px) + ops[3].projectMomentum(Ptot-px, px) \
-        + ops[3].projectMomentum(Ptot+py, -py) + ops[3].projectMomentum(Ptot-py, py)
+    op = Ptot.z * (ops[3].projectMomentum(Ptot+px, -px) + ops[3].projectMomentum(Ptot-px, px) \
+        + ops[3].projectMomentum(Ptot+py, -py) + ops[3].projectMomentum(Ptot-py, py))
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P1_A2_2_1_Lp(ops, Ptot):
+def P1_A2_E2_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
   px = P([1,0,0])
   py = P([0,1,0])
   pz = P([0,0,1])
 
-  print("P^2 = 1 A2 (P-wave), (p1^2 = 2, p2^2 = 1)")
   if Ptot.x != 0:
     op = ops[2].projectMomentum(Ptot+py, -py) - ops[2].projectMomentum(Ptot-py, py) \
         + ops[3].projectMomentum(Ptot+pz, -pz) - ops[3].projectMomentum(Ptot-pz, pz)
@@ -605,12 +1403,11 @@ def test_P1_A2_2_1_Lp(ops, Ptot):
     op = ops[1].projectMomentum(Ptot+px, -px) - ops[1].projectMomentum(Ptot-px, px) \
         + ops[2].projectMomentum(Ptot+py, -py) - ops[2].projectMomentum(Ptot-py, py)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P1_B1_2_1_S0(ops, Ptot):
+def P1_B1_B1_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
   if Ptot.x != 0:
@@ -625,19 +1422,15 @@ def test_P1_B1_2_1_S0(ops, Ptot):
     k1 = P([0,1,0])
     k2 = P([1,0,0])
 
-
-  print("P^2 = 1 B1 (S0), (p1^2 = 2, p2^2 = 1)")
-
   op = ops[0].projectMomentum(Ptot-k1, k1) + ops[0].projectMomentum(Ptot+k1, -k1) \
       - ops[0].projectMomentum(Ptot-k2, k2) - ops[0].projectMomentum(Ptot+k2, -k2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P1_B1_2_1_S1(ops, Ptot):
+def P1_B1_E2_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
   if Ptot.x != 0:
@@ -661,18 +1454,15 @@ def test_P1_B1_2_1_S1(ops, Ptot):
     k1s = 2
     k2s = 1
 
-  print("P^2 = 1 B1 (S1), (p1^2 = 2, p2^2 = 1)")
-
   op = ops[k1s].projectMomentum(Ptot + k1*Ptot, -k1*Ptot) - ops[k1s].projectMomentum(Ptot - k1*Ptot, k1*Ptot) \
       - ops[k2s].projectMomentum(Ptot + k2*Ptot, -k2*Ptot) + ops[k2s].projectMomentum(Ptot - k2*Ptot, k2*Ptot)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P1_B2_2_1_LB1(ops, Ptot):
+def P1_B2_B1_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
   if Ptot.x != 0:
@@ -680,32 +1470,30 @@ def test_P1_B2_2_1_LB1(ops, Ptot):
     k2 = P([0,0,1])
 
     j = 1
+    dj = Ptot.x
 
   elif Ptot.y != 0:
     k1 = P([1,0,0])
     k2 = P([0,0,1])
 
     j = 2
+    dj = Ptot.y
 
   elif Ptot.z != 0:
     k1 = P([0,1,0])
     k2 = P([1,0,0])
 
     j = 3
+    dj = Ptot.z
 
-  print("P^2 = 1 B2 (L-B1), (p1^2 = 2, p2^2 = 1)")
+  op = dj * (ops[j].projectMomentum(Ptot - k1, k1) + ops[j].projectMomentum(Ptot + k1, -k1) \
+      - ops[j].projectMomentum(Ptot - k2, k2) - ops[j].projectMomentum(Ptot + k2, -k2))
 
-  op = ops[j].projectMomentum(Ptot - k1, k1) + ops[j].projectMomentum(Ptot + k1, -k1) \
-      - ops[j].projectMomentum(Ptot - k2, k2) - ops[j].projectMomentum(Ptot + k2, -k2)
+  return [op]
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
-
-
-
-def test_P1_B2_2_1_LE2(ops, Ptot):
+def P1_B2_E2_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
   if Ptot.x != 0:
@@ -729,23 +1517,16 @@ def test_P1_B2_2_1_LE2(ops, Ptot):
     k1s = 2
     k2s = 1
 
-  print("P^2 = 1 B2 (L-E2), (p1^2 = 2, p2^2 = 1)")
-
   op = ops[k1s].projectMomentum(Ptot + k1, -k1) - ops[k1s].projectMomentum(Ptot - k1, k1) \
       - ops[k2s].projectMomentum(Ptot + k2, -k2) + ops[k2s].projectMomentum(Ptot - k2, k2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-
-# P=001 E tests
-def test_P1_E2_1_0_S0(ops, Ptot):
+def P1_E2_A1_1_0(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 1 E2 (p1^2 = 1, p2^2 = 0")
 
   if Ptot.x != 0:
     op1 = ops[2].projectMomentum(Ptot, P0)
@@ -759,17 +1540,13 @@ def test_P1_E2_1_0_S0(ops, Ptot):
     op1 = ops[1].projectMomentum(Ptot, P0)
     op2 = ops[2].projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op1, op2)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op1, op2]
 
 
-def test_P1_E2_2_1_S0(ops, Ptot):
+def P1_E2_E2_2_1_S0(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 1 E2 (S 0) (p1^2 = 2, p2^2 = 1")
-
 
   if Ptot.x != 0:
     k1 = P([0,1,0])
@@ -780,24 +1557,19 @@ def test_P1_E2_2_1_S0(ops, Ptot):
     k2 = P([0,0,1])
 
   elif Ptot.z != 0:
-    k1 = P([0,1,0])
-    k2 = P([1,0,0])
-
+    k1 = P([1,0,0])
+    k2 = P([0,1,0])
 
   op_1 = ops[0].projectMomentum(Ptot + k1*Ptot, -k1*Ptot) - ops[0].projectMomentum(Ptot - k1*Ptot, k1*Ptot)
   op_2 = ops[0].projectMomentum(Ptot + k2*Ptot, -k2*Ptot) - ops[0].projectMomentum(Ptot - k2*Ptot, k2*Ptot)
 
-  op_rep = OperatorRepresentation(op_1, op_2)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op_1, op_2]
 
 
-def test_P1_E2_2_1_S1_A1(ops, Ptot):
+def P1_E2_A1_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 1 E2 (L A1) (p1^2 = 2, p2^2 = 1")
-
 
   if Ptot.x != 0:
     jk1_1 = P([1,0,0])
@@ -822,15 +1594,15 @@ def test_P1_E2_2_1_S1_A1(ops, Ptot):
     k2s = 3
 
   elif Ptot.z != 0:
-    jk1_1 = P([1,0,0])
-    jk1_2 = P([0,0,1])
+    jk1_1 = P([0,0,1])
+    jk1_2 = P([0,1,0])
 
-    k1s = 2
+    k1s = 1
 
-    jk2_1 = P([0,0,1])
-    jk2_2 = P([0,1,0])
+    jk2_1 = P([1,0,0])
+    jk2_2 = P([0,0,1])
 
-    k2s = 1
+    k2s = 2
 
 
   op_1 = ops[k1s].projectMomentum(Ptot + jk1_1, -jk1_1) + ops[k1s].projectMomentum(Ptot - jk1_1, jk1_1) \
@@ -839,13 +1611,12 @@ def test_P1_E2_2_1_S1_A1(ops, Ptot):
   op_2 = ops[k2s].projectMomentum(Ptot + jk2_1, -jk2_1) + ops[k2s].projectMomentum(Ptot - jk2_1, jk2_1) \
       + ops[k2s].projectMomentum(Ptot + jk2_2, -jk2_2) + ops[k2s].projectMomentum(Ptot - jk2_2, jk2_2)
 
-  op_rep = OperatorRepresentation(op_1, op_2)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op_1, op_2]
 
 
-def test_P1_E2_2_1_S1_B1(ops, Ptot):
+def P1_E2_B1_2_1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
 
   if Ptot.x != 0:
@@ -863,89 +1634,101 @@ def test_P1_E2_2_1_S1_B1(ops, Ptot):
     k2s = 3
 
   elif Ptot.z != 0:
-    k1 = P([0,1,0])
-    k2 = P([1,0,0])
+    k1 = P([1,0,0])
+    k2 = P([0,1,0])
 
-    k1s = 2
-    k2s = 1
-
-  print("P^2 = 1 E2 (L B1), (p1^2 = 2, p2^2 = 1)")
+    k1s = 1
+    k2s = 2
 
   op_1 = ops[k1s].projectMomentum(Ptot - k1, k1) + ops[k1s].projectMomentum(Ptot + k1, -k1) \
       - ops[k1s].projectMomentum(Ptot - k2, k2) - ops[k1s].projectMomentum(Ptot + k2, -k2)
 
-  op_2 = ops[k2s].projectMomentum(Ptot - k1, k1) + ops[k2s].projectMomentum(Ptot + k1, -k1) \
-      - ops[k2s].projectMomentum(Ptot - k2, k2) - ops[k2s].projectMomentum(Ptot + k2, -k2)
+  op_2 = -ops[k2s].projectMomentum(Ptot - k1, k1) - ops[k2s].projectMomentum(Ptot + k1, -k1) \
+      + ops[k2s].projectMomentum(Ptot - k2, k2) + ops[k2s].projectMomentum(Ptot + k2, -k2)
 
-  op_rep = OperatorRepresentation(op_1, op_2)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op_1, op_2]
 
 
-def test_P1_E2_2_1_S1_E2(ops, Ptot):
+def P1_E2_E2_2_1_S1(ops, Ptot):
   if Ptot.psq != 1:
-    print("Total P != 1! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 1 E2 (L E2) (p1^2 = 2, p2^2 = 1")
 
   if Ptot.x != 0:
     k1 = P([0,1,0])
     k2 = P([0,0,1])
+    dj = Ptot.x
 
-    op1 = ops[1].projectMomentum(Ptot + k1, -k1) - ops[1].projectMomentum(Ptot - k1, k1)
-    op2 = -ops[1].projectMomentum(Ptot + k2, -k2) + ops[1].projectMomentum(Ptot - k2, k2)
+    op1 = dj * (ops[1].projectMomentum(Ptot + k1, -k1) - ops[1].projectMomentum(Ptot - k1, k1))
+    op2 = dj * (ops[1].projectMomentum(Ptot + k2, -k2) - ops[1].projectMomentum(Ptot - k2, k2))
 
   elif Ptot.y != 0:
     k1 = P([1,0,0])
     k2 = P([0,0,1])
+    dj = Ptot.y
 
-    op1 = ops[2].projectMomentum(Ptot + k1, -k1) - ops[2].projectMomentum(Ptot - k1, k1)
-    op2 = -ops[2].projectMomentum(Ptot + k2, -k2) + ops[2].projectMomentum(Ptot - k2, k2)
+    op1 = dj * (ops[2].projectMomentum(Ptot + k1, -k1) - ops[2].projectMomentum(Ptot - k1, k1))
+    op2 = dj * (ops[2].projectMomentum(Ptot + k2, -k2) - ops[2].projectMomentum(Ptot - k2, k2))
 
   elif Ptot.z != 0:
-    k1 = P([0,1,0])
-    k2 = P([1,0,0])
+    k1 = P([1,0,0])
+    k2 = P([0,1,0])
+    dj = Ptot.z
 
-    op1 = ops[3].projectMomentum(Ptot + k1, -k1) - ops[3].projectMomentum(Ptot - k1, k1)
-    op2 = -ops[3].projectMomentum(Ptot + k2, -k2) + ops[3].projectMomentum(Ptot - k2, k2)
+    op1 = dj * (ops[3].projectMomentum(Ptot + k1, -k1) - ops[3].projectMomentum(Ptot - k1, k1))
+    op2 = dj * (ops[3].projectMomentum(Ptot + k2, -k2) - ops[3].projectMomentum(Ptot - k2, k2))
 
-  op_rep = OperatorRepresentation(op1, op2)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op1, op2]
 
 
-# P=011 A1 tests
-def test_P2_A1_2_0_S0(ops, Ptot):
+def P2_A1_A1_2_0(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 A1 S0 (p1^2 = 2, p2^2 = 0)")
   op = ops[0].projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P2_A1_1_1_S0(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_A1_A1_1_1(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 A1 S0 (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
+
   op = ops[0].projectMomentum(p1, p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P2_A1_1_1_S1(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_A1_B1_1_1(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 A1 S1 (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1*p2
   op = S.Zero
@@ -960,16 +1743,13 @@ def test_P2_A1_1_1_S1(ops, p1, p2):
 
   op = op.projectMomentum(p1, p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-# P=011 A2 tests
-def test_P2_A2_2_0_S1(ops, Ptot):
+
+def P2_A2_A1_2_0(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 2 A2 S1 (p1^2 = 2, p2^2 = 0)")
 
   op = S.Zero
   if Ptot.x != 0:
@@ -983,17 +1763,25 @@ def test_P2_A2_2_0_S1(ops, Ptot):
 
   op = op.projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P2_A2_1_1_Fs(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_A2_B1_1_1_Fs(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 A2 Fs (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1 - p2
   op = S.Zero
@@ -1008,17 +1796,25 @@ def test_P2_A2_1_1_Fs(ops, p1, p2):
 
   op = op.projectMomentum(p1, p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P2_A2_1_1_Fa(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_A2_B1_1_1_Fa(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 A2 Fa (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1 + p2
   op = S.Zero
@@ -1033,16 +1829,25 @@ def test_P2_A2_1_1_Fa(ops, p1, p2):
 
   op = op.projectMomentum(p1, p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P2_B1_2_0_S1(ops, p1, p2):
-  Ptot = p1 + p2
+
+def P2_B1_A1_2_0(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 B1 S1 (p1^2 = 2, p2^2 = 0)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1*p2
   op = S.Zero
@@ -1057,16 +1862,24 @@ def test_P2_B1_2_0_S1(ops, p1, p2):
 
   op = op.projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P2_B1_1_1_S1(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_B1_A1_1_1(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 B1 S1 (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1*p2
   op = S.Zero
@@ -1081,31 +1894,46 @@ def test_P2_B1_1_1_S1(ops, p1, p2):
 
   op = op.projectMomentum(p1, p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P2_B1_1_1_S0(ops, p1, p2):
-
-  Ptot = p1 + p2
+def P2_B1_B1_1_1(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 B1 S1 (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   op = ops[0].projectMomentum(p1,p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P2_B2_2_0_S1(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_B2_A1_2_0(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 B2 S1 (p1^2 = 2, p2^2 = 0)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1 - p2
   op = S.Zero
@@ -1120,16 +1948,24 @@ def test_P2_B2_2_0_S1(ops, p1, p2):
 
   op = op.projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P2_B2_1_1_Fs(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_B2_B1_1_1(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 B2 Fs (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1 + p2
   op = S.Zero
@@ -1144,17 +1980,25 @@ def test_P2_B2_1_1_Fs(ops, p1, p2):
 
   op = op.projectMomentum(p1, p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P2_B2_1_1_Fa(ops, p1, p2):
-  Ptot = p1 + p2
+def P2_B2_A1_1_1(ops, Ptot):
   if Ptot.psq != 2:
-    print("Total P != 2! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 2 B2 Fa (p1^2 = 1, p2^2 = 1)")
+  if Ptot.x == 0:
+    p1 = P([0,Ptot.y,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.y == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,0,Ptot.z])
+
+  elif Ptot.z == 0:
+    p1 = P([Ptot.x,0,0])
+    p2 = P([0,Ptot.y,0])
 
   p = p1 - p2
   op = S.Zero
@@ -1167,49 +2011,46 @@ def test_P2_B2_1_1_Fa(ops, p1, p2):
   if p.z != 0:
     op += p.z * ops[3]
 
-  op = op.projectMomentum(Ptot, P0)
+  op = op.projectMomentum(p1, p2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P3_A1_3_0_S0(ops, Ptot):
+def P3_A1_A1_3_0(ops, Ptot):
   if Ptot.psq != 3:
-    print("Total P != 3! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 3 A1 S0 (p1^2 = 3, p2^2 = 0)")
   op = ops[0].projectMomentum(Ptot, P0)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P3_A1_2_1_S0(ops, p1, p2, p3):
-  Ptot = p1 + p2 + p3
+def P3_A1_A1_2_1(ops, Ptot):
   if Ptot.psq != 3:
-    print("Total P != 3! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 3 A1 S0 (p1^2 = 2, p2^2 = 1)")
+  p1 = Momentum([Ptot.x, 0, 0])
+  p2 = Momentum([0, Ptot.y, 0])
+  p3 = Momentum([0, 0, Ptot.z])
 
   op = ops[0].projectMomentum(Ptot - p1, p1) \
       + ops[0].projectMomentum(Ptot - p2, p2) \
       + ops[0].projectMomentum(Ptot - p3, p3)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-def test_P3_A1_2_1_S1(ops, Ptot):
+def P3_A1_E2_2_1_old(ops, Ptot):
   if Ptot.psq != 3:
-    print("Total P != 3! Skipping test")
+    print("Invalid P^2 given")
     return
 
   p1 = P([Ptot.x,0,0])
   p2 = P([0,Ptot.y,0])
   p3 = P([0,0,Ptot.z])
-  print("P^2 = 3 A1 S1 (p1^2 = 2, p2^2 = 1)")
+
   op = p2.y*ops[2].projectMomentum(Ptot-p3,p3) \
       - p3.z*ops[3].projectMomentum(Ptot-p2,p2) \
       - p1.x*ops[1].projectMomentum(Ptot-p3,p3) \
@@ -1217,29 +2058,46 @@ def test_P3_A1_2_1_S1(ops, Ptot):
       + p1.x*ops[1].projectMomentum(Ptot-p2,p2) \
       - p2.y*ops[2].projectMomentum(Ptot-p1,p1)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P3_A2_3_0_S1(ops, Ptot):
+def P3_A1_E2_2_1(ops, Ptot):
   if Ptot.psq != 3:
-    print("Total P != 3! Skipping test")
+    print("Invalid P^2 given")
+    return
+
+  p1 = P([Ptot.x,0,0])
+  p2 = P([0,Ptot.y,0])
+  p3 = P([0,0,Ptot.z])
+
+  p1p2 = p1*p2
+  coeff = p1p2.x * p3.x + p1p2.y * p3.y + p1p2.z * p3.z
+
+  op = coeff * (p2.y*ops[2].projectMomentum(Ptot-p3,p3) \
+      - p3.z*ops[3].projectMomentum(Ptot-p2,p2) \
+      - p1.x*ops[1].projectMomentum(Ptot-p3,p3) \
+      + p3.z*ops[3].projectMomentum(Ptot-p1,p1) \
+      + p1.x*ops[1].projectMomentum(Ptot-p2,p2) \
+      - p2.y*ops[2].projectMomentum(Ptot-p1,p1))
+
+  return [op]
+
+def P3_A2_A1_3_0(ops, Ptot):
+  if Ptot.psq != 3:
+    print("Invalid P^2 given")
     return
 
   op = Ptot.x * ops[1].projectMomentum(Ptot, P0) \
       + Ptot.y * ops[2].projectMomentum(Ptot, P0) \
       + Ptot.z * ops[3].projectMomentum(Ptot, P0)
 
-  print("P^2 = 3 A2 S1 (p1^2 = 3, p2^2 = 0)")
+  return [op]
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
 
-def test_P3_A2_2_1_Ls(ops, Ptot):
+def P3_A2_A1_2_1(ops, Ptot):
   if Ptot.psq != 3:
-    print("Total P != 3! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 3 A2 Ls (p1^2 = 2, p2^2 = 1)")
   p1 = Momentum([Ptot.x, 0, 0])
   p2 = Momentum([0, Ptot.y, 0])
   p3 = Momentum([0, 0, Ptot.z])
@@ -1254,18 +2112,18 @@ def test_P3_A2_2_1_Ls(ops, Ptot):
       + Ptot.z * ops[3].projectMomentum(Ptot - p2, p2) \
       + Ptot.z * ops[3].projectMomentum(Ptot - p3, p3)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
 
-
-def test_P3_A2_2_1_Lp(ops, p1, p2, p3):
-  Ptot = p1 + p2 + p3
+def P3_A2_E2_2_1(ops, Ptot):
   if Ptot.psq != 3:
-    print("Total P != 3! Skipping test")
+    print("Invalid P^2 given")
     return
 
-  print("P^2 = 3 A2 Lp (p1^2 = 2, p2^2 = 1)")
+  p1 = Momentum([Ptot.x, 0, 0])
+  p2 = Momentum([0, Ptot.y, 0])
+  p3 = Momentum([0, 0, Ptot.z])
+
 
   op = (p1*3 - p1 - p2 - p3).x * ops[1].projectMomentum(Ptot-p1, p1) \
       + (p1*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p1, p1) \
@@ -1277,27 +2135,21 @@ def test_P3_A2_2_1_Lp(ops, p1, p2, p3):
       + (p3*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p3, p3) \
       + (p3*3 - p1 - p2 - p3).z * ops[3].projectMomentum(Ptot-p3, p3)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P4_A1_Fs(ops, Ptot):
+def P4_A1_A1_1_1(ops, Ptot):
   if Ptot.psq != 4:
-    print("Total P != 4! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 4 A1 Fs (p1^2 = 1, p2^2 = 1)")
 
   op = ops[0].projectMomentum(Ptot/2, Ptot/2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P4_A2_Fa(ops, Ptot):
+def P4_A2_A1_1_1(ops, Ptot):
   if Ptot.psq != 4:
-    print("Total P != 4! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 4 A2 Fa (p1^2 = 1, p2^2 = 1)")
 
   if Ptot.x != 0:
     op = Ptot.x * ops[1]
@@ -1310,15 +2162,12 @@ def test_P4_A2_Fa(ops, Ptot):
 
   op = op.projectMomentum(Ptot/2, Ptot/2)
 
-  op_rep = OperatorRepresentation(op)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op]
 
-def test_P4_E1_Fa(ops, Ptot):
+def P4_E1_A1_1_1(ops, Ptot):
   if Ptot.psq != 4:
-    print("Total P != 4! Skipping test")
+    print("Invalid P^2 given")
     return
-
-  print("P^2 = 4 E1 Fa (p1^2 = 1, p2^2 = 1)")
 
   if Ptot.x != 0:
     op1 = ops[2].projectMomentum(Ptot/2, Ptot/2)
@@ -1332,51 +2181,31 @@ def test_P4_E1_Fa(ops, Ptot):
     op1 = ops[1].projectMomentum(Ptot/2, Ptot/2)
     op2 = ops[2].projectMomentum(Ptot/2, Ptot/2)
 
-  op_rep = OperatorRepresentation(op1, op2)
-  print("\t{}\n".format(op_rep.littleGroupContents(True, False)))
+  return [op1, op2]
 
-# Equivalent Momentum checks
-def test_equiv_P1_E2_1_0_S0(ops):
+def test_irrep(ops, irrep, op_name, use_generators):
+  print("TESTING: {}".format(op_name))
 
-  print("Testing Equivalent: P^2 = 1 E2 (p1^2 = 1, p2^2 = 0")
+  op_rep = OperatorRepresentation(*ops)
+  t_irrep = op_rep.littleGroupContents(True, use_generators)
 
-  pz = P([0,0,1])
-  py = P([0,1,0])
-
-  op1_z = ops[2].projectMomentum(pz, P0)
-  op1_y = ops[1].projectMomentum(py, P0)
-
-  op1_z_to_y = op1_z.rotate(C4xi)
-
-  op1_y_coeffs = op1_y.coefficients
-  op1_z_to_y_coeffs = op1_z_to_y.coefficients
-
-  for term, coeff in op1_y_coeffs.items():
-    print("{} == {}".format(coeff, op1_z_to_y_coeffs[term]))
+  if irrep != t_irrep:
+    print("\tFAILED - expected {}, transforms as {}".format(irrep, t_irrep))
+    return 0
+  else:
+    print("\tPASSED - expected {}, transforms as {}".format(irrep, t_irrep))
+    return 1
 
 
-def test_equiv_P1_A1_1_0_S0(ops):
+g = Gamma()
 
+C5p = Array(g.chargeConj * g.five * g.parityPlus)
+C1p = Array(g.chargeConj * g.one * g.parityPlus)
+C2p = Array(g.chargeConj * g.two * g.parityPlus)
+C3p = Array(g.chargeConj * g.three * g.parityPlus)
 
-  print("Testing Equivalent: P^2 = 1 A1 S0 (p1^2 = 1, p2^2 = 0)")
-
-  pz = P([0,0,1])
-  py = P([0,1,0])
-
-  op_z = ops[0].projectMomentum(pz, P0)
-  op_y = ops[0].projectMomentum(py, P0)
-
-  op_z_to_y = op_z.rotate(C4xi)
-
-  op_y_coeffs = op_y.coefficients
-  op_z_coeffs = op_z.coefficients
-  op_z_to_y_coeffs = op_z_to_y.coefficients
-
-  print(op_y_coeffs == op_z_to_y_coeffs)
-
-
-
-
+i = DiracIdx('i')
+j = DiracIdx('j')
 
 def flavor_term(fl1_i, fl2_i):
 
