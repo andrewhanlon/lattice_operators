@@ -59,38 +59,17 @@ def test_P1_A1(ops, more_ops=[]):
     op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
     if more_ops:
-      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-      #pprint(op4_mat)
+      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if more_ops:
-      if op1_mat != op4_mat:
-        print("{}: op1 != op4".format(element))
-        fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 def test_P1_A2(ops, more_ops=[]):
 
@@ -139,47 +118,17 @@ def test_P1_A2(ops, more_ops=[]):
     op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
     if more_ops:
-      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-      #pprint(op4_mat)
+      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      pprint(op1_mat)
-      pprint(op2_mat)
-      fails += 1
-
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      pprint(op1_mat)
-      pprint(op3_mat)
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      pprint(op2_mat)
-      pprint(op3_mat)
-      fails += 1
-
-    if more_ops:
-      if op1_mat != op4_mat:
-        print("{}: op1 != op4".format(element))
-        pprint(op1_mat)
-        pprint(op4_mat)
-        fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 def test_P1_B1(ops, more_ops=[]):
 
@@ -218,28 +167,16 @@ def test_P1_B1(ops, more_ops=[]):
     op3_rep = OperatorRepresentation(*ops_3)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
     if more_ops:
-      op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-      #pprint(op3_mat)
+      mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if more_ops:
-      if op1_mat != op3_mat:
-        print("{}: op1 != op3".format(element))
-        fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 def test_P1_B2(ops, more_ops=[]):
 
@@ -278,28 +215,16 @@ def test_P1_B2(ops, more_ops=[]):
     op3_rep = OperatorRepresentation(*ops_3)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
     if more_ops:
-      op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-      #pprint(op3_mat)
+      mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if more_ops:
-      if op1_mat != op3_mat:
-        print("{}: op1 != op3".format(element))
-        fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 def test_P1_E2(ops, more_ops=[]):
 
@@ -368,74 +293,19 @@ def test_P1_E2(ops, more_ops=[]):
     op6_rep = OperatorRepresentation(*ops_6)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
-    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op4_mat)
-    op5_mat = op5_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op5_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op5_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
     if more_ops:
-      op6_mat = op6_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-      #pprint(op6_mat)
+      mats.append(op6_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      pprint(op1_mat)
-      pprint(op2_mat)
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op1_mat != op4_mat:
-      print("{}: op1 != op4".format(element))
-      fails += 1
-
-    if op1_mat != op5_mat:
-      print("{}: op1 != op5".format(element))
-      fails += 1
-      pprint(op1_mat)
-      pprint(op5_mat)
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op4_mat:
-      print("{}: op2 != op4".format(element))
-      fails += 1
-
-    if op2_mat != op5_mat:
-      print("{}: op2 != op5".format(element))
-      fails += 1
-
-    if op3_mat != op4_mat:
-      print("{}: op3 != op4".format(element))
-      fails += 1
-
-    if op3_mat != op5_mat:
-      print("{}: op3 != op5".format(element))
-      fails += 1
-
-    if op4_mat != op5_mat:
-      print("{}: op4 != op5".format(element))
-      fails += 1
-
-    if more_ops:
-      if op1_mat != op6_mat:
-        print("{}: op1 != op6".format(element))
-        fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 
 def test_P2_A1(ops_sym, ops_asym):
@@ -507,44 +377,16 @@ def test_P2_A1(ops_sym, ops_asym):
   op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
-    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op4_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op1_mat != op4_mat:
-      print("{}: op1 != op4".format(element))
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op4_mat:
-      print("{}: op2 != op4".format(element))
-      fails += 1
-
-    if op3_mat != op4_mat:
-      print("{}: op3 != op4".format(element))
-      fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 
 def test_P2_A2(ops_sym, ops_asym):
@@ -616,45 +458,16 @@ def test_P2_A2(ops_sym, ops_asym):
   op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
-    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op4_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op1_mat != op4_mat:
-      print("{}: op1 != op4".format(element))
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op4_mat:
-      print("{}: op2 != op4".format(element))
-      fails += 1
-
-    if op3_mat != op4_mat:
-      print("{}: op3 != op4".format(element))
-      fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
-
+  print("TEST PASSED")
 
 
 def test_P2_B1(ops_sym, ops_asym):
@@ -726,44 +539,16 @@ def test_P2_B1(ops_sym, ops_asym):
   op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
-    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op4_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op1_mat != op4_mat:
-      print("{}: op1 != op4".format(element))
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op4_mat:
-      print("{}: op2 != op4".format(element))
-      fails += 1
-
-    if op3_mat != op4_mat:
-      print("{}: op3 != op4".format(element))
-      fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 
 
@@ -837,44 +622,16 @@ def test_P2_B2(ops_sym, ops_asym):
   op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
-    op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op4_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op1_mat != op4_mat:
-      print("{}: op1 != op4".format(element))
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op4_mat:
-      print("{}: op2 != op4".format(element))
-      fails += 1
-
-    if op3_mat != op4_mat:
-      print("{}: op3 != op4".format(element))
-      fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 
 def test_P3_A1(ops, more_ops=[]):
@@ -931,47 +688,17 @@ def test_P3_A1(ops, more_ops=[]):
     op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
     if more_ops:
-      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-      #pprint(op4_mat)
+      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
-
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if more_ops:
-      if op1_mat != op4_mat:
-        print("{}: op1 != op4".format(element))
-        fails += 1
-
-      if op2_mat != op4_mat:
-        print("{}: op2 != op4".format(element))
-        fails += 1
-
-      if op3_mat != op4_mat:
-        print("{}: op3 != op4".format(element))
-        fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
+  print("TEST PASSED")
 
 
 def test_P3_A2(ops, more_ops=[]):
@@ -1025,42 +752,20 @@ def test_P3_A2(ops, more_ops=[]):
     ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,-1,1])))
     ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,-1,-1])))
 
-  op4_rep = OperatorRepresentation(*ops_4)
+    op4_rep = OperatorRepresentation(*ops_4)
 
   for element in _POINT_GROUP:
-    #print(element)
-    op1_mat = op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op1_mat)
-    op2_mat = op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op2_mat)
-    op3_mat = op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-    #pprint(op3_mat)
+    mats = list()
+    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
+    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
     if more_ops:
-      op4_mat = op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify)
-      #pprint(op4_mat)
+      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
 
-    if op1_mat != op2_mat:
-      print("{}: op1 != op2".format(element))
-      fails += 1
+    if not all(mat == mats[0] for mat in mats):
+      print("TEST FAILED")
 
-    if op1_mat != op3_mat:
-      print("{}: op1 != op3".format(element))
-      fails += 1
-
-    if op2_mat != op3_mat:
-      print("{}: op2 != op3".format(element))
-      fails += 1
-
-    if more_ops:
-      if op1_mat != op4_mat:
-        print("{}: op1 != op4".format(element))
-        fails += 1
-
-  if fails:
-    print("TEST FAILED")
-  else:
-    print("TEST PASSED")
-
+  print("TEST PASSED")
 
 
 def P0_A1p(ops, n=0):

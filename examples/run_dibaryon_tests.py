@@ -274,114 +274,357 @@ def main():
   #passed += test_irrep(P1_E2_E2_2_1_S1(N_X_a_I0, P([-1,0,0])), 'E', 'P=(-1,0,0) E2 (E2) (2,1) S1; NXa I=0', False); total += 1  # PASSED
 
   # Psq = 2 (A1)
-  #P2_A1_2_0_S0(L_L_s_I0, P([0,1,1]))  # PASSED
-  #P2_A1_2_0_S0(L_L_s_I0, P([-1,1,0]))  # PASSED
-  #P2_A1_2_0_S0(N_X_a_I0, P([0,1,1]))  # PASSED
-  #P2_A1_2_0_S0(N_X_a_I0, P([-1,1,0]))  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([0,1,1])), 'A1', 'P=(0,1,1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([0,1,-1])), 'A1', 'P=(0,1,-1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([0,-1,1])), 'A1', 'P=(0,-1,1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([0,-1,-1])), 'A1', 'P=(0,-1,-1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([1,0,1])), 'A1', 'P=(1,0,1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([1,0,-1])), 'A1', 'P=(1,0,-1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([-1,0,1])), 'A1', 'P=(-1,0,1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([-1,0,-1])), 'A1', 'P=(-1,0,-1) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([1,1,0])), 'A1', 'P=(1,1,0) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([1,-1,0])), 'A1', 'P=(1,-1,0) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([-1,1,0])), 'A1', 'P=(-1,1,0) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(L_L_s_I0, P([-1,-1,0])), 'A1', 'P=(-1,-1,0) A1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([0,1,1])), 'A1', 'P=(0,1,1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([0,1,-1])), 'A1', 'P=(0,1,-1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([0,-1,1])), 'A1', 'P=(0,-1,1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([0,-1,-1])), 'A1', 'P=(0,-1,-1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([1,0,1])), 'A1', 'P=(1,0,1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([1,0,-1])), 'A1', 'P=(1,0,-1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([-1,0,1])), 'A1', 'P=(-1,0,1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([-1,0,-1])), 'A1', 'P=(-1,0,-1) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([1,1,0])), 'A1', 'P=(1,1,0) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([1,-1,0])), 'A1', 'P=(1,-1,0) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([-1,1,0])), 'A1', 'P=(-1,1,0) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_2_0(N_X_a_I0, P([-1,-1,0])), 'A1', 'P=(-1,-1,0) A1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
 
-  #P2_A1_1_1_S0(L_L_s_I0, P([0,1,0]), P([0,0,1]))  # PASSED
-  #P2_A1_1_1_S0(L_L_s_I0, P([0,1,0]), P([-1,0,0]))  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([0,1,1])), 'A1', 'P=(0,1,1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([0,1,-1])), 'A1', 'P=(0,1,-1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([0,-1,1])), 'A1', 'P=(0,-1,1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([0,-1,-1])), 'A1', 'P=(0,-1,-1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([1,0,1])), 'A1', 'P=(1,0,1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([1,0,-1])), 'A1', 'P=(1,0,-1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([-1,0,1])), 'A1', 'P=(-1,0,1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([-1,0,-1])), 'A1', 'P=(-1,0,-1) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([1,1,0])), 'A1', 'P=(1,1,0) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([1,-1,0])), 'A1', 'P=(1,-1,0) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([-1,1,0])), 'A1', 'P=(-1,1,0) A1 (A1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_A1_1_1(L_L_s_I0, P([-1,-1,0])), 'A1', 'P=(-1,-1,0) A1 (A1) (1,1); LL', False); total += 1  # PASSED
 
-  #P2_A1_1_1_S1(L_L_s_I0, P([0,1,0]), P([0,0,1]))  # PASSED
-  #P2_A1_1_1_S1(L_L_s_I0, P([0,1,0]), P([-1,0,0]))  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([0,1,1])), 'A1', 'P=(0,1,1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([0,1,-1])), 'A1', 'P=(0,1,-1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([0,-1,1])), 'A1', 'P=(0,-1,1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([0,-1,-1])), 'A1', 'P=(0,-1,-1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([1,0,1])), 'A1', 'P=(1,0,1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([1,0,-1])), 'A1', 'P=(1,0,-1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([-1,0,1])), 'A1', 'P=(-1,0,1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([-1,0,-1])), 'A1', 'P=(-1,0,-1) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([1,1,0])), 'A1', 'P=(1,1,0) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([1,-1,0])), 'A1', 'P=(1,-1,0) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([-1,1,0])), 'A1', 'P=(-1,1,0) A1 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A1_B1_1_1(L_L_s_I0, P([-1,-1,0])), 'A1', 'P=(-1,-1,0) A1 (B1) (1,1); LL', False); total += 1  # PASSED
 
 
-  #P2_A2_2_0_S1(L_L_s_I0, P([0,1,1]))  # PASSED
-  #P2_A2_2_0_S1(L_L_s_I0, P([-1,0,1]))  # PASSED
-  #P2_A2_2_0_S1(N_X_a_I0, P([0,1,1]))  # PASSED
-  #P2_A2_2_0_S1(N_X_a_I0, P([-1,0,1]))  # PASSED
+  # Psq = 2 (A2)
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([0,1,1])), 'A2', 'P=(0,1,1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([0,1,-1])), 'A2', 'P=(0,1,-1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([0,-1,1])), 'A2', 'P=(0,-1,1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([0,-1,-1])), 'A2', 'P=(0,-1,-1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([1,0,1])), 'A2', 'P=(1,0,1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([1,0,-1])), 'A2', 'P=(1,0,-1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([-1,0,1])), 'A2', 'P=(-1,0,1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([-1,0,-1])), 'A2', 'P=(-1,0,-1) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([1,1,0])), 'A2', 'P=(1,1,0) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([1,-1,0])), 'A2', 'P=(1,-1,0) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([-1,1,0])), 'A2', 'P=(-1,1,0) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(L_L_s_I0, P([-1,-1,0])), 'A2', 'P=(-1,-1,0) A2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([0,1,1])), 'A2', 'P=(0,1,1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([0,1,-1])), 'A2', 'P=(0,1,-1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([0,-1,1])), 'A2', 'P=(0,-1,1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([0,-1,-1])), 'A2', 'P=(0,-1,-1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([1,0,1])), 'A2', 'P=(1,0,1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([1,0,-1])), 'A2', 'P=(1,0,-1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([-1,0,1])), 'A2', 'P=(-1,0,1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([-1,0,-1])), 'A2', 'P=(-1,0,-1) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([1,1,0])), 'A2', 'P=(1,1,0) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([1,-1,0])), 'A2', 'P=(1,-1,0) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([-1,1,0])), 'A2', 'P=(-1,1,0) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_A1_2_0(N_X_a_I0, P([-1,-1,0])), 'A2', 'P=(-1,-1,0) A2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
 
-  #P2_A2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED
-  #P2_A2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([-1,0,0]))  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([0,1,1])), 'A2', 'P=(0,1,1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([0,1,-1])), 'A2', 'P=(0,1,-1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([0,-1,1])), 'A2', 'P=(0,-1,1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([0,-1,-1])), 'A2', 'P=(0,-1,-1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([1,0,1])), 'A2', 'P=(1,0,1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([1,0,-1])), 'A2', 'P=(1,0,-1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([-1,0,1])), 'A2', 'P=(-1,0,1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([-1,0,-1])), 'A2', 'P=(-1,0,-1) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([1,1,0])), 'A2', 'P=(1,1,0) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([1,-1,0])), 'A2', 'P=(1,-1,0) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([-1,1,0])), 'A2', 'P=(-1,1,0) A2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fs(L_L_s_I0, P([-1,-1,0])), 'A2', 'P=(-1,-1,0) A2 (B1) (1,1); LL', False); total += 1  # PASSED
 
-  #P2_A2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED
-  #P2_A2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([-1,0,0]))  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([0,1,1])), 'A2', 'P=(0,1,1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([0,1,-1])), 'A2', 'P=(0,1,-1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([0,-1,1])), 'A2', 'P=(0,-1,1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([0,-1,-1])), 'A2', 'P=(0,-1,-1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([1,0,1])), 'A2', 'P=(1,0,1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([1,0,-1])), 'A2', 'P=(1,0,-1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([-1,0,1])), 'A2', 'P=(-1,0,1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([-1,0,-1])), 'A2', 'P=(-1,0,-1) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([1,1,0])), 'A2', 'P=(1,1,0) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([1,-1,0])), 'A2', 'P=(1,-1,0) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([-1,1,0])), 'A2', 'P=(-1,1,0) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_A2_B1_1_1_Fa(N_X_a_I0, P([-1,-1,0])), 'A2', 'P=(-1,-1,0) A2 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
 
-  #P2_B1_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #P2_B1_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #P2_B1_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #P2_B1_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
 
-  #P2_B1_1_1_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #P2_B1_1_1_S1(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B2
+  # Psq = 2 (B1)
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([0,1,1])), 'B2', 'P=(0,1,1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([0,1,-1])), 'B2', 'P=(0,1,-1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([0,-1,1])), 'B2', 'P=(0,-1,1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([0,-1,-1])), 'B2', 'P=(0,-1,-1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([1,0,1])), 'B2', 'P=(1,0,1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([1,0,-1])), 'B2', 'P=(1,0,-1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([-1,0,1])), 'B2', 'P=(-1,0,1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([-1,0,-1])), 'B2', 'P=(-1,0,-1) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([1,1,0])), 'B2', 'P=(1,1,0) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([1,-1,0])), 'B2', 'P=(1,-1,0) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([-1,1,0])), 'B2', 'P=(-1,1,0) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(L_L_s_I0, P([-1,-1,0])), 'B2', 'P=(-1,-1,0) B1 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([0,1,1])), 'B2', 'P=(0,1,1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([0,1,-1])), 'B2', 'P=(0,1,-1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([0,-1,1])), 'B2', 'P=(0,-1,1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([0,-1,-1])), 'B2', 'P=(0,-1,-1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([1,0,1])), 'B2', 'P=(1,0,1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([1,0,-1])), 'B2', 'P=(1,0,-1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([-1,0,1])), 'B2', 'P=(-1,0,1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([-1,0,-1])), 'B2', 'P=(-1,0,-1) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([1,1,0])), 'B2', 'P=(1,1,0) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([1,-1,0])), 'B2', 'P=(1,-1,0) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([-1,1,0])), 'B2', 'P=(-1,1,0) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_2_0(N_X_a_I0, P([-1,-1,0])), 'B2', 'P=(-1,-1,0) B1 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
 
-  #P2_B1_1_1_S0(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B2
-  #P2_B1_1_1_S0(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B2
-  
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([0,1,1])), 'B2', 'P=(0,1,1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([0,1,-1])), 'B2', 'P=(0,1,-1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([0,-1,1])), 'B2', 'P=(0,-1,1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([0,-1,-1])), 'B2', 'P=(0,-1,-1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([1,0,1])), 'B2', 'P=(1,0,1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([1,0,-1])), 'B2', 'P=(1,0,-1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([-1,0,1])), 'B2', 'P=(-1,0,1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([-1,0,-1])), 'B2', 'P=(-1,0,-1) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([1,1,0])), 'B2', 'P=(1,1,0) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([1,-1,0])), 'B2', 'P=(1,-1,0) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([-1,1,0])), 'B2', 'P=(-1,1,0) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_A1_1_1(N_X_a_I0, P([-1,-1,0])), 'B2', 'P=(-1,-1,0) B1 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
 
-  #P2_B2_2_0_S1(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
-  #P2_B2_2_0_S1(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([0,1,1])), 'B2', 'P=(0,1,1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([0,1,-1])), 'B2', 'P=(0,1,-1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([0,-1,1])), 'B2', 'P=(0,-1,1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([0,-1,-1])), 'B2', 'P=(0,-1,-1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([1,0,1])), 'B2', 'P=(1,0,1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([1,0,-1])), 'B2', 'P=(1,0,-1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([-1,0,1])), 'B2', 'P=(-1,0,1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([-1,0,-1])), 'B2', 'P=(-1,0,-1) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([1,1,0])), 'B2', 'P=(1,1,0) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([1,-1,0])), 'B2', 'P=(1,-1,0) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([-1,1,0])), 'B2', 'P=(-1,1,0) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B1_B1_1_1(N_X_a_I0, P([-1,-1,0])), 'B2', 'P=(-1,-1,0) B1 (B1) (1,1); NXa I=0', False); total += 1  # PASSED
 
-  #P2_B2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
-  #P2_B2_1_1_Fs(L_L_s_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B1
 
-  #P2_B2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,1,0]))  # PASSED B1
-  #P2_B2_1_1_Fa(N_X_a_I0, P([0,0,1]), P([0,-1,0]))  # PASSED B1
+  # Psq = 2 (B2)
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([0,1,1])), 'B1', 'P=(0,1,1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([0,1,-1])), 'B1', 'P=(0,1,-1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([0,-1,1])), 'B1', 'P=(0,-1,1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([0,-1,-1])), 'B1', 'P=(0,-1,-1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([1,0,1])), 'B1', 'P=(1,0,1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([1,0,-1])), 'B1', 'P=(1,0,-1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([-1,0,1])), 'B1', 'P=(-1,0,1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([-1,0,-1])), 'B1', 'P=(-1,0,-1) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([1,1,0])), 'B1', 'P=(1,1,0) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([1,-1,0])), 'B1', 'P=(1,-1,0) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([-1,1,0])), 'B1', 'P=(-1,1,0) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(L_L_s_I0, P([-1,-1,0])), 'B1', 'P=(-1,-1,0) B2 (A1) (2,0); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([0,1,1])), 'B1', 'P=(0,1,1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([0,1,-1])), 'B1', 'P=(0,1,-1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([0,-1,1])), 'B1', 'P=(0,-1,1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([0,-1,-1])), 'B1', 'P=(0,-1,-1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([1,0,1])), 'B1', 'P=(1,0,1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([1,0,-1])), 'B1', 'P=(1,0,-1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([-1,0,1])), 'B1', 'P=(-1,0,1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([-1,0,-1])), 'B1', 'P=(-1,0,-1) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([1,1,0])), 'B1', 'P=(1,1,0) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([1,-1,0])), 'B1', 'P=(1,-1,0) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([-1,1,0])), 'B1', 'P=(-1,1,0) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_2_0(N_X_a_I0, P([-1,-1,0])), 'B1', 'P=(-1,-1,0) B2 (A1) (2,0); NXa I=0', False); total += 1  # PASSED
 
-  #P3_A1_3_0_S0(L_L_s_I0, P([1,1,1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([1,1,-1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([1,-1,1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([1,-1,-1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([-1,1,1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([-1,1,-1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([-1,-1,1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([-1,-1,-1]))  # PASSED
-  #P3_A1_3_0_S0(L_L_s_I0, P([1,-1,1]))  # PASSED
-  #P3_A1_3_0_S0(N_X_a_I0, P([1,1,1]))  # PASSED
-  #P3_A1_3_0_S0(N_X_a_I0, P([1,-1,1]))  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([0,1,1])), 'B1', 'P=(0,1,1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([0,1,-1])), 'B1', 'P=(0,1,-1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([0,-1,1])), 'B1', 'P=(0,-1,1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([0,-1,-1])), 'B1', 'P=(0,-1,-1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([1,0,1])), 'B1', 'P=(1,0,1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([1,0,-1])), 'B1', 'P=(1,0,-1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([-1,0,1])), 'B1', 'P=(-1,0,1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([-1,0,-1])), 'B1', 'P=(-1,0,-1) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([1,1,0])), 'B1', 'P=(1,1,0) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([1,-1,0])), 'B1', 'P=(1,-1,0) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([-1,1,0])), 'B1', 'P=(-1,1,0) B2 (B1) (1,1); LL', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_B1_1_1(L_L_s_I0, P([-1,-1,0])), 'B1', 'P=(-1,-1,0) B2 (B1) (1,1); LL', False); total += 1  # PASSED
 
-  #P3_A1_2_1_S0(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #P3_A1_2_1_S0(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
-  #P3_A1_2_1_S0(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #P3_A1_2_1_S0(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([0,1,1])), 'B1', 'P=(0,1,1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([0,1,-1])), 'B1', 'P=(0,1,-1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([0,-1,1])), 'B1', 'P=(0,-1,1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([0,-1,-1])), 'B1', 'P=(0,-1,-1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([1,0,1])), 'B1', 'P=(1,0,1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([1,0,-1])), 'B1', 'P=(1,0,-1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([-1,0,1])), 'B1', 'P=(-1,0,1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([-1,0,-1])), 'B1', 'P=(-1,0,-1) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([1,1,0])), 'B1', 'P=(1,1,0) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([1,-1,0])), 'B1', 'P=(1,-1,0) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([-1,1,0])), 'B1', 'P=(-1,1,0) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
+  #passed += test_irrep(P2_B2_A1_1_1(N_X_a_I0, P([-1,-1,0])), 'B1', 'P=(-1,-1,0) B2 (A1) (1,1); NXa I=0', False); total += 1  # PASSED
 
-  #P3_A1_2_1_S1(L_L_s_I0, P([1,1,1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([1,1,-1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([1,-1,1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([1,-1,-1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([-1,1,1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([-1,1,-1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([-1,-1,1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([-1,-1,-1]))  # PASSED
-  #P3_A1_2_1_S1(L_L_s_I0, P([-1,1,-1]))  # PASSED
-  #P3_A1_2_1_S1(N_X_a_I0, P([1,1,1]))  # PASSED
-  #P3_A1_2_1_S1(N_X_a_I0, P([-1,1,-1]))  # PASSED
 
-  #P3_A2_3_0_S1(L_L_s_I0, P([1,1,1]))  # PASSED
-  #P3_A2_3_0_S1(L_L_s_I0, P([-1,1,1]))  # PASSED
-  #P3_A2_3_0_S1(N_X_a_I0, P([1,1,1]))  # PASSED
-  #P3_A2_3_0_S1(N_X_a_I0, P([-1,1,1])) # PASSED
+  # Psq = 3 (A1)
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([1,1,1])), 'A1', 'P=(1,1,1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([1,1,-1])), 'A1', 'P=(1,1,-1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([1,-1,1])), 'A1', 'P=(1,-1,1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([-1,1,1])), 'A1', 'P=(-1,1,1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([1,-1,-1])), 'A1', 'P=(1,-1,-1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([-1,1,-1])), 'A1', 'P=(-1,1,-1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([-1,-1,1])), 'A1', 'P=(-1,-1,1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(L_L_s_I0, P([-1,-1,-1])), 'A1', 'P=(-1,-1,-1) A1 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([1,1,1])), 'A1', 'P=(1,1,1) A1 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([1,1,-1])), 'A1', 'P=(1,1,-1) A1 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([1,-1,1])), 'A1', 'P=(1,-1,1) A1 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([-1,1,1])), 'A1', 'P=(-1,1,1) A1 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([1,-1,-1])), 'A1', 'P=(1,-1,-1) A1 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([-1,1,-1])), 'A1', 'P=(-1,1,-1) A1 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([-1,-1,1])), 'A1', 'P=(-1,-1,1) A1 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_3_0(N_X_a_I0, P([-1,-1,-1])), 'A1', 'P=(-1,-1,-1) A1 (A1) (3,0); NXa I=0', False); total += 1
 
-  #P3_A2_2_1_Ls(L_L_s_I0, P([1,1,1]))  # PASSED
-  #P3_A2_2_1_Ls(L_L_s_I0, P([-1,1,1]))  # PASSED
-  #P3_A2_2_1_Ls(N_X_a_I0, P([1,1,1]))  # PASSED
-  #P3_A2_2_1_Ls(N_X_a_I0, P([-1,1,1]))  # PASSED
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([1,1,1])), 'A1', 'P=(1,1,1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([1,1,-1])), 'A1', 'P=(1,1,-1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([1,-1,1])), 'A1', 'P=(1,-1,1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([-1,1,1])), 'A1', 'P=(-1,1,1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([1,-1,-1])), 'A1', 'P=(1,-1,-1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([-1,1,-1])), 'A1', 'P=(-1,1,-1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([-1,-1,1])), 'A1', 'P=(-1,-1,1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(L_L_s_I0, P([-1,-1,-1])), 'A1', 'P=(-1,-1,-1) A1 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([1,1,1])), 'A1', 'P=(1,1,1) A1 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([1,1,-1])), 'A1', 'P=(1,1,-1) A1 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([1,-1,1])), 'A1', 'P=(1,-1,1) A1 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([-1,1,1])), 'A1', 'P=(-1,1,1) A1 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([1,-1,-1])), 'A1', 'P=(1,-1,-1) A1 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([-1,1,-1])), 'A1', 'P=(-1,1,-1) A1 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([-1,-1,1])), 'A1', 'P=(-1,-1,1) A1 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_A1_2_1(N_X_a_I0, P([-1,-1,-1])), 'A1', 'P=(-1,-1,-1) A1 (A1) (2,1); NXa I=0', False); total += 1
 
-  #P3_A2_2_1_Lp(L_L_s_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #P3_A2_2_1_Lp(L_L_s_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
-  #P3_A2_2_1_Lp(N_X_a_I0, P([0,1,0]), P([1,0,0]), P([0,0,1]))  # PASSED
-  #P3_A2_2_1_Lp(N_X_a_I0, P([-1,0,0]), P([0,0,-1]), P([0,1,0]))  # PASSED
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([1,1,1])), 'A1', 'P=(1,1,1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([1,1,-1])), 'A1', 'P=(1,1,-1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([1,-1,1])), 'A1', 'P=(1,-1,1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([-1,1,1])), 'A1', 'P=(-1,1,1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([1,-1,-1])), 'A1', 'P=(1,-1,-1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([-1,1,-1])), 'A1', 'P=(-1,1,-1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([-1,-1,1])), 'A1', 'P=(-1,-1,1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(L_L_s_I0, P([-1,-1,-1])), 'A1', 'P=(-1,-1,-1) A1 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([1,1,1])), 'A1', 'P=(1,1,1) A1 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([1,1,-1])), 'A1', 'P=(1,1,-1) A1 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([1,-1,1])), 'A1', 'P=(1,-1,1) A1 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([-1,1,1])), 'A1', 'P=(-1,1,1) A1 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([1,-1,-1])), 'A1', 'P=(1,-1,-1) A1 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([-1,1,-1])), 'A1', 'P=(-1,1,-1) A1 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([-1,-1,1])), 'A1', 'P=(-1,-1,1) A1 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A1_E2_2_1(N_X_a_I0, P([-1,-1,-1])), 'A1', 'P=(-1,-1,-1) A1 (E2) (2,1); NXa I=0', False); total += 1
 
-  #P4_A1_Fs(L_L_s_I0, P([0,0,2]))  # PASSED
-  #P4_A1_Fs(L_L_s_I0, P([2,0,0]))  # PASSED
 
-  #P4_A2_Fa(N_X_a_I0, P([0,0,2]))  # PASSED
-  #P4_A2_Fa(N_X_a_I0, P([2,0,0]))  # PASSED
+  # Psq = 3 (A2)
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([1,1,1])), 'A2', 'P=(1,1,1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([1,1,-1])), 'A2', 'P=(1,1,-1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([1,-1,1])), 'A2', 'P=(1,-1,1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([-1,1,1])), 'A2', 'P=(-1,1,1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([1,-1,-1])), 'A2', 'P=(1,-1,-1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([-1,1,-1])), 'A2', 'P=(-1,1,-1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([-1,-1,1])), 'A2', 'P=(-1,-1,1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(L_L_s_I0, P([-1,-1,-1])), 'A2', 'P=(-1,-1,-1) A2 (A1) (3,0); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([1,1,1])), 'A2', 'P=(1,1,1) A2 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([1,1,-1])), 'A2', 'P=(1,1,-1) A2 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([1,-1,1])), 'A2', 'P=(1,-1,1) A2 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([-1,1,1])), 'A2', 'P=(-1,1,1) A2 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([1,-1,-1])), 'A2', 'P=(1,-1,-1) A2 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([-1,1,-1])), 'A2', 'P=(-1,1,-1) A2 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([-1,-1,1])), 'A2', 'P=(-1,-1,1) A2 (A1) (3,0); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_3_0(N_X_a_I0, P([-1,-1,-1])), 'A2', 'P=(-1,-1,-1) A2 (A1) (3,0); NXa I=0', False); total += 1
 
-  #P4_E1_Fa(N_X_a_I0, P([0,0,2]))  # PASSED
-  #P4_E1_Fa(N_X_a_I0, P([2,0,0]))  # PASSED
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([1,1,1])), 'A2', 'P=(1,1,1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([1,1,-1])), 'A2', 'P=(1,1,-1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([1,-1,1])), 'A2', 'P=(1,-1,1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([-1,1,1])), 'A2', 'P=(-1,1,1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([1,-1,-1])), 'A2', 'P=(1,-1,-1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([-1,1,-1])), 'A2', 'P=(-1,1,-1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([-1,-1,1])), 'A2', 'P=(-1,-1,1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(L_L_s_I0, P([-1,-1,-1])), 'A2', 'P=(-1,-1,-1) A2 (A1) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([1,1,1])), 'A2', 'P=(1,1,1) A2 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([1,1,-1])), 'A2', 'P=(1,1,-1) A2 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([1,-1,1])), 'A2', 'P=(1,-1,1) A2 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([-1,1,1])), 'A2', 'P=(-1,1,1) A2 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([1,-1,-1])), 'A2', 'P=(1,-1,-1) A2 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([-1,1,-1])), 'A2', 'P=(-1,1,-1) A2 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([-1,-1,1])), 'A2', 'P=(-1,-1,1) A2 (A1) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_A1_2_1(N_X_a_I0, P([-1,-1,-1])), 'A2', 'P=(-1,-1,-1) A2 (A1) (2,1); NXa I=0', False); total += 1
 
-  '''
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([1,1,1])), 'A2', 'P=(1,1,1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([1,1,-1])), 'A2', 'P=(1,1,-1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([1,-1,1])), 'A2', 'P=(1,-1,1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([-1,1,1])), 'A2', 'P=(-1,1,1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([1,-1,-1])), 'A2', 'P=(1,-1,-1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([-1,1,-1])), 'A2', 'P=(-1,1,-1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([-1,-1,1])), 'A2', 'P=(-1,-1,1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(L_L_s_I0, P([-1,-1,-1])), 'A2', 'P=(-1,-1,-1) A2 (E2) (2,1); LL', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([1,1,1])), 'A2', 'P=(1,1,1) A2 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([1,1,-1])), 'A2', 'P=(1,1,-1) A2 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([1,-1,1])), 'A2', 'P=(1,-1,1) A2 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([-1,1,1])), 'A2', 'P=(-1,1,1) A2 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([1,-1,-1])), 'A2', 'P=(1,-1,-1) A2 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([-1,1,-1])), 'A2', 'P=(-1,1,-1) A2 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([-1,-1,1])), 'A2', 'P=(-1,-1,1) A2 (E2) (2,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P3_A2_E2_2_1(N_X_a_I0, P([-1,-1,-1])), 'A2', 'P=(-1,-1,-1) A2 (E2) (2,1); NXa I=0', False); total += 1
+
+
+  # Psq = 4 (A1)
+  #passed += test_irrep(P4_A1_A1_1_1(L_L_s_I0, P([0,0,2])), 'A1', 'P=(0,0,2) A1 (A1) (1,1); LL', False); total += 1
+  #passed += test_irrep(P4_A1_A1_1_1(L_L_s_I0, P([0,0,-2])), 'A1', 'P=(0,0,-2) A1 (A1) (1,1); LL', False); total += 1
+  #passed += test_irrep(P4_A1_A1_1_1(L_L_s_I0, P([0,2,0])), 'A1', 'P=(0,2,0) A1 (A1) (1,1); LL', False); total += 1
+  #passed += test_irrep(P4_A1_A1_1_1(L_L_s_I0, P([0,-2,0])), 'A1', 'P=(0,-2,0) A1 (A1) (1,1); LL', False); total += 1
+  #passed += test_irrep(P4_A1_A1_1_1(L_L_s_I0, P([2,0,0])), 'A1', 'P=(2,0,0) A1 (A1) (1,1); LL', False); total += 1
+  #passed += test_irrep(P4_A1_A1_1_1(L_L_s_I0, P([-2,0,0])), 'A1', 'P=(-2,0,0) A1 (A1) (1,1); LL', False); total += 1
+
+  # Psq = 4 (A2)
+  #passed += test_irrep(P4_A2_A1_1_1(N_X_a_I0, P([0,0,2])), 'A2', 'P=(0,0,2) A2 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_A2_A1_1_1(N_X_a_I0, P([0,0,-2])), 'A2', 'P=(0,0,-2) A2 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_A2_A1_1_1(N_X_a_I0, P([0,2,0])), 'A2', 'P=(0,2,0) A2 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_A2_A1_1_1(N_X_a_I0, P([0,-2,0])), 'A2', 'P=(0,-2,0) A2 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_A2_A1_1_1(N_X_a_I0, P([2,0,0])), 'A2', 'P=(2,0,0) A2 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_A2_A1_1_1(N_X_a_I0, P([-2,0,0])), 'A2', 'P=(-2,0,0) A2 (A1) (1,1); NXa I=0', False); total += 1
+
+  # Psq = 4 (E1)
+  #passed += test_irrep(P4_E1_A1_1_1(N_X_a_I0, P([0,0,2])), 'E', 'P=(0,0,2) E1 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_E1_A1_1_1(N_X_a_I0, P([0,0,-2])), 'E', 'P=(0,0,-2) E1 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_E1_A1_1_1(N_X_a_I0, P([0,2,0])), 'E', 'P=(0,2,0) E1 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_E1_A1_1_1(N_X_a_I0, P([0,-2,0])), 'E', 'P=(0,-2,0) E1 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_E1_A1_1_1(N_X_a_I0, P([2,0,0])), 'E', 'P=(2,0,0) E1 (A1) (1,1); NXa I=0', False); total += 1
+  #passed += test_irrep(P4_E1_A1_1_1(N_X_a_I0, P([-2,0,0])), 'E', 'P=(-2,0,0) E1 (A1) (1,1); NXa I=0', False); total += 1
+
+
+
+
   print("Irrep tests: ({}/{}) PASSED".format(passed, total))
   if total != passed:
     print("\t{} FAILED!!".format(total-passed))
-  '''
 
 
   # Test momentum equivalence
   
-  # @ADH - test mixing sym and asym
-
   #test_P1_A1(L_L_s_I0)  # PASSED
   #test_P1_A1(N_X_a_I0)  # PASSED
   #test_P1_A1(L_L_s_I0, N_X_a_I0)  # PASSED
