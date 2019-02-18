@@ -1,19 +1,63 @@
 from enum import Enum, auto
 
-from sympy.tensor.array import Array
-from sympy.matrices import Matrix, eye
-from sympy.functions.special.tensor_functions import LeviCivita
+from sympy import Matrix, eye, I
 
-from sympy import I
-
-# Code for Gamma matrices
-# Enumeration to specify different gamma matrix representations
 class GammaRep(Enum):
   DIRAC_PAULI = auto()
   WEYL_CHIRAL = auto()
   DEGRAND_ROSSI = auto()
 
-# explicit definition of gamma matrices
+class Gamma:
+
+  def __init__(self, rep=GammaRep.DIRAC_PAULI):
+    if rep == GammaRep.DIRAC_PAULI:
+      self._gamma = _gamma_dp
+    elif rep == GammaRep.WEYL_CHIRAL:
+      self._gamma = _gamma_wc
+    elif rep == GammaRep.DEGRAND_ROSSI:
+      self._gamma = _gamma_dr
+
+    self._rep = rep
+
+  @property
+  def rep(self):
+    return self._rep
+
+  @property
+  def one(self):
+    return self._gamma[0]
+
+  @property
+  def two(self):
+    return self._gamma[1]
+
+  @property
+  def three(self):
+    return self._gamma[2]
+
+  @property
+  def four(self):
+    return self._gamma[3]
+
+  @property
+  def five(self):
+    return self._gamma[4]
+
+  # @ADH - Is this how I want to do this?
+  # @ADH - Also, is this expression representation dependent?
+  @property
+  def chargeConj(self):
+    return self.four * self.two
+
+  @property
+  def parityPlus(self):
+    return (eye(4) + self.four)/2
+
+  @property
+  def parityMinus(self):
+    return (eye(4) - self.four)/2
+
+
 # The Dirac-Pauli Representation
 _gamma_dp = [
     # gamma1
@@ -130,55 +174,3 @@ _gamma_dr = [
         [ 0 , 0 , 0 , 1 ]
     ])
 ]
-
-
-class Gamma:
-
-  def __init__(self, rep=GammaRep.DIRAC_PAULI):
-    if rep == GammaRep.DIRAC_PAULI:
-      self._gamma = _gamma_dp
-    elif rep == GammaRep.WEYL_CHIRAL:
-      self._gamma = _gamma_wc
-    elif rep == GammaRep.DEGRAND_ROSSI:
-      self._gamma = _gamma_dr
-
-    self._rep = rep
-
-  @property
-  def rep(self):
-    return self._rep
-
-  @property
-  def one(self):
-    return self._gamma[0]
-
-  @property
-  def two(self):
-    return self._gamma[1]
-
-  @property
-  def three(self):
-    return self._gamma[2]
-
-  @property
-  def four(self):
-    return self._gamma[3]
-
-  @property
-  def five(self):
-    return self._gamma[4]
-
-  # @ADH - Is this how I want to do this?
-  # @ADH - Also, is this expression representation dependent?
-  @property
-  def chargeConj(self):
-    return self.four * self.two
-
-  @property
-  def parityPlus(self):
-    return (eye(4) + self.four)/2
-
-  @property
-  def parityMinus(self):
-    return (eye(4) - self.four)/2
-

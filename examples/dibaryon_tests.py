@@ -1,1970 +1,1875 @@
-from sympy import Eijk
-from sympy import Array
-from sympy import S
-from sympy import simplify
-
-from context import operators
-
-from operators.operators import DiracIdx, ColorIdx, OperatorRepresentation, Operator
-from operators.cubic_rotations import _POINT_GROUP, P, P0
-from operators.cubic_rotations import *
-from operators.tensors import Gamma
-
+import time
+import cProfile
+from typing import NamedTuple
+from types import FunctionType
 from pprint import pprint
 
-def test_P1_A1(ops, more_ops=[]):
-
-  print("P1 A1 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P1_A1_A1_1_0(ops, P([0,0,1])))
-  ops_1.extend(P1_A1_A1_1_0(ops, P([0,1,0])))
-  ops_1.extend(P1_A1_A1_1_0(ops, P([1,0,0])))
-  ops_1.extend(P1_A1_A1_1_0(ops, P([0,0,-1])))
-  ops_1.extend(P1_A1_A1_1_0(ops, P([0,-1,0])))
-  ops_1.extend(P1_A1_A1_1_0(ops, P([-1,0,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P1_A1_A1_2_1(ops, P([0,0,1])))
-  ops_2.extend(P1_A1_A1_2_1(ops, P([0,1,0])))
-  ops_2.extend(P1_A1_A1_2_1(ops, P([1,0,0])))
-  ops_2.extend(P1_A1_A1_2_1(ops, P([0,0,-1])))
-  ops_2.extend(P1_A1_A1_2_1(ops, P([0,-1,0])))
-  ops_2.extend(P1_A1_A1_2_1(ops, P([-1,0,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P1_A1_E2_2_1(ops, P([0,0,1])))
-  ops_3.extend(P1_A1_E2_2_1(ops, P([0,1,0])))
-  ops_3.extend(P1_A1_E2_2_1(ops, P([1,0,0])))
-  ops_3.extend(P1_A1_E2_2_1(ops, P([0,0,-1])))
-  ops_3.extend(P1_A1_E2_2_1(ops, P([0,-1,0])))
-  ops_3.extend(P1_A1_E2_2_1(ops, P([-1,0,0])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  if more_ops:
-    ops_4 = list()
-    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,0,1])))
-    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,1,0])))
-    ops_4.extend(P1_A1_E2_2_1(more_ops, P([1,0,0])))
-    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,0,-1])))
-    ops_4.extend(P1_A1_E2_2_1(more_ops, P([0,-1,0])))
-    ops_4.extend(P1_A1_E2_2_1(more_ops, P([-1,0,0])))
-
-    op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    if more_ops:
-      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-def test_P1_A2(ops, more_ops=[]):
-
-  print("P1 A2 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P1_A2_A1_1_0(ops, P([0,0,1])))
-  ops_1.extend(P1_A2_A1_1_0(ops, P([0,1,0])))
-  ops_1.extend(P1_A2_A1_1_0(ops, P([1,0,0])))
-  ops_1.extend(P1_A2_A1_1_0(ops, P([0,0,-1])))
-  ops_1.extend(P1_A2_A1_1_0(ops, P([0,-1,0])))
-  ops_1.extend(P1_A2_A1_1_0(ops, P([-1,0,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P1_A2_A1_2_1(ops, P([0,0,1])))
-  ops_2.extend(P1_A2_A1_2_1(ops, P([0,1,0])))
-  ops_2.extend(P1_A2_A1_2_1(ops, P([1,0,0])))
-  ops_2.extend(P1_A2_A1_2_1(ops, P([0,0,-1])))
-  ops_2.extend(P1_A2_A1_2_1(ops, P([0,-1,0])))
-  ops_2.extend(P1_A2_A1_2_1(ops, P([-1,0,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P1_A2_E2_2_1(ops, P([0,0,1])))
-  ops_3.extend(P1_A2_E2_2_1(ops, P([0,1,0])))
-  ops_3.extend(P1_A2_E2_2_1(ops, P([1,0,0])))
-  ops_3.extend(P1_A2_E2_2_1(ops, P([0,0,-1])))
-  ops_3.extend(P1_A2_E2_2_1(ops, P([0,-1,0])))
-  ops_3.extend(P1_A2_E2_2_1(ops, P([-1,0,0])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  if more_ops:
-    ops_4 = list()
-    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,0,1])))
-    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,1,0])))
-    ops_4.extend(P1_A2_E2_2_1(more_ops, P([1,0,0])))
-    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,0,-1])))
-    ops_4.extend(P1_A2_E2_2_1(more_ops, P([0,-1,0])))
-    ops_4.extend(P1_A2_E2_2_1(more_ops, P([-1,0,0])))
-
-    op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    if more_ops:
-      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-def test_P1_B1(ops, more_ops=[]):
-
-  print("P1 B1 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P1_B1_B1_2_1(ops, P([0,0,1])))
-  ops_1.extend(P1_B1_B1_2_1(ops, P([0,1,0])))
-  ops_1.extend(P1_B1_B1_2_1(ops, P([1,0,0])))
-  ops_1.extend(P1_B1_B1_2_1(ops, P([0,0,-1])))
-  ops_1.extend(P1_B1_B1_2_1(ops, P([0,-1,0])))
-  ops_1.extend(P1_B1_B1_2_1(ops, P([-1,0,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P1_B1_E2_2_1(ops, P([0,0,1])))
-  ops_2.extend(P1_B1_E2_2_1(ops, P([0,1,0])))
-  ops_2.extend(P1_B1_E2_2_1(ops, P([1,0,0])))
-  ops_2.extend(P1_B1_E2_2_1(ops, P([0,0,-1])))
-  ops_2.extend(P1_B1_E2_2_1(ops, P([0,-1,0])))
-  ops_2.extend(P1_B1_E2_2_1(ops, P([-1,0,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  if more_ops:
-    ops_3 = list()
-    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,0,1])))
-    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,1,0])))
-    ops_3.extend(P1_B1_E2_2_1(more_ops, P([1,0,0])))
-    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,0,-1])))
-    ops_3.extend(P1_B1_E2_2_1(more_ops, P([0,-1,0])))
-    ops_3.extend(P1_B1_E2_2_1(more_ops, P([-1,0,0])))
-
-    op3_rep = OperatorRepresentation(*ops_3)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    if more_ops:
-      mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-def test_P1_B2(ops, more_ops=[]):
-
-  print("P1 B2 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P1_B2_B1_2_1(ops, P([0,0,1])))
-  ops_1.extend(P1_B2_B1_2_1(ops, P([0,1,0])))
-  ops_1.extend(P1_B2_B1_2_1(ops, P([1,0,0])))
-  ops_1.extend(P1_B2_B1_2_1(ops, P([0,0,-1])))
-  ops_1.extend(P1_B2_B1_2_1(ops, P([0,-1,0])))
-  ops_1.extend(P1_B2_B1_2_1(ops, P([-1,0,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P1_B2_E2_2_1(ops, P([0,0,1])))
-  ops_2.extend(P1_B2_E2_2_1(ops, P([0,1,0])))
-  ops_2.extend(P1_B2_E2_2_1(ops, P([1,0,0])))
-  ops_2.extend(P1_B2_E2_2_1(ops, P([0,0,-1])))
-  ops_2.extend(P1_B2_E2_2_1(ops, P([0,-1,0])))
-  ops_2.extend(P1_B2_E2_2_1(ops, P([-1,0,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  if more_ops:
-    ops_3 = list()
-    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,0,1])))
-    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,1,0])))
-    ops_3.extend(P1_B2_E2_2_1(more_ops, P([1,0,0])))
-    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,0,-1])))
-    ops_3.extend(P1_B2_E2_2_1(more_ops, P([0,-1,0])))
-    ops_3.extend(P1_B2_E2_2_1(more_ops, P([-1,0,0])))
-
-    op3_rep = OperatorRepresentation(*ops_3)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    if more_ops:
-      mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-def test_P1_E2(ops, more_ops=[]):
-
-  print("P1 E2 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P1_E2_A1_1_0(ops, P([0,0,1])))
-  ops_1.extend(P1_E2_A1_1_0(ops, P([0,1,0])))
-  ops_1.extend(P1_E2_A1_1_0(ops, P([1,0,0])))
-  ops_1.extend(P1_E2_A1_1_0(ops, P([0,0,-1])))
-  ops_1.extend(P1_E2_A1_1_0(ops, P([0,-1,0])))
-  ops_1.extend(P1_E2_A1_1_0(ops, P([-1,0,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,0,1])))
-  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,1,0])))
-  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([1,0,0])))
-  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,0,-1])))
-  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([0,-1,0])))
-  ops_2.extend(P1_E2_E2_2_1_S0(ops, P([-1,0,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P1_E2_A1_2_1(ops, P([0,0,1])))
-  ops_3.extend(P1_E2_A1_2_1(ops, P([0,1,0])))
-  ops_3.extend(P1_E2_A1_2_1(ops, P([1,0,0])))
-  ops_3.extend(P1_E2_A1_2_1(ops, P([0,0,-1])))
-  ops_3.extend(P1_E2_A1_2_1(ops, P([0,-1,0])))
-  ops_3.extend(P1_E2_A1_2_1(ops, P([-1,0,0])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  ops_4 = list()
-  ops_4.extend(P1_E2_B1_2_1(ops, P([0,0,1])))
-  ops_4.extend(P1_E2_B1_2_1(ops, P([0,1,0])))
-  ops_4.extend(P1_E2_B1_2_1(ops, P([1,0,0])))
-  ops_4.extend(P1_E2_B1_2_1(ops, P([0,0,-1])))
-  ops_4.extend(P1_E2_B1_2_1(ops, P([0,-1,0])))
-  ops_4.extend(P1_E2_B1_2_1(ops, P([-1,0,0])))
-
-  op4_rep = OperatorRepresentation(*ops_4)
-
-  ops_5 = list()
-  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,0,1])))
-  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,1,0])))
-  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([1,0,0])))
-  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,0,-1])))
-  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([0,-1,0])))
-  ops_5.extend(P1_E2_E2_2_1_S1(ops, P([-1,0,0])))
-
-  op5_rep = OperatorRepresentation(*ops_5)
-
-  if more_ops:
-    ops_6 = list()
-    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,0,1])))
-    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,1,0])))
-    ops_6.extend(P1_E2_A1_1_0(more_ops, P([1,0,0])))
-    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,0,-1])))
-    ops_6.extend(P1_E2_A1_1_0(more_ops, P([0,-1,0])))
-    ops_6.extend(P1_E2_A1_1_0(more_ops, P([-1,0,0])))
-
-    op6_rep = OperatorRepresentation(*ops_6)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op5_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    if more_ops:
-      mats.append(op6_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-
-def test_P2_A1(ops_sym, ops_asym):
-  print("P2 A1 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,1,1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,-1,-1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,1,-1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([0,-1,1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,0,1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,0,-1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,0,-1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,0,1])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,1,0])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,-1,0])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([1,-1,0])))
-  ops_1.extend(P2_A1_A1_2_0(ops_sym, P([-1,1,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,1,1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,-1,-1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,1,-1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([0,-1,1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,0,1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,0,-1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,0,-1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,0,1])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,1,0])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,-1,0])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([1,-1,0])))
-  ops_2.extend(P2_A1_A1_2_0(ops_asym, P([-1,1,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,1,1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,-1,-1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,1,-1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([0,-1,1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,0,1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,0,-1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,0,-1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,0,1])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,1,0])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,-1,0])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([1,-1,0])))
-  ops_3.extend(P2_A1_A1_1_1(ops_sym, P([-1,1,0])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  ops_4 = list()
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,1,1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,-1,-1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,1,-1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([0,-1,1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,0,1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,0,-1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,0,-1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,0,1])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,1,0])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,-1,0])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([1,-1,0])))
-  ops_4.extend(P2_A1_B1_1_1(ops_sym, P([-1,1,0])))
-
-  op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-
-def test_P2_A2(ops_sym, ops_asym):
-  print("P2 A2 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,1,1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,-1,-1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,1,-1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([0,-1,1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,0,1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,0,-1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,0,-1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,0,1])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,1,0])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,-1,0])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([1,-1,0])))
-  ops_1.extend(P2_A2_A1_2_0(ops_sym, P([-1,1,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,1,1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,-1,-1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,1,-1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([0,-1,1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,0,1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,0,-1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,0,-1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,0,1])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,1,0])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,-1,0])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([1,-1,0])))
-  ops_2.extend(P2_A2_A1_2_0(ops_asym, P([-1,1,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,1,1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,-1,-1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,1,-1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([0,-1,1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,0,1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,0,-1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,0,-1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,0,1])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,1,0])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,-1,0])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([1,-1,0])))
-  ops_3.extend(P2_A2_B1_1_1_Fs(ops_sym, P([-1,1,0])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  ops_4 = list()
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,1,1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,-1,-1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,1,-1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([0,-1,1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,0,1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,0,-1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,0,-1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,0,1])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,1,0])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,-1,0])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([1,-1,0])))
-  ops_4.extend(P2_A2_B1_1_1_Fa(ops_asym, P([-1,1,0])))
-
-  op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-
-def test_P2_B1(ops_sym, ops_asym):
-  print("P2 B1 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,1,1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,-1,-1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,1,-1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([0,-1,1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,0,1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,0,-1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,0,-1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,0,1])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,1,0])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,-1,0])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([1,-1,0])))
-  ops_1.extend(P2_B1_A1_2_0(ops_sym, P([-1,1,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,1,1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,-1,-1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,1,-1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([0,-1,1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,0,1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,0,-1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,0,-1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,0,1])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,1,0])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,-1,0])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([1,-1,0])))
-  ops_2.extend(P2_B1_A1_2_0(ops_asym, P([-1,1,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,1,1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,-1,-1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,1,-1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([0,-1,1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,0,1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,0,-1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,0,-1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,0,1])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,1,0])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,-1,0])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([1,-1,0])))
-  ops_3.extend(P2_B1_A1_1_1(ops_asym, P([-1,1,0])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  ops_4 = list()
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,1,1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,-1,-1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,1,-1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([0,-1,1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,0,1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,0,-1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,0,-1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,0,1])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,1,0])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,-1,0])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([1,-1,0])))
-  ops_4.extend(P2_B1_B1_1_1(ops_asym, P([-1,1,0])))
-
-  op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-
-
-def test_P2_B2(ops_sym, ops_asym):
-
-  print("P2 B2 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,1,1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,-1,-1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,1,-1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([0,-1,1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,0,1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,0,-1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,0,-1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,0,1])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,1,0])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,-1,0])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([1,-1,0])))
-  ops_1.extend(P2_B2_A1_2_0(ops_sym, P([-1,1,0])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,1,1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,-1,-1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,1,-1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([0,-1,1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,0,1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,0,-1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,0,-1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,0,1])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,1,0])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,-1,0])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([1,-1,0])))
-  ops_2.extend(P2_B2_A1_2_0(ops_asym, P([-1,1,0])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,1,1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,-1,-1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,1,-1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([0,-1,1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,0,1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,0,-1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,0,-1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,0,1])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,1,0])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,-1,0])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([1,-1,0])))
-  ops_3.extend(P2_B2_B1_1_1(ops_sym, P([-1,1,0])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  ops_4 = list()
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,1,1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,-1,-1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,1,-1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([0,-1,1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,0,1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,0,-1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,0,-1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,0,1])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,1,0])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,-1,0])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([1,-1,0])))
-  ops_4.extend(P2_B2_A1_1_1(ops_asym, P([-1,1,0])))
-
-  op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-
-def test_P3_A1(ops, more_ops=[]):
-  print("P3 A1 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P3_A1_A1_3_0(ops, P([1,1,1])))
-  ops_1.extend(P3_A1_A1_3_0(ops, P([1,1,-1])))
-  ops_1.extend(P3_A1_A1_3_0(ops, P([1,-1,1])))
-  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,1,1])))
-  ops_1.extend(P3_A1_A1_3_0(ops, P([1,-1,-1])))
-  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,1,-1])))
-  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,-1,1])))
-  ops_1.extend(P3_A1_A1_3_0(ops, P([-1,-1,-1])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P3_A1_A1_2_1(ops, P([1,1,1])))
-  ops_2.extend(P3_A1_A1_2_1(ops, P([1,1,-1])))
-  ops_2.extend(P3_A1_A1_2_1(ops, P([1,-1,1])))
-  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,1,1])))
-  ops_2.extend(P3_A1_A1_2_1(ops, P([1,-1,-1])))
-  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,1,-1])))
-  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,-1,1])))
-  ops_2.extend(P3_A1_A1_2_1(ops, P([-1,-1,-1])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P3_A1_E2_2_1(ops, P([1,1,1])))
-  ops_3.extend(P3_A1_E2_2_1(ops, P([1,1,-1])))
-  ops_3.extend(P3_A1_E2_2_1(ops, P([1,-1,1])))
-  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,1,1])))
-  ops_3.extend(P3_A1_E2_2_1(ops, P([1,-1,-1])))
-  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,1,-1])))
-  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,-1,1])))
-  ops_3.extend(P3_A1_E2_2_1(ops, P([-1,-1,-1])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  if more_ops:
-    ops_4 = list()
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,1,1])))
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,1,-1])))
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,-1,1])))
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,1,1])))
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([1,-1,-1])))
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,1,-1])))
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,-1,1])))
-    ops_4.extend(P3_A1_A1_3_0(more_ops, P([-1,-1,-1])))
-
-    op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    if more_ops:
-      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-
-def test_P3_A2(ops, more_ops=[]):
-  print("P3 A1 equivalent momentum test...")
-  fails = 0
-
-  ops_1 = list()
-  ops_1.extend(P3_A2_A1_3_0(ops, P([1,1,1])))
-  ops_1.extend(P3_A2_A1_3_0(ops, P([1,1,-1])))
-  ops_1.extend(P3_A2_A1_3_0(ops, P([1,-1,1])))
-  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,1,1])))
-  ops_1.extend(P3_A2_A1_3_0(ops, P([1,-1,-1])))
-  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,1,-1])))
-  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,-1,1])))
-  ops_1.extend(P3_A2_A1_3_0(ops, P([-1,-1,-1])))
-
-  op1_rep = OperatorRepresentation(*ops_1)
-
-  ops_2 = list()
-  ops_2.extend(P3_A2_A1_2_1(ops, P([1,1,1])))
-  ops_2.extend(P3_A2_A1_2_1(ops, P([1,1,-1])))
-  ops_2.extend(P3_A2_A1_2_1(ops, P([1,-1,1])))
-  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,1,1])))
-  ops_2.extend(P3_A2_A1_2_1(ops, P([1,-1,-1])))
-  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,1,-1])))
-  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,-1,1])))
-  ops_2.extend(P3_A2_A1_2_1(ops, P([-1,-1,-1])))
-
-  op2_rep = OperatorRepresentation(*ops_2)
-
-  ops_3 = list()
-  ops_3.extend(P3_A2_E2_2_1(ops, P([1,1,1])))
-  ops_3.extend(P3_A2_E2_2_1(ops, P([1,1,-1])))
-  ops_3.extend(P3_A2_E2_2_1(ops, P([1,-1,1])))
-  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,1,1])))
-  ops_3.extend(P3_A2_E2_2_1(ops, P([1,-1,-1])))
-  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,1,-1])))
-  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,-1,1])))
-  ops_3.extend(P3_A2_E2_2_1(ops, P([-1,-1,-1])))
-
-  op3_rep = OperatorRepresentation(*ops_3)
-
-  if more_ops:
-    ops_4 = list()
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,1,1])))
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,1,-1])))
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,-1,1])))
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,1,1])))
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([1,-1,-1])))
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,1,-1])))
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,-1,1])))
-    ops_4.extend(P3_A2_A1_3_0(more_ops, P([-1,-1,-1])))
-
-    op4_rep = OperatorRepresentation(*ops_4)
-
-  for element in _POINT_GROUP:
-    mats = list()
-    mats.append(op1_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op2_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    mats.append(op3_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-    if more_ops:
-      mats.append(op4_rep.getRepresentationMatrix(element, True).applyfunc(simplify))
-
-    if not all(mat == mats[0] for mat in mats):
-      print("TEST FAILED")
-
-  print("TEST PASSED")
-
-
-def P0_A1p(ops, n=0):
-  if n == 0:
-    A1p_op = ops[0].projectMomentum(P0, P0)
-
-  elif n == 1:
-    A1p_op = ops[0].projectMomentum(P([0,0,1]), P([0,0,-1])) \
-        + ops[0].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-        + ops[0].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-        + ops[0].projectMomentum(P([0,0,-1]), P([0,0,1])) \
-        + ops[0].projectMomentum(P([0,-1,0]), P([0,1,0])) \
-        + ops[0].projectMomentum(P([-1,0,0]), P([1,0,0]))
-
-  elif n == 2:
-    A1p_op = ops[0].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-        + ops[0].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
-        + ops[0].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
-        + ops[0].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
-        + ops[0].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-        + ops[0].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
-        + ops[0].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
-        + ops[0].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
-        + ops[0].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-        + ops[0].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
-        + ops[0].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
-        + ops[0].projectMomentum(P([-1,1,0]), P([1,-1,0]))
-
-  elif n == 3:
-    A1p_op = ops[0].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
-        + ops[0].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
-        + ops[0].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
-        + ops[0].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
-        + ops[0].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
-        + ops[0].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
-        + ops[0].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
-        + ops[0].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
-
-  else:
-    print("P0_A1p: pi^2 = {} not implemented".format(n))
-    return
-
-  return [A1p_op]
-
-
-def P0_T1p_A1p(ops, n=0):
-  if n == 0:
-    T1p_1_op = ops[1].projectMomentum(P([0,0,0]), P([0,0,0]))
-    T1p_2_op = ops[2].projectMomentum(P([0,0,0]), P([0,0,0]))
-    T1p_3_op = ops[3].projectMomentum(P([0,0,0]), P([0,0,0]))
-
-  elif n == 1:
-    T1p_1_op = ops[1].projectMomentum(P([0,0,1]), P([0,0,-1])) \
-        + ops[1].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-        + ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-        + ops[1].projectMomentum(P([0,0,-1]), P([0,0,1])) \
-        + ops[1].projectMomentum(P([0,-1,0]), P([0,1,0])) \
-        + ops[1].projectMomentum(P([-1,0,0]), P([1,0,0]))
-
-    T1p_2_op = ops[2].projectMomentum(P([0,0,1]), P([0,0,-1])) \
-        + ops[2].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-        + ops[2].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-        + ops[2].projectMomentum(P([0,0,-1]), P([0,0,1])) \
-        + ops[2].projectMomentum(P([0,-1,0]), P([0,1,0])) \
-        + ops[2].projectMomentum(P([-1,0,0]), P([1,0,0]))
-
-    T1p_3_op = ops[3].projectMomentum(P([0,0,1]), P([0,0,-1])) \
-        + ops[3].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-        + ops[3].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-        + ops[3].projectMomentum(P([0,0,-1]), P([0,0,1])) \
-        + ops[3].projectMomentum(P([0,-1,0]), P([0,1,0])) \
-        + ops[3].projectMomentum(P([-1,0,0]), P([1,0,0]))
-
-  elif n == 2:
-    T1p_1_op = ops[1].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-        + ops[1].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
-        + ops[1].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
-        + ops[1].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
-        + ops[1].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-        + ops[1].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
-        + ops[1].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
-        + ops[1].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
-        + ops[1].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-        + ops[1].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
-        + ops[1].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
-        + ops[1].projectMomentum(P([-1,1,0]), P([1,-1,0]))
-
-    T1p_2_op = ops[2].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-        + ops[2].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
-        + ops[2].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
-        + ops[2].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
-        + ops[2].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-        + ops[2].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
-        + ops[2].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
-        + ops[2].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
-        + ops[2].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-        + ops[2].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
-        + ops[2].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
-        + ops[2].projectMomentum(P([-1,1,0]), P([1,-1,0]))
-
-    T1p_3_op = ops[3].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-        + ops[3].projectMomentum(P([0,-1,-1]), P([0,1,1])) \
-        + ops[3].projectMomentum(P([0,1,-1]), P([0,-1,1])) \
-        + ops[3].projectMomentum(P([0,-1,1]), P([0,1,-1])) \
-        + ops[3].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-        + ops[3].projectMomentum(P([-1,0,-1]), P([1,0,1])) \
-        + ops[3].projectMomentum(P([1,0,-1]), P([-1,0,1])) \
-        + ops[3].projectMomentum(P([-1,0,1]), P([1,0,-1])) \
-        + ops[3].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-        + ops[3].projectMomentum(P([-1,-1,0]), P([1,1,0])) \
-        + ops[3].projectMomentum(P([1,-1,0]), P([-1,1,0])) \
-        + ops[3].projectMomentum(P([-1,1,0]), P([1,-1,0]))
-
-  elif n == 3:
-    T1p_1_op = ops[1].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
-        + ops[1].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
-        + ops[1].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
-        + ops[1].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
-        + ops[1].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
-        + ops[1].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
-        + ops[1].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
-        + ops[1].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
-
-    T1p_2_op = ops[2].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
-        + ops[2].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
-        + ops[2].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
-        + ops[2].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
-        + ops[2].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
-        + ops[2].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
-        + ops[2].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
-        + ops[2].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
-
-    T1p_3_op = ops[3].projectMomentum(P([1,1,1]), P([-1,-1,-1])) \
-        + ops[3].projectMomentum(P([1,1,-1]), P([-1,-1,1])) \
-        + ops[3].projectMomentum(P([1,-1,1]), P([-1,1,-1])) \
-        + ops[3].projectMomentum(P([1,-1,-1]), P([-1,1,1])) \
-        + ops[3].projectMomentum(P([-1,1,1]), P([1,-1,-1])) \
-        + ops[3].projectMomentum(P([-1,1,-1]), P([1,-1,1])) \
-        + ops[3].projectMomentum(P([-1,-1,1]), P([1,1,-1])) \
-        + ops[3].projectMomentum(P([-1,-1,-1]), P([1,1,1]))
-
-  else:
-    print("P0_T1p_A1p: pi^2 = {} not implemented".format(n))
-    return
-
-  return [T1p_1_op, T1p_2_op, T1p_3_op]
-
-
-def P0_T1p_Ep_1(ops):
+from sympy import S, sqrt, Eijk, KroneckerDelta, Rational, simplify, expand
+
+from context import operators
+from operators.operators import project_momentum
+from operators.operator_rep import OperatorRepresentation, OperatorRepresentationError
+from operators.cubic_rotations import _POINT_GROUP, P, P0, MOMENTA
+
+####################################################################################################
+#                                                                                                  #
+#               OperatorTest Class                                                                 #
+#                                                                                                  #
+####################################################################################################
+
+
+class OperatorTest(NamedTuple):
+  name: str
+  irrep: str
+  psq: int
+  operator_def: FunctionType
+
+  PASSED = 0
+  TOTAL_TESTS = 0
+  TOTAL_TIME = 0
+
+  def test_irrep(self, f_op, momenta=None, message='', count=True):
+    start = time.time()
+    print("TESTING: {}".format(self.name))
+    if message:
+      print("\tINFO: {}".format(message))
+
+    if momenta is not None:
+      print("\tMOMENTA: {}".format(momenta))
+    elif momenta is None and self.psq:
+      momenta = MOMENTA[self.psq]
+      print("\tMOMENTA: {}".format(momenta))
+    else:
+      print("\tMOMENTA: none given, assuming one momentum")
+
+    print()
+
+    t_irreps = set()
+    try:
+      if momenta is not None:
+        for momentum in momenta:
+          print("\tTESTING MOMENTUM: {}".format(momentum))
+          op_rep = OperatorRepresentation(*self.operator_def(f_op, momentum))
+          t_irrep = op_rep.lgIrrepOccurences(True)
+          t_irreps.add(t_irrep)
+          print("\t\tRep: {}\n".format(t_irrep))
+      else:
+        op_rep = OperatorRepresentation(*self.operator_def(f_op))
+        t_irrep = op_rep.lgIrrepOccurences(True)
+        t_irreps.add(t_irrep)
+
+    except Exception as e:
+      print("\tFAILED: {}\n".format(e))
+      OperatorTest.TOTAL_TESTS += count
+      return
+
+    if len(t_irreps) != 1:
+      print("\tFAILED: Not all irreps in set transformed identically")
+    else:
+      t_irrep = t_irreps.pop()
+
+      if t_irrep == self.irrep:
+        OperatorTest.PASSED += count
+        print("\tPASSED:")
+        print("\t\tExpected Irrep: {}".format(self.irrep))
+        print("\t\tActual Rep:     {}".format(t_irrep))
+
+      else:
+        print("\tFAILED:")
+        print("\t\tExpected Irrep: {}".format(self.irrep))
+        print("\t\tActual Rep:     {}".format(t_irrep))
+
+    total = time.time() - start
+    OperatorTest.TOTAL_TIME += total
+    print("\n\tTIME: {}\n".format(total))
+
+    OperatorTest.TOTAL_TESTS += count
+
+  def getMomRep(self, f_op):
+    if self.psq == 0:
+      raise ValueError("Mometum Representation requires moving operator")
+
+    ops = []
+    for p in MOMENTA[self.psq]:
+      ops.extend(self.operator_def(f_op, p))
+
+    return OperatorRepresentation(*ops)
+
+  @staticmethod
+  def test_equivalent_transforms(*mom_reps, message=''):
+    start = time.time()
+    print("EQUIVALENT MOMENTUM TESTING:")
+    if message:
+      print("\tINFO: {}".format(message))
+
+    failed = False
+    # @ADH - Could just choose a representative element for each equivalent frame rather than the whole _POINT_GROUP
+    for el in _POINT_GROUP:
+      mats = list()
+      for mom_rep in mom_reps:
+        try:
+          # expand doesn't seem to work correctly, and this appears faster than just calling simplify
+          mats.append(mom_rep.getRepresentationMatrix(el).applyfunc(expand).applyfunc(simplify))
+        except Exception as e:
+          print("\tFAILED: {}\n".format(e))
+          OperatorTest.TOTAL_TESTS += 1
+          return
+
+      if not all(mat == mats[0] for mat in mats):
+        print("\tFAILED: not all operators transform in the same way")
+        print("\t\tELEMENT: {}".format(el))
+        for mat in mats:
+          print()
+          pprint(mat)
+
+        failed = True
+        break
+
+    if not failed:
+      OperatorTest.PASSED += 1
+      print("\tPASSED")
+
+    total = time.time() - start
+    OperatorTest.TOTAL_TIME += total
+    print("\n\tTIME: {}\n".format(total))
+
+    OperatorTest.TOTAL_TESTS += 1
+
+  @staticmethod
+  def print_results():
+    print("{}/{} PASSED".format(OperatorTest.PASSED, OperatorTest.TOTAL_TESTS))
+    failed = OperatorTest.TOTAL_TESTS - OperatorTest.PASSED
+    if failed:
+      print("{} FAILED!!!".format(failed))
+
+    print("TOTAL TEST TIME: {}".format(OperatorTest.TOTAL_TIME))
+
+    OperatorTest.PASSED = 0
+    OperatorTest.TOTAL_TESTS = 0
+    OperatorTest.TOTAL_TIME = 0
+
+
+
+
+
+####################################################################################################
+#                                                                                                  #
+#               Operator Definitions                                                               #
+#                                                                                                  #
+####################################################################################################
+
+############ HELPERS ###############################################################################
+
+L = {
+    1: { 1: 1/sqrt(2), 2: -1/sqrt(2), 3:         0 },
+    2: { 1: 1/sqrt(6), 2:  1/sqrt(6), 3: -2/sqrt(6)}
+}
+
+Pi = {
+    1: P(1,0,0),
+    2: P(0,1,0),
+    3: P(0,0,1)
+}
+
+
+def mod3(i):
+  return ((i - 1)%3) + 1
+
+def Pks(p):
+  pks = {}
+  n = 1
+  for i, pi in Pi.items():
+    if p*pi != P0:
+      pks[n] = pi
+      n += 1
+
+  return pks
+
+def Pksi(p):
+  pks = {}
+  n = 1
+  for i, pi in Pi.items():
+    if p*pi != P0:
+      pks[n] = i
+      n += 1
+
+  return pks
+
+def Pc(p):
+  ds = {}
+  n = 1
+
+  if p.x != 0:
+    ds[n] = P(p.x,0,0)
+    n += 1
+
+  if p.y != 0:
+    ds[n] = P(0, p.y,0)
+    n += 1
+
+  if p.z != 0:
+    ds[n] = P(0,0,p.z)
+    n += 1
+
+  return ds
+
+#############  P^2 = 0  ############################################################################
+#############    A1p    ############################################################################
+
+def _P0_A1p(f_ops, n=0):
+
+  op = S.Zero
+  N = 0
+  for p in MOMENTA[n]:
+    op += project_momentum(f_ops[0], p, -p)
+    N += 1
+
+  return [op/N]
+
+#############    A2p    ############################################################################
+def _P0_A2p_LT2p(f_ops):
+
+  op = S.Zero
+  for i in range(1,4):
+    p1 = Pi[mod3(i+1)] + Pi[mod3(i+2)]
+    p2 = Pi[mod3(i+1)] - Pi[mod3(i+2)]
+
+    op += project_momentum(f_ops[i], p1, -p1) - project_momentum(f_ops[i], p2, -p2)
+
+  return [op]
+
+def _P0_LT2p_A2p(f_ops):
+
+  op = S.Zero
+  for i in range(1,4):
+    p1 = Pi[mod3(i+1)] + Pi[mod3(i+2)]
+    p2 = Pi[mod3(i+1)] - Pi[mod3(i+2)]
+
+    op += project_momentum(f_ops[0], p1, -p1) - project_momentum(f_ops[0], p2, -p2)
+
+  return [op]
+
+#############    Ep     ############################################################################
+def _P0_Ep_LEp_1(f_ops):
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      ops[i-1] += L[i][j]*project_momentum(f_ops[0], Pi[j], -Pi[j])
+
+  return ops
+
+def _P0_Ep_LEp_2(f_ops):
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      p1 = Pi[mod3(j+1)] + Pi[mod3(j+2)]
+      p2 = Pi[mod3(j+1)] - Pi[mod3(j+2)]
+
+      ops[i-1] += L[i][j]*(project_momentum(f_ops[0], p1, -p1) \
+                         + project_momentum(f_ops[0], p2, -p2))
+
+  return ops
+
+def _P0_Ep_LT2p(f_ops):
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      for k in range(1,3):
+        p1 = Pi[mod3(j+1)] + Pi[mod3(j+2)]
+        p2 = Pi[mod3(j+1)] - Pi[mod3(j+2)]
+
+        ops[i-1] += Eijk(i,k)*L[k][j]*(project_momentum(f_ops[j], p1, -p1) \
+                                     - project_momentum(f_ops[j], p2, -p2))
+
+  return ops
+
+def _P0_LT2p_Ep(f_ops):
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      for k in range(1,3):
+        p1 = Pi[mod3(j+1)] + Pi[mod3(j+2)]
+        p2 = Pi[mod3(j+1)] - Pi[mod3(j+2)]
+
+        ops[i-1] += Eijk(i,k)*L[k][j]*(project_momentum(f_ops[0], p1, -p1) \
+                                     - project_momentum(f_ops[0], p2, -p2))
+
+  return ops
+
+#############    T1p    ############################################################################
+def _P0_T1p_LA1p(f_ops, n=0):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[n]:
+      ops[i-1] += project_momentum(f_ops[i], p, -p)
+
+  return ops
+
+def _P0_LA1p_T1p(f_ops, n=0):
+
+  op = S.Zero
+  for p in MOMENTA[n]:
+    op += project_momentum(f_ops[0], p, -p)
+
+  return [op]
+
+def _P0_T1p_LEp_1(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    ops[i-1] = project_momentum(f_ops[i], Pi[i], -Pi[i])
+
+    for j in range(1,4):
+      ops[i-1] -= Rational(1,3)*project_momentum(f_ops[i], Pi[j], -Pi[j])
+
+  return ops
+
+def _P0_LEp_T1p_1(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    ops[i-1] = project_momentum(f_ops[0], Pi[i], -Pi[i])
+
+    for j in range(1,4):
+      ops[i-1] -= Rational(1,3)*project_momentum(f_ops[0], Pi[j], -Pi[j])
+
+  return ops
+
+def _P0_T1p_LEp_2(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    p1 = Pi[mod3(i+1)] + Pi[mod3(i+2)]
+    p2 = Pi[mod3(i+1)] - Pi[mod3(i+2)]
+    ops[i-1] = Rational(1,2)*(project_momentum(f_ops[i], p1, -p1) \
+                            + project_momentum(f_ops[i], p2, -p2))
+
+    for j in range(1,4):
+      for k in range(j+1,4):
+        ops[i-1] -= Rational(1,6)*(project_momentum(f_ops[i], Pi[j]+Pi[k], -Pi[j]-Pi[k]) \
+                                 + project_momentum(f_ops[i], Pi[j]-Pi[k], -Pi[j]+Pi[k]))
+
+  return ops
+
+def _P0_LEp_T1p_2(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    p1 = Pi[mod3(i+1)] + Pi[mod3(i+2)]
+    p2 = Pi[mod3(i+1)] - Pi[mod3(i+2)]
+    ops[i-1] = Rational(1,2)*(project_momentum(f_ops[0], p1, -p1) \
+                            + project_momentum(f_ops[0], p2, -p2))
+
+    for j in range(1,4):
+      for k in range(j+1,4):
+        ops[i-1] -= Rational(1,6)*(project_momentum(f_ops[0], Pi[j]+Pi[k], -Pi[j]-Pi[k]) \
+                                 + project_momentum(f_ops[0], Pi[j]-Pi[k], -Pi[j]+Pi[k]))
+
+  return ops
+
+def _P0_T1p_LT2p(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      ops[i-1] += Rational(1,4)*(project_momentum(f_ops[i_j], Pi[i]+Pi[i_j], -Pi[i]-Pi[i_j]) \
+                               - project_momentum(f_ops[i_j], Pi[i]-Pi[i_j], -Pi[i]+Pi[i_j]))
+
+  return ops
+
+def _P0_LT2p_T1p(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      ops[i-1] += Rational(1,4)*(project_momentum(f_ops[0], Pi[i]+Pi[i_j], -Pi[i]-Pi[i_j]) \
+                               - project_momentum(f_ops[0], Pi[i]-Pi[i_j], -Pi[i]+Pi[i_j]))
+
+  return ops
+
+def _P0_T1p_1(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[2]:
+      for j in range(1,4):
+        ops[i-1] += (p[i]*p[j] - KroneckerDelta(i,j)*Rational(p.sq,3))*project_momentum(f_ops[j], p, -p)
+
+  return ops
+
+def _P0_T1p_3(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[2]:
+      ops[i-1] += (p[i]**2 - Rational(p.sq,3))*project_momentum(f_ops[i], p, -p)
+      for j in range(1,4):
+        ops[i-1] -= Rational(2,5)*(p[i]*p[j] - KroneckerDelta(i,j)*Rational(p.sq,3))*project_momentum(f_ops[j], p, -p)
+
+  return ops
+
+#############    T2p    ############################################################################
+def _P0_T2p_LEp_1(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      ops[i-1] += (-1)**j*project_momentum(f_ops[i], Pi[i_j], -Pi[i_j])
+
+  return ops
+
+def _P0_LEp_T2p_1(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      ops[i-1] += (-1)**j*project_momentum(f_ops[0], Pi[i_j], -Pi[i_j])
+
+  return ops
+
+def _P0_T2p_LT2p_0(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    p1 = Pi[mod3(i+1)] + Pi[mod3(i+2)]
+    p2 = Pi[mod3(i+1)] - Pi[mod3(i+2)]
+    ops[i-1] += project_momentum(f_ops[0], p1, -p1) - project_momentum(f_ops[0], p2, -p2)
+
+  return ops
+
+def _P0_T2p_LEp_2(f_ops):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      p1 = Pi[i] + Pi[i_j]
+      p2 = Pi[i] - Pi[i_j]
+
+      ops[i-1] += (-1)**j*(project_momentum(f_ops[i], p1, -p1) \
+                         + project_momentum(f_ops[i], p2, -p2))
+
+  return ops
+
+def _P0_LEp_T2p_2(f_ops):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      p1 = Pi[i] + Pi[i_j]
+      p2 = Pi[i] - Pi[i_j]
+
+      ops[i-1] += (-1)**j*(project_momentum(f_ops[0], p1, -p1) \
+                         + project_momentum(f_ops[0], p2, -p2))
+
+  return ops
+
+def _P0_T2p_LT2p_1(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,4):
+      for k in range(1,4):
+        p1 = Pi[mod3(k+1)] + Pi[mod3(k+2)]
+        p2 = Pi[mod3(k+1)] - Pi[mod3(k+2)]
+        ops[i-1] += Eijk(i,j,k)*(project_momentum(f_ops[j], p1, -p1) \
+                               - project_momentum(f_ops[j], p2, -p2))
+
+  return ops
+
+def _P0_LT2p_T2p_1(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,4):
+      for k in range(1,4):
+        p1 = Pi[mod3(k+1)] + Pi[mod3(k+2)]
+        p2 = Pi[mod3(k+1)] - Pi[mod3(k+2)]
+        ops[i-1] += Eijk(i,j,k)*(project_momentum(f_ops[0], p1, -p1) \
+                               - project_momentum(f_ops[0], p2, -p2))
+
+  return ops
+
+def _P0_T2p_2(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[2]:
+      for j in range(1,3):
+        i_j = mod3(i+j)
+        ops[i-1] += (-1)**j*(p[i_j]**2*project_momentum(f_ops[i], p, -p) \
+                         - p[i]*p[i_j]*project_momentum(f_ops[i_j], p, -p))
+
+  return ops
+
+def _P0_T2p_3(f_ops):
+
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[2]:
+      for j in range(1,3):
+        i_j = mod3(i+j)
+        ops[i-1] += (-1)**j*(2*p[i]*p[i_j]*project_momentum(f_ops[i_j], p, -p) \
+                               + p[i_j]**2*project_momentum(f_ops[i], p, -p))
+
+  return ops
+
+#############    A1m    ############################################################################
+
+def _P0_A1m_LT1m(f_ops, n=1):
+  op = S.Zero
+  for p in MOMENTA[n]:
+    for i in range(1,4):
+      op += p[i]*project_momentum(f_ops[i], p, -p)
+
+  return [op]
+
+def _P0_LT1m_A1m(f_ops, n=1):
+  op = S.Zero
+  for p in MOMENTA[n]:
+    for i in range(1,4):
+      op += p[i]*project_momentum(f_ops[0], p, -p)
+
+  return [op]
+
+#############    A2m    ############################################################################
+
+def _P0_A2m_LT2m(f_ops):
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      p1 = Pi[i] + Pi[i_j]
+      p2 = Pi[i] - Pi[i_j]
+
+      op += (-1)**j*(project_momentum(f_ops[i], p1, -p1) + project_momentum(f_ops[i], p2, -p2))
+
+  return [op]
+
+def _P0_LT2m_A2m(f_ops):
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,3):
+      i_j = mod3(i+j)
+      p1 = Pi[i] + Pi[i_j]
+      p2 = Pi[i] - Pi[i_j]
+
+      op += (-1)**j*(project_momentum(f_ops[0], p1, -p1) + project_momentum(f_ops[0], p2, -p2))
+
+  return [op]
+
+#############    Em     ############################################################################
+def _P0_Em_LT1m(f_ops, n=1):
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for p in MOMENTA[n]:
+      for j in range(1,4):
+        ops[i-1] += L[i][j]*p[j]*project_momentum(f_ops[j], p, -p)
+
+  return ops
+
+def _P0_LT1m_Em(f_ops, n=1):
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for p in MOMENTA[n]:
+      for j in range(1,4):
+        ops[i-1] += L[i][j]*p[j]*project_momentum(f_ops[0], p, -p)
+
+  return ops
+
+def _P0_Em_LT2m(f_ops):
+
+  ops = [S.Zero, S.Zero]
+  for j in range(1,3):
+    for l in range(1,3):
+      for k in range(1,4):
+        p1 = Pi[k] + Pi[mod3(k+j)]
+        p2 = Pi[k] - Pi[mod3(k+j)]
+
+        for i in range(1,3):
+          ops[i-1] += Eijk(i,l)*L[l][k]*(-1)**j*(project_momentum(f_ops[k], p1, -p1) \
+                                               + project_momentum(f_ops[k], p2, -p2))
+
+  return ops
+
+def _P0_LT2m_Em(f_ops):
+
+  ops = [S.Zero, S.Zero]
+  for j in range(1,3):
+    for l in range(1,3):
+      for k in range(1,4):
+        p1 = Pi[k] + Pi[mod3(k+j)]
+        p2 = Pi[k] - Pi[mod3(k+j)]
+
+        for i in range(1,3):
+          ops[i-1] += Eijk(i,l)*L[l][k]*(-1)**j*(project_momentum(f_ops[0], p1, -p1) \
+                                               + project_momentum(f_ops[0], p2, -p2))
+
+  return ops
+
+#############    T1m    ############################################################################
+
+def _P0_T1m_LT1m_0(f_ops, n=1):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[n]:
+      ops[i-1] += p[i]*project_momentum(f_ops[0], p, -p)
+
+  return ops
+
+def _P0_T1m_LT1m_1(f_ops, n=1):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[n]:
+      for j in range(1,4):
+        for k in range(1,4):
+          ops[i-1] += Eijk(i,j,k)*p[j]*project_momentum(f_ops[k], p, -p)
+
+  return ops
+
+def _P0_LT1m_T1m_1(f_ops, n=1):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[n]:
+      for j in range(1,4):
+        for k in range(1,4):
+          ops[i-1] += Eijk(i,j,k)*p[j]*project_momentum(f_ops[0], p, -p)
+
+  return ops
+
+def _P0_T1m_LT2m(f_ops):
+  ops = [S.Zero, S.Zero, S.Zero]
+
+  for i in range(1,4):
+    for j in range(1,4):
+      if i == j:
+        continue
+      for k in range(1,4):
+        if i == k or j == k:
+          continue
+
+        for l in range(1,3):
+          p1 = Pi[k] + Pi[mod3(k+l)]
+          p2 = Pi[k] - Pi[mod3(k+l)]
+          ops[i-1] += (-1)**l*(project_momentum(f_ops[j], p1, -p1) \
+                             + project_momentum(f_ops[j], p2, -p2))
+
+  return ops
+
+def _P0_LT2m_T1m(f_ops):
+  ops = [S.Zero, S.Zero, S.Zero]
+
+  for i in range(1,4):
+    for j in range(1,4):
+      if i == j:
+        continue
+      for k in range(1,4):
+        if i == k or j == k:
+          continue
+
+        for l in range(1,3):
+          p1 = Pi[k] + Pi[mod3(k+l)]
+          p2 = Pi[k] - Pi[mod3(k+l)]
+          ops[i-1] += (-1)**l*(project_momentum(f_ops[0], p1, -p1) \
+                             + project_momentum(f_ops[0], p2, -p2))
+
+  return ops
+
+#############    T2m    ############################################################################
+
+def _P0_T2m_LT1m(f_ops, n=1):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[n]:
+      for j in range(1,4):
+        if j == i:
+          continue
+        for k in range(1,4):
+          if i == k or j == k:
+            continue
+
+          ops[i-1] += p[j]*project_momentum(f_ops[k], p, -p)
+
+  return ops
+
+def _P0_LT1m_T2m(f_ops, n=1):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for p in MOMENTA[n]:
+      for j in range(1,4):
+        if j == i:
+          continue
+        for k in range(1,4):
+          if i == k or j == k:
+            continue
+
+          ops[i-1] += p[j]*project_momentum(f_ops[0], p, -p)
+
+  return ops
+
+def _P0_T2m_LT2m_1(f_ops):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,4):
+      for k in range(1,4):
+        for l in range(1,3):
+          p1 = Pi[k] + Pi[mod3(k+l)]
+          p2 = Pi[k] - Pi[mod3(k+l)]
+
+          ops[i-1] += Eijk(i,j,k)*(-1)**l*(project_momentum(f_ops[j], p1, -p1) \
+                                         + project_momentum(f_ops[j], p2, -p2))
+
+  return ops
+
+def _P0_LT2m_T2m_1(f_ops):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,4):
+      for k in range(1,4):
+        for l in range(1,3):
+          p1 = Pi[k] + Pi[mod3(k+l)]
+          p2 = Pi[k] - Pi[mod3(k+l)]
+
+          ops[i-1] += Eijk(i,j,k)*(-1)**l*(project_momentum(f_ops[0], p1, -p1) \
+                                         + project_momentum(f_ops[0], p2, -p2))
+
+  return ops
+
+def _P0_T2m_LT2m_0(f_ops):
+  ops = [S.Zero, S.Zero, S.Zero]
+  for i in range(1,4):
+    for j in range(1,3):
+      p1 = Pi[i] + Pi[mod3(i+j)]
+      p2 = Pi[i] - Pi[mod3(i+j)]
+
+      ops[i-1] += (-1)**j*(project_momentum(f_ops[0], p1, -p1) \
+                         + project_momentum(f_ops[0], p2, -p2))
   
-  T1p_1_op = 3*ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - ops[1].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - ops[1].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - ops[1].projectMomentum(P([0,0,1]), P([0,0,-1]))
+  return ops
 
-  T1p_2_op = 3*ops[2].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - ops[2].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - ops[2].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - ops[2].projectMomentum(P([0,0,1]), P([0,0,-1]))
+#############  P^2 = 1  ############################################################################
+#############    A1     ############################################################################
 
-  T1p_3_op = 3*ops[3].projectMomentum(P([0,0,1]), P([0,0,-1])) \
-      - ops[3].projectMomentum(P([1,0,0]), P([-1,0,0])) \
-      - ops[3].projectMomentum(P([0,1,0]), P([0,-1,0])) \
-      - ops[3].projectMomentum(P([0,0,1]), P([0,0,-1]))
+def _P1_A1_LA1_10(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
 
-  return [T1p_1_op, T1p_2_op, T1p_3_op]
-
-
-# @ADH - Consider other k_{i1} and k_{i2}?
-def P0_T1p_Ep_2(ops):
-
-  k11 = P([0,1,0]); k12 = P([0,0,1])
-  k21 = P([1,0,0]); k22 = P([0,0,1])
-  k31 = P([1,0,0]); k32 = P([0,1,0])
-
-  T1p_1_op = 3*(ops[1].projectMomentum(k11 + k12, -k11 - k12) \
-      + ops[1].projectMomentum(k11 - k12, -k11 + k12)) \
-      - (ops[1].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-         + ops[1].projectMomentum(P([1,-1,0]), P([-1,1,0]))) \
-      - (ops[1].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-         + ops[1].projectMomentum(P([1,0,-1]), P([-1,0,1]))) \
-      - (ops[1].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-         + ops[1].projectMomentum(P([0,1,-1]), P([0,-1,1])))
-
-  T1p_2_op = 3*(ops[2].projectMomentum(k21 + k22, -k21 - k22) \
-      + ops[2].projectMomentum(k21 - k22, -k21 + k22)) \
-      - (ops[2].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-         + ops[2].projectMomentum(P([1,-1,0]), P([-1,1,0]))) \
-      - (ops[2].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-         + ops[2].projectMomentum(P([1,0,-1]), P([-1,0,1]))) \
-      - (ops[2].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-         + ops[2].projectMomentum(P([0,1,-1]), P([0,-1,1])))
-
-  T1p_3_op = 3*(ops[3].projectMomentum(k31 + k32, -k31 - k32) \
-      + ops[3].projectMomentum(k31 - k32, -k31 + k32)) \
-      - (ops[3].projectMomentum(P([1,1,0]), P([-1,-1,0])) \
-         + ops[3].projectMomentum(P([1,-1,0]), P([-1,1,0]))) \
-      - (ops[3].projectMomentum(P([1,0,1]), P([-1,0,-1])) \
-         + ops[3].projectMomentum(P([1,0,-1]), P([-1,0,1]))) \
-      - (ops[3].projectMomentum(P([0,1,1]), P([0,-1,-1])) \
-         + ops[3].projectMomentum(P([0,1,-1]), P([0,-1,1])))
-
-  return [T1p_1_op, T1p_2_op, T1p_3_op]
-
-# @ADH - Consider other k_{i1} and k_{i2}?
-def P0_T1p_T2p_2(ops):
-  px = P([1,0,0]); py = P([0,1,0]); pz = P([0,0,1])
-
-  k11 = P([0,1,0]); k12 = P([0,0,1])
-  k21 = P([1,0,0]); k22 = P([0,0,1])
-  k31 = P([1,0,0]); k32 = P([0,1,0])
-
-  T1p_1_op = ops[2].projectMomentum(px + k11, -px - k11) \
-      - ops[2].projectMomentum(px - k11, -px + k11) \
-      + ops[3].projectMomentum(px + k12, -px - k12) \
-      - ops[3].projectMomentum(px - k12, -px + k12)
-
-  T1p_2_op = ops[1].projectMomentum(py + k21, -py - k21) \
-      - ops[1].projectMomentum(py - k21, -py + k21) \
-      + ops[3].projectMomentum(py + k22, -py - k22) \
-      - ops[3].projectMomentum(py - k22, -py + k22)
-
-  T1p_3_op = ops[1].projectMomentum(pz + k31, -pz - k31) \
-      - ops[1].projectMomentum(pz - k31, -pz + k31) \
-      + ops[2].projectMomentum(pz + k32, -pz - k32) \
-      - ops[2].projectMomentum(pz - k32, -pz + k32)
-
-  return [T1p_1_op, T1p_2_op, T1p_3_op]
-
-
-def P1_A1_A1_1_0(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  op = ops[0].projectMomentum(Ptot, P0)
+  op = project_momentum(f_ops[0], Ptot, P0)
 
   return [op]
+
+def _P1_A1_LA1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for j in range(1,4):
+    if Ptot[j] != 0:
+      continue
+
+    op += Rational(1,4)*(project_momentum(f_ops[0], Ptot + Pi[j], -Pi[j]) \
+                       + project_momentum(f_ops[0], Ptot - Pi[j],  Pi[j]))
+
+  return [op]
+
+def _P1_A1_LE2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for j in range(1,4):
+    if Ptot[j] != 0:
+      continue
+
+    op += Rational(1,4)*(project_momentum(f_ops[j], Ptot + Pi[j]*Ptot, -Pi[j]*Ptot) \
+                       - project_momentum(f_ops[j], Ptot - Pi[j]*Ptot,  Pi[j]*Ptot))
+
+  return [op]
+
+def _P1_LE2_A1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for j in range(1,4):
+    if Ptot[j] != 0:
+      continue
+
+    op += Rational(1,4)*(project_momentum(f_ops[0], Ptot+Pi[j]*Ptot, -Pi[j]*Ptot) \
+                       - project_momentum(f_ops[0], Ptot-Pi[j]*Ptot,  Pi[j]*Ptot))
+
+  return [op]
+
+#############    A2     ############################################################################
+
+def _P1_A2_LA1_10(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[i], Ptot, P0)
+
+  return [op]
+
+def _P1_LA1_A2_10(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[0], Ptot, P0)
+
+  return [op]
+
+def _P1_A2_LA1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,4):
+      if Ptot[j] != 0:
+        continue
+
+      op += Rational(Ptot[i],4)*(project_momentum(f_ops[i], Ptot + Pi[j], -Pi[j]) \
+                               + project_momentum(f_ops[i], Ptot - Pi[j],  Pi[j]))
+  return [op]
+
+def _P1_LA1_A2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,4):
+      if Ptot[j] != 0:
+        continue
+
+      op += Rational(Ptot[i],4)*(project_momentum(f_ops[0], Ptot + Pi[j], -Pi[j]) \
+                               + project_momentum(f_ops[0], Ptot - Pi[j],  Pi[j]))
+  return [op]
+
+def _P1_A2_LE2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for j in range(1,4):
+    if Ptot[j] != 0:
+      continue
+
+    op += Rational(1,4)*(project_momentum(f_ops[j], Ptot + Pi[j], -Pi[j]) \
+                       - project_momentum(f_ops[j], Ptot - Pi[j],  Pi[j]))
+
+  return [op]
+
+def _P1_LE2_A2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = S.Zero
+  for j in range(1,4):
+    if Ptot[j] != 0:
+      continue
+
+    op += Rational(1,4)*(project_momentum(f_ops[0], Ptot + Pi[j], -Pi[j]) \
+                       - project_momentum(f_ops[0], Ptot - Pi[j],  Pi[j]))
+
+  return [op]
+
+#############    B1     ############################################################################
+
+def _P1_B1_LB1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+
+  op = S.Zero
+  for i in range(1,3):
+    op += Rational(1,4)*(-1)**i*(project_momentum(f_ops[0], Ptot - k[i],  k[i]) \
+                               + project_momentum(f_ops[0], Ptot + k[i], -k[i]))
+
+  return [op]
+
+def _P1_B1_LE2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+  ks = Pksi(Ptot)
+
+  op = S.Zero
+  for i in range(1,3):
+    op += Rational(1,4)*(-1)**i*(project_momentum(f_ops[ks[i]], Ptot + k[i]*Ptot, -k[i]*Ptot) \
+                               - project_momentum(f_ops[ks[i]], Ptot - k[i]*Ptot,  k[i]*Ptot))
+
+  return [op]
+
+def _P1_LE2_B1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+
+  op = S.Zero
+  for i in range(1,3):
+    op += Rational(1,4)*(-1)**i*(project_momentum(f_ops[0], Ptot + k[i]*Ptot, -k[i]*Ptot) \
+                               - project_momentum(f_ops[0], Ptot - k[i]*Ptot,  k[i]*Ptot))
+
+  return [op]
+
+#############    B2     ############################################################################
+
+def _P1_B2_LB1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
   
-def P1_A1_A1_2_1(ops, Ptot):
+  op = S.Zero
+  for i in range(1,3):
+    for j in range(1,4):
+      op += Rational(1,4)*(-1)**i*Ptot[j]*(project_momentum(f_ops[j], Ptot - k[i],  k[i]) \
+                                         + project_momentum(f_ops[j], Ptot + k[i], -k[i]))
 
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
+  return [op]
+
+def _P1_LB1_B2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+  
+  op = S.Zero
+  for i in range(1,3):
+    for j in range(1,4):
+      op += Rational(1,4)*(-1)**i*Ptot[j]*(project_momentum(f_ops[0], Ptot - k[i],  k[i]) \
+                                         + project_momentum(f_ops[0], Ptot + k[i], -k[i]))
+
+  return [op]
+
+def _P1_B2_LE2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+  ks = Pksi(Ptot)
 
   op = S.Zero
-  if Ptot.x == 0:
-    px = P([1,0,0])
-    op += ops[0].projectMomentum(Ptot+px, -px) + ops[0].projectMomentum(Ptot-px, px)
-
-  if Ptot.y == 0:
-    py = P([0,1,0])
-    op += ops[0].projectMomentum(Ptot+py, -py) + ops[0].projectMomentum(Ptot-py, py)
-
-  if Ptot.z == 0:
-    pz = P([0,0,1])
-    op += ops[0].projectMomentum(Ptot+pz, -pz) + ops[0].projectMomentum(Ptot-pz, pz)
+  for i in range(1,3):
+    op += Rational(1,4)*(-1)**i*(project_momentum(f_ops[ks[i]], Ptot + k[i], -k[i]) \
+                               - project_momentum(f_ops[ks[i]], Ptot - k[i],  k[i]))
 
   return [op]
 
+def _P1_LE2_B2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
 
-def P1_A1_E2_2_1(ops, Ptot):
-
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
+  k = Pks(Ptot)
 
   op = S.Zero
-  if Ptot.x == 0:
-    p = P([1,0,0]) * Ptot
-    op += ops[1].projectMomentum(Ptot+p, -p) - ops[1].projectMomentum(Ptot-p, p)
+  for i in range(1,3):
+    op += Rational(1,4)*(-1)**i*(project_momentum(f_ops[0], Ptot + k[i], -k[i]) \
+                               - project_momentum(f_ops[0], Ptot - k[i],  k[i]))
 
-  if Ptot.y == 0:
-    p = P([0,1,0]) * Ptot
-    op += ops[2].projectMomentum(Ptot+p, -p) - ops[2].projectMomentum(Ptot-p, p)
+  return [op]
 
-  if Ptot.z == 0:
-    p = P([0,0,1]) * Ptot
-    op += ops[3].projectMomentum(Ptot+p, -p) - ops[3].projectMomentum(Ptot-p, p)
+#############    E2     ############################################################################
+
+def _P1_E2_LA1_10(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  ks = Pksi(Ptot)
+
+  op = [project_momentum(f_ops[ks[1]], Ptot, P0), project_momentum(f_ops[ks[2]], Ptot, P0)]
+
+  return op
+
+def _P1_LA1_E2_10(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  op = project_momentum(f_ops[0], Ptot, P0)
 
   return [op]
 
 
-def P1_A2_A1_1_0(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
+def _P1_E2_LE2_21_0(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
 
-  if Ptot.x != 0:
-    op = Ptot.x * ops[1].projectMomentum(Ptot, P0)
-  elif Ptot.y != 0:
-    op = Ptot.y * ops[2].projectMomentum(Ptot, P0)
-  elif Ptot.z != 0:
-    op = Ptot.z * ops[3].projectMomentum(Ptot, P0)
+  k = Pks(Ptot)
 
-  return [op]
-
-def P1_A2_A1_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  px = P([1,0,0])
-  py = P([0,1,0])
-  pz = P([0,0,1])
-
-  if Ptot.x != 0:
-    op = Ptot.x * (ops[1].projectMomentum(Ptot+py, -py) + ops[1].projectMomentum(Ptot-py, py) \
-        + ops[1].projectMomentum(Ptot+pz, -pz) + ops[1].projectMomentum(Ptot-pz, pz))
-
-  elif Ptot.y != 0:
-    op = Ptot.y * (ops[2].projectMomentum(Ptot+px, -px) + ops[2].projectMomentum(Ptot-px, px) \
-        + ops[2].projectMomentum(Ptot+pz, -pz) + ops[2].projectMomentum(Ptot-pz, pz))
-
-  elif Ptot.z != 0:
-    op = Ptot.z * (ops[3].projectMomentum(Ptot+px, -px) + ops[3].projectMomentum(Ptot-px, px) \
-        + ops[3].projectMomentum(Ptot+py, -py) + ops[3].projectMomentum(Ptot-py, py))
-
-  return [op]
-
-
-def P1_A2_E2_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  px = P([1,0,0])
-  py = P([0,1,0])
-  pz = P([0,0,1])
-
-  if Ptot.x != 0:
-    op = ops[2].projectMomentum(Ptot+py, -py) - ops[2].projectMomentum(Ptot-py, py) \
-        + ops[3].projectMomentum(Ptot+pz, -pz) - ops[3].projectMomentum(Ptot-pz, pz)
-
-  elif Ptot.y != 0:
-    op = ops[1].projectMomentum(Ptot+px, -px) - ops[1].projectMomentum(Ptot-px, px) \
-        + ops[3].projectMomentum(Ptot+pz, -pz) - ops[3].projectMomentum(Ptot-pz, pz)
-
-  elif Ptot.z != 0:
-    op = ops[1].projectMomentum(Ptot+px, -px) - ops[1].projectMomentum(Ptot-px, px) \
-        + ops[2].projectMomentum(Ptot+py, -py) - ops[2].projectMomentum(Ptot-py, py)
-
-  return [op]
-
-def P1_B1_B1_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    k1 = P([0,1,0])
-    k2 = P([0,0,1])
-
-  elif Ptot.y != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,0,1])
-
-  elif Ptot.z != 0:
-    k1 = P([0,1,0])
-    k2 = P([1,0,0])
-
-  op = ops[0].projectMomentum(Ptot-k1, k1) + ops[0].projectMomentum(Ptot+k1, -k1) \
-      - ops[0].projectMomentum(Ptot-k2, k2) - ops[0].projectMomentum(Ptot+k2, -k2)
-
-  return [op]
-
-
-def P1_B1_E2_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    k1 = P([0,1,0])
-    k2 = P([0,0,1])
-
-    k1s = 2
-    k2s = 3
-
-  elif Ptot.y != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,0,1])
-
-    k1s = 1
-    k2s = 3
-
-  elif Ptot.z != 0:
-    k1 = P([0,1,0])
-    k2 = P([1,0,0])
-
-    k1s = 2
-    k2s = 1
-
-  op = ops[k1s].projectMomentum(Ptot + k1*Ptot, -k1*Ptot) - ops[k1s].projectMomentum(Ptot - k1*Ptot, k1*Ptot) \
-      - ops[k2s].projectMomentum(Ptot + k2*Ptot, -k2*Ptot) + ops[k2s].projectMomentum(Ptot - k2*Ptot, k2*Ptot)
-
-  return [op]
-
-
-def P1_B2_B1_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    k1 = P([0,1,0])
-    k2 = P([0,0,1])
-
-    j = 1
-    dj = Ptot.x
-
-  elif Ptot.y != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,0,1])
-
-    j = 2
-    dj = Ptot.y
-
-  elif Ptot.z != 0:
-    k1 = P([0,1,0])
-    k2 = P([1,0,0])
-
-    j = 3
-    dj = Ptot.z
-
-  op = dj * (ops[j].projectMomentum(Ptot - k1, k1) + ops[j].projectMomentum(Ptot + k1, -k1) \
-      - ops[j].projectMomentum(Ptot - k2, k2) - ops[j].projectMomentum(Ptot + k2, -k2))
-
-  return [op]
-
-def P1_B2_E2_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    k1 = P([0,1,0])
-    k2 = P([0,0,1])
-
-    k1s = 2
-    k2s = 3
-
-  elif Ptot.y != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,0,1])
-
-    k1s = 1
-    k2s = 3
-
-  elif Ptot.z != 0:
-    k1 = P([0,1,0])
-    k2 = P([1,0,0])
-
-    k1s = 2
-    k2s = 1
-
-  op = ops[k1s].projectMomentum(Ptot + k1, -k1) - ops[k1s].projectMomentum(Ptot - k1, k1) \
-      - ops[k2s].projectMomentum(Ptot + k2, -k2) + ops[k2s].projectMomentum(Ptot - k2, k2)
-
-  return [op]
-
-
-def P1_E2_A1_1_0(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    op1 = ops[2].projectMomentum(Ptot, P0)
-    op2 = ops[3].projectMomentum(Ptot, P0)
-
-  elif Ptot.y != 0:
-    op1 = ops[1].projectMomentum(Ptot, P0)
-    op2 = ops[3].projectMomentum(Ptot, P0)
-
-  elif Ptot.z != 0:
-    op1 = ops[1].projectMomentum(Ptot, P0)
-    op2 = ops[2].projectMomentum(Ptot, P0)
-
-  return [op1, op2]
-
-
-def P1_E2_E2_2_1_S0(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    k1 = P([0,1,0])
-    k2 = P([0,0,1])
-
-  elif Ptot.y != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,0,1])
-
-  elif Ptot.z != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,1,0])
-
-  op_1 = ops[0].projectMomentum(Ptot + k1*Ptot, -k1*Ptot) - ops[0].projectMomentum(Ptot - k1*Ptot, k1*Ptot)
-  op_2 = ops[0].projectMomentum(Ptot + k2*Ptot, -k2*Ptot) - ops[0].projectMomentum(Ptot - k2*Ptot, k2*Ptot)
+  op_1 = Rational(1,2)*(project_momentum(f_ops[0], Ptot + k[1]*Ptot, -k[1]*Ptot) \
+                      - project_momentum(f_ops[0], Ptot - k[1]*Ptot, k[1]*Ptot))
+  op_2 = Rational(1,2)*(project_momentum(f_ops[0], Ptot + k[2]*Ptot, -k[2]*Ptot) \
+                      - project_momentum(f_ops[0], Ptot - k[2]*Ptot, k[2]*Ptot))
 
   return [op_1, op_2]
 
 
-def P1_E2_A1_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
+def _P1_E2_LA1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
 
-  if Ptot.x != 0:
-    jk1_1 = P([1,0,0])
-    jk1_2 = P([0,0,1])
+  ks = Pksi(Ptot)
 
-    k1s = 2
+  op1 = S.Zero
+  op2 = S.Zero
+  for j in range(1,4):
+    if Ptot[j] != 0:
+      continue
 
-    jk2_1 = P([1,0,0])
-    jk2_2 = P([0,1,0])
+    op1 += Rational(1,4)*(project_momentum(f_ops[ks[1]], Ptot + Pi[j], -Pi[j]) \
+                        + project_momentum(f_ops[ks[1]], Ptot - Pi[j],  Pi[j]))
 
-    k2s = 3
+    op2 += Rational(1,4)*(project_momentum(f_ops[ks[2]], Ptot + Pi[j], -Pi[j]) \
+                        + project_momentum(f_ops[ks[2]], Ptot - Pi[j],  Pi[j]))
 
-  elif Ptot.y != 0:
-    jk1_1 = P([0,1,0])
-    jk1_2 = P([0,0,1])
+  return [op1, op2]
 
-    k1s = 1
+def _P1_LA1_E2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
 
-    jk2_1 = P([1,0,0])
-    jk2_2 = P([0,1,0])
+  ks = Pksi(Ptot)
 
-    k2s = 3
+  op1 = S.Zero
+  op2 = S.Zero
+  for j in range(1,4):
+    if Ptot[j] != 0:
+      continue
 
-  elif Ptot.z != 0:
-    jk1_1 = P([0,0,1])
-    jk1_2 = P([0,1,0])
+    op1 += Rational(1,4)*(project_momentum(f_ops[0], Ptot + Pi[j], -Pi[j]) \
+                        + project_momentum(f_ops[0], Ptot - Pi[j],  Pi[j]))
 
-    k1s = 1
+    op2 += Rational(1,4)*(project_momentum(f_ops[0], Ptot + Pi[j], -Pi[j]) \
+                        + project_momentum(f_ops[0], Ptot - Pi[j],  Pi[j]))
 
-    jk2_1 = P([1,0,0])
-    jk2_2 = P([0,0,1])
+  return [op1, op2]
 
-    k2s = 2
+def _P1_E2_LB1_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+  ks = Pksi(Ptot)
+
+  op = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,3):
+      op[i-1] += Rational(1,4)*(-1)**(i+j)*(project_momentum(f_ops[ks[i]], Ptot - k[j],  k[j]) \
+                                          + project_momentum(f_ops[ks[i]], Ptot + k[j], -k[j]))
+
+  return op
+
+def _P1_LB1_E2_21(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+
+  op = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,3):
+      op[i-1] += Rational(1,4)*(-1)**(i+j)*(project_momentum(f_ops[0], Ptot - k[j],  k[j]) \
+                                          + project_momentum(f_ops[0], Ptot + k[j], -k[j]))
+
+  return op
+
+def _P1_E2_LE2_21_1(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+
+  op1 = S.Zero
+  op2 = S.Zero
+  for j in range(1,4):
+    op1 += Rational(1,2)*Ptot[j]*(project_momentum(f_ops[j], Ptot + k[1], -k[1]) \
+                                - project_momentum(f_ops[j], Ptot - k[1],  k[1]))
+
+    op2 += Rational(1,2)*Ptot[j]*(project_momentum(f_ops[j], Ptot + k[2], -k[2]) \
+                                - project_momentum(f_ops[j], Ptot - k[2],  k[2]))
+
+  return [op1, op2]
+
+def _P1_LE2_E2_21_1(f_ops, Ptot):
+  if Ptot.sq != 1:
+    raise ValueError("P^2 != 1")
+
+  k = Pks(Ptot)
+
+  op1 = S.Zero
+  op2 = S.Zero
+  for j in range(1,4):
+    op1 += Rational(1,2)*Ptot[j]*(project_momentum(f_ops[0], Ptot + k[1], -k[1]) \
+                                - project_momentum(f_ops[0], Ptot - k[1],  k[1]))
+
+    op2 += Rational(1,2)*Ptot[j]*(project_momentum(f_ops[0], Ptot + k[2], -k[2]) \
+                                - project_momentum(f_ops[0], Ptot - k[2],  k[2]))
+
+  return [op1, op2]
+
+#############  P^2 = 2  ############################################################################
+#############    A1     ############################################################################
+
+def _P2_A1_LA1_20(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  op = project_momentum(f_ops[0], Ptot, P0)
+
+  return [op]
 
 
-  op_1 = ops[k1s].projectMomentum(Ptot + jk1_1, -jk1_1) + ops[k1s].projectMomentum(Ptot - jk1_1, jk1_1) \
-      + ops[k1s].projectMomentum(Ptot + jk1_2, -jk1_2) + ops[k1s].projectMomentum(Ptot - jk1_2, jk1_2)
+def _P2_A1_LA1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
 
-  op_2 = ops[k2s].projectMomentum(Ptot + jk2_1, -jk2_1) + ops[k2s].projectMomentum(Ptot - jk2_1, jk2_1) \
-      + ops[k2s].projectMomentum(Ptot + jk2_2, -jk2_2) + ops[k2s].projectMomentum(Ptot - jk2_2, jk2_2)
+  ds = Pc(Ptot)
 
-  return [op_1, op_2]
+  op = project_momentum(f_ops[0], ds[1], ds[2])
 
-
-def P1_E2_B1_2_1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    k1 = P([0,1,0])
-    k2 = P([0,0,1])
-
-    k1s = 2
-    k2s = 3
-
-  elif Ptot.y != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,0,1])
-
-    k1s = 1
-    k2s = 3
-
-  elif Ptot.z != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,1,0])
-
-    k1s = 1
-    k2s = 2
-
-  op_1 = ops[k1s].projectMomentum(Ptot - k1, k1) + ops[k1s].projectMomentum(Ptot + k1, -k1) \
-      - ops[k1s].projectMomentum(Ptot - k2, k2) - ops[k1s].projectMomentum(Ptot + k2, -k2)
-
-  op_2 = -ops[k2s].projectMomentum(Ptot - k1, k1) - ops[k2s].projectMomentum(Ptot + k1, -k1) \
-      + ops[k2s].projectMomentum(Ptot - k2, k2) + ops[k2s].projectMomentum(Ptot + k2, -k2)
-
-  return [op_1, op_2]
+  return [op]
 
 
-def P1_E2_E2_2_1_S1(ops, Ptot):
-  if Ptot.psq != 1:
-    print("Invalid P^2 given")
-    return
+def _P2_A1_LB1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
 
-  if Ptot.x != 0:
-    k1 = P([0,1,0])
-    k2 = P([0,0,1])
-    dj = Ptot.x
+  ds = Pc(Ptot)
 
-    op1 = dj * (ops[1].projectMomentum(Ptot + k1, -k1) - ops[1].projectMomentum(Ptot - k1, k1))
-    op2 = dj * (ops[1].projectMomentum(Ptot + k2, -k2) - ops[1].projectMomentum(Ptot - k2, k2))
+  p = ds[1]*ds[2]
+  op = S.Zero
 
-  elif Ptot.y != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,0,1])
-    dj = Ptot.y
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[i], ds[1], ds[2])
 
-    op1 = dj * (ops[2].projectMomentum(Ptot + k1, -k1) - ops[2].projectMomentum(Ptot - k1, k1))
-    op2 = dj * (ops[2].projectMomentum(Ptot + k2, -k2) - ops[2].projectMomentum(Ptot - k2, k2))
+  return [op]
 
-  elif Ptot.z != 0:
-    k1 = P([1,0,0])
-    k2 = P([0,1,0])
-    dj = Ptot.z
+def _P2_LB1_A1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
 
-    op1 = dj * (ops[3].projectMomentum(Ptot + k1, -k1) - ops[3].projectMomentum(Ptot - k1, k1))
-    op2 = dj * (ops[3].projectMomentum(Ptot + k2, -k2) - ops[3].projectMomentum(Ptot - k2, k2))
+  ds = Pc(Ptot)
+
+  p = ds[1]*ds[2]
+  op = S.Zero
+
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[0], ds[1], ds[2])
+
+  return [op]
+
+#############    A2     ############################################################################
+
+def _P2_A2_LA1_20(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  op = S.Zero
+
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[i], Ptot, P0)
+
+  return [op]
+
+def _P2_LA1_A2_20(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  op = S.Zero
+
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[0], Ptot, P0)
+
+  return [op]
+
+def _P2_A2_LB1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1] - ds[2]
+
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[i], ds[1], ds[2])
+
+  return [op]
+
+def _P2_LB1_A2_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1] - ds[2]
+
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[0], ds[1], ds[2])
+
+  return [op]
+
+def _P2_A2_LA1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[i], ds[1], ds[2])
+
+  return [op]
+
+def _P2_LA1_A2_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[0], ds[1], ds[2])
+
+  return [op]
+
+#############    B1     ############################################################################
+
+def _P2_B1_LA1_20(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1]*ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[i], Ptot, P0)
+
+  return [op]
+
+def _P2_LA1_B1_20(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1]*ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[0], Ptot, P0)
+
+  return [op]
+
+def _P2_B1_LA1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1]*ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[i], ds[1], ds[2])
+
+  return [op]
+
+def _P2_LA1_B1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1]*ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[0], ds[1], ds[2])
+
+  return [op]
+
+def _P2_B1_LB1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  op = project_momentum(f_ops[0], ds[1], ds[2])
+
+  return [op]
+
+#############    B2     ############################################################################
+
+def _P2_B2_LA1_20(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1] - ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[i], Ptot, P0)
+
+  return [op]
+
+def _P2_LA1_B2_20(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1] - ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[0], Ptot, P0)
+
+  return [op]
+
+def _P2_B2_LB1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[i], ds[1], ds[2])
+
+  return [op]
+
+def _P2_LB1_B2_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Ptot[i]*project_momentum(f_ops[0], ds[1], ds[2])
+
+  return [op]
+
+def _P2_B2_LA1_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1] - ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[i], ds[1], ds[2])
+
+  return [op]
+
+def _P2_LA1_B2_11(f_ops, Ptot):
+  if Ptot.sq != 2:
+    raise ValueError("P^2 != 2")
+
+  ds = Pc(Ptot)
+
+  p = ds[1] - ds[2]
+  op = S.Zero
+  for i in range(1,4):
+    op += p[i]*project_momentum(f_ops[0], ds[1], ds[2])
+
+  return [op]
+
+
+#############  P^2 = 3  ############################################################################
+#############    A1     ############################################################################
+
+def _P3_A1_LA1_30(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  op = project_momentum(f_ops[0], Ptot, P0)
+
+  return [op]
+
+
+def _P3_A1_LA1_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Rational(1,3)*project_momentum(f_ops[0], Ptot - ds[i], ds[i])
+
+  return [op]
+
+
+def _P3_A1_LE2_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  p1p2 = ds[1]*ds[2]
+  coeff = p1p2.x*ds[3].x + p1p2.y*ds[3].y + p1p2.z*ds[3].z
+
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,4):
+      for k in range(1,4):
+        for l in range(1,4):
+          op += coeff*Rational(1,6)*Eijk(i,j,k)*ds[j][l]*project_momentum(f_ops[l], Ptot - ds[k], ds[k])
+
+  return [op]
+
+def _P3_LE2_A1_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  p1p2 = ds[1]*ds[2]
+  coeff = p1p2.x*ds[3].x + p1p2.y*ds[3].y + p1p2.z*ds[3].z
+
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,4):
+      for k in range(1,4):
+        for l in range(1,4):
+          op += coeff*Rational(1,6)*Eijk(i,j,k)*ds[j][l]*project_momentum(f_ops[0], Ptot - ds[k], ds[k])
+
+  return [op]
+
+#############    A2     ############################################################################
+
+def _P3_A2_LA1_30(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Rational(Ptot[i],3)*project_momentum(f_ops[i], Ptot, P0)
+
+  return [op]
+
+def _P3_LA1_A2_30(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  op = S.Zero
+  for i in range(1,4):
+    op += Rational(Ptot[i],3)*project_momentum(f_ops[0], Ptot, P0)
+
+  return [op]
+
+def _P3_A2_LA1_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,4):
+      op += Rational(Ptot[i],3)*project_momentum(f_ops[i], Ptot - ds[j], ds[j])
+
+  return [op]
+
+def _P3_LA1_A2_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    for j in range(1,4):
+      op += Rational(Ptot[i],3)*project_momentum(f_ops[0], Ptot - ds[j], ds[j])
+
+  return [op]
+
+def _P3_A2_LE2_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    for k in range(1,4):
+      d = 3*ds[i]
+      for j in range(1,4):
+        d -= ds[j]
+
+      op += Rational(1,9)*d[k]*project_momentum(f_ops[k], Ptot - ds[i], ds[i])
+
+  return [op]
+
+def _P3_LE2_A2_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  op = S.Zero
+  for i in range(1,4):
+    for k in range(1,4):
+      d = 3*ds[i]
+      for j in range(1,4):
+        d -= ds[j]
+
+      op += Rational(1,9)*d[k]*project_momentum(f_ops[0], Ptot - ds[i], ds[i])
+
+  return [op]
+
+#############    E2     ############################################################################
+
+def _P3_E2_LA1_30(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      ops[i-1] += L[i][j]*Ptot[j]*project_momentum(f_ops[j], Ptot, P0)
+
+  return ops
+
+def _P3_LA1_E2_30(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      ops[i-1] += L[i][j]*Ptot[j]*project_momentum(f_ops[0], Ptot, P0)
+
+  return ops
+
+
+def _P3_E2_LA1_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      for k in range(1,4):
+        ops[i-1] += Rational(1,3)*L[i][j]*Ptot[j]*project_momentum(f_ops[j], Ptot - ds[k], ds[k])
+
+  return ops
+
+def _P3_LA1_E2_21(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      for k in range(1,4):
+        ops[i-1] += Rational(1,3)*L[i][j]*Ptot[j]*project_momentum(f_ops[0], Ptot - ds[k], ds[k])
+
+  return ops
+
+
+def _P3_E2_LE2_21_0(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  p1p2 = ds[1]*ds[2]
+  coeff = p1p2.x*ds[3].x + p1p2.y*ds[3].y + p1p2.z*ds[3].z
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,3):
+      for k in range(1,4):
+        ops[i-1] += coeff*Eijk(i,j)*L[j][k]*project_momentum(f_ops[0], Ptot - ds[k], ds[k])
+
+  return ops
+
+
+def _P3_E2_LE2_21_1L(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      for k in range(1,4):
+        ops[i-1] += L[i][j]*Ptot[k]*project_momentum(f_ops[k], Ptot - ds[j], ds[j])
+
+  return ops
+
+def _P3_LE2_E2_21_1L(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  ops = [S.Zero, S.Zero]
+  for i in range(1,3):
+    for j in range(1,4):
+      for k in range(1,4):
+        ops[i-1] += L[i][j]*Ptot[k]*project_momentum(f_ops[0], Ptot - ds[j], ds[j])
+
+  return ops
+
+def _P3_E2_LE2_21_1T(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  op1 = S.Zero
+  op2 = S.Zero
+  for j in range(1,4):
+    for k in range(1,4):
+      op1 += (L[1][j]*L[2][k] + L[2][j]*L[1][k])*Ptot[j]*project_momentum(f_ops[j], Ptot - ds[k], ds[k])
+      op2 += (L[1][j]*L[1][k] - L[2][j]*L[2][k])*Ptot[j]*project_momentum(f_ops[j], Ptot - ds[k], ds[k])
+
+  return [op1, op2]
+
+def _P3_LE2_E2_21_1T(f_ops, Ptot):
+  if Ptot.sq != 3:
+    raise ValueError("P^2 != 3")
+
+  ds = Pc(Ptot)
+
+  op1 = S.Zero
+  op2 = S.Zero
+  for j in range(1,4):
+    for k in range(1,4):
+      op1 += (L[1][j]*L[2][k] + L[2][j]*L[1][k])*Ptot[j]*project_momentum(f_ops[0], Ptot - ds[k], ds[k])
+      op2 += (L[1][j]*L[1][k] - L[2][j]*L[2][k])*Ptot[j]*project_momentum(f_ops[0], Ptot - ds[k], ds[k])
 
   return [op1, op2]
 
 
-def P2_A1_A1_2_0(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
 
-  op = ops[0].projectMomentum(Ptot, P0)
+#############  P^2 = 4  ############################################################################
+#############    A1     ############################################################################
 
-  return [op]
+def _P4_A1_LA1_11(f_ops, Ptot):
+  if Ptot.sq != 4:
+    raise ValueError("P^2 != 4")
 
-
-def P2_A1_A1_1_1(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  op = ops[0].projectMomentum(p1, p2)
+  op = project_momentum(f_ops[0], Ptot/2, Ptot/2)
 
   return [op]
 
+#############    A2     ############################################################################
 
-def P2_A1_B1_1_1(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1*p2
-  op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(p1, p2)
-
-  return [op]
-
-
-def P2_A2_A1_2_0(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
+def _P4_A2_LA1_11(f_ops, Ptot):
+  if Ptot.sq != 4:
+    raise ValueError("P^2 != 4")
 
   op = S.Zero
-  if Ptot.x != 0:
-    op += Ptot.x * ops[1]
-
-  if Ptot.y != 0:
-    op += Ptot.y * ops[2]
-
-  if Ptot.z != 0:
-    op += Ptot.z * ops[3]
-
-  op = op.projectMomentum(Ptot, P0)
+  for i in range(1,4):
+    op += Ptot[i]/2*project_momentum(f_ops[i], Ptot/2, Ptot/2)
 
   return [op]
 
+def _P4_LA1_A2_11(f_ops, Ptot):
+  if Ptot.sq != 4:
+    raise ValueError("P^2 != 4")
 
-def P2_A2_B1_1_1_Fs(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1 - p2
   op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(p1, p2)
+  for i in range(1,4):
+    op += Ptot[i]/2*project_momentum(f_ops[0], Ptot/2, Ptot/2)
 
   return [op]
 
-
-def P2_A2_B1_1_1_Fa(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1 + p2
-  op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(p1, p2)
-
-  return [op]
-
-
-def P2_B1_A1_2_0(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1*p2
-  op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(Ptot, P0)
-
-  return [op]
-
-def P2_B1_A1_1_1(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1*p2
-  op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(p1, p2)
-
-  return [op]
-
-def P2_B1_B1_1_1(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  op = ops[0].projectMomentum(p1,p2)
-
-  return [op]
-
-
-def P2_B2_A1_2_0(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1 - p2
-  op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(Ptot, P0)
-
-  return [op]
-
-def P2_B2_B1_1_1(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1 + p2
-  op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(p1, p2)
-
-  return [op]
-
-
-def P2_B2_A1_1_1(ops, Ptot):
-  if Ptot.psq != 2:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x == 0:
-    p1 = P([0,Ptot.y,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.y == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,0,Ptot.z])
-
-  elif Ptot.z == 0:
-    p1 = P([Ptot.x,0,0])
-    p2 = P([0,Ptot.y,0])
-
-  p = p1 - p2
-  op = S.Zero
-  if p.x != 0:
-    op += p.x * ops[1]
-
-  if p.y != 0:
-    op += p.y * ops[2]
-
-  if p.z != 0:
-    op += p.z * ops[3]
-
-  op = op.projectMomentum(p1, p2)
-
-  return [op]
-
-
-def P3_A1_A1_3_0(ops, Ptot):
-  if Ptot.psq != 3:
-    print("Invalid P^2 given")
-    return
-
-  op = ops[0].projectMomentum(Ptot, P0)
-
-  return [op]
-
-
-def P3_A1_A1_2_1(ops, Ptot):
-  if Ptot.psq != 3:
-    print("Invalid P^2 given")
-    return
-
-  p1 = Momentum([Ptot.x, 0, 0])
-  p2 = Momentum([0, Ptot.y, 0])
-  p3 = Momentum([0, 0, Ptot.z])
-
-  op = ops[0].projectMomentum(Ptot - p1, p1) \
-      + ops[0].projectMomentum(Ptot - p2, p2) \
-      + ops[0].projectMomentum(Ptot - p3, p3)
-
-  return [op]
-
-
-def P3_A1_E2_2_1_old(ops, Ptot):
-  if Ptot.psq != 3:
-    print("Invalid P^2 given")
-    return
-
-  p1 = P([Ptot.x,0,0])
-  p2 = P([0,Ptot.y,0])
-  p3 = P([0,0,Ptot.z])
-
-  op = p2.y*ops[2].projectMomentum(Ptot-p3,p3) \
-      - p3.z*ops[3].projectMomentum(Ptot-p2,p2) \
-      - p1.x*ops[1].projectMomentum(Ptot-p3,p3) \
-      + p3.z*ops[3].projectMomentum(Ptot-p1,p1) \
-      + p1.x*ops[1].projectMomentum(Ptot-p2,p2) \
-      - p2.y*ops[2].projectMomentum(Ptot-p1,p1)
-
-  return [op]
-
-def P3_A1_E2_2_1(ops, Ptot):
-  if Ptot.psq != 3:
-    print("Invalid P^2 given")
-    return
-
-  p1 = P([Ptot.x,0,0])
-  p2 = P([0,Ptot.y,0])
-  p3 = P([0,0,Ptot.z])
-
-  p1p2 = p1*p2
-  coeff = p1p2.x * p3.x + p1p2.y * p3.y + p1p2.z * p3.z
-
-  op = coeff * (p2.y*ops[2].projectMomentum(Ptot-p3,p3) \
-      - p3.z*ops[3].projectMomentum(Ptot-p2,p2) \
-      - p1.x*ops[1].projectMomentum(Ptot-p3,p3) \
-      + p3.z*ops[3].projectMomentum(Ptot-p1,p1) \
-      + p1.x*ops[1].projectMomentum(Ptot-p2,p2) \
-      - p2.y*ops[2].projectMomentum(Ptot-p1,p1))
-
-  return [op]
-
-def P3_A2_A1_3_0(ops, Ptot):
-  if Ptot.psq != 3:
-    print("Invalid P^2 given")
-    return
-
-  op = Ptot.x * ops[1].projectMomentum(Ptot, P0) \
-      + Ptot.y * ops[2].projectMomentum(Ptot, P0) \
-      + Ptot.z * ops[3].projectMomentum(Ptot, P0)
-
-  return [op]
-
-
-def P3_A2_A1_2_1(ops, Ptot):
-  if Ptot.psq != 3:
-    print("Invalid P^2 given")
-    return
-
-  p1 = Momentum([Ptot.x, 0, 0])
-  p2 = Momentum([0, Ptot.y, 0])
-  p3 = Momentum([0, 0, Ptot.z])
-
-  op = Ptot.x * ops[1].projectMomentum(Ptot - p1, p1) \
-      + Ptot.x * ops[1].projectMomentum(Ptot - p2, p2) \
-      + Ptot.x * ops[1].projectMomentum(Ptot - p3, p3) \
-      + Ptot.y * ops[2].projectMomentum(Ptot - p1, p1) \
-      + Ptot.y * ops[2].projectMomentum(Ptot - p2, p2) \
-      + Ptot.y * ops[2].projectMomentum(Ptot - p3, p3) \
-      + Ptot.z * ops[3].projectMomentum(Ptot - p1, p1) \
-      + Ptot.z * ops[3].projectMomentum(Ptot - p2, p2) \
-      + Ptot.z * ops[3].projectMomentum(Ptot - p3, p3)
-
-  return [op]
-
-
-def P3_A2_E2_2_1(ops, Ptot):
-  if Ptot.psq != 3:
-    print("Invalid P^2 given")
-    return
-
-  p1 = Momentum([Ptot.x, 0, 0])
-  p2 = Momentum([0, Ptot.y, 0])
-  p3 = Momentum([0, 0, Ptot.z])
-
-
-  op = (p1*3 - p1 - p2 - p3).x * ops[1].projectMomentum(Ptot-p1, p1) \
-      + (p1*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p1, p1) \
-      + (p1*3 - p1 - p2 - p3).z * ops[3].projectMomentum(Ptot-p1, p1) \
-      + (p2*3 - p1 - p2 - p3).x * ops[1].projectMomentum(Ptot-p2, p2) \
-      + (p2*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p2, p2) \
-      + (p2*3 - p1 - p2 - p3).z * ops[3].projectMomentum(Ptot-p2, p2) \
-      + (p3*3 - p1 - p2 - p3).x * ops[1].projectMomentum(Ptot-p3, p3) \
-      + (p3*3 - p1 - p2 - p3).y * ops[2].projectMomentum(Ptot-p3, p3) \
-      + (p3*3 - p1 - p2 - p3).z * ops[3].projectMomentum(Ptot-p3, p3)
-
-  return [op]
-
-def P4_A1_A1_1_1(ops, Ptot):
-  if Ptot.psq != 4:
-    print("Invalid P^2 given")
-    return
-
-  op = ops[0].projectMomentum(Ptot/2, Ptot/2)
-
-  return [op]
-
-def P4_A2_A1_1_1(ops, Ptot):
-  if Ptot.psq != 4:
-    print("Invalid P^2 given")
-    return
+#############    E2     ############################################################################
+
+def _P4_E2_LA1_11(f_ops, Ptot):
+  if Ptot.sq != 4:
+    raise ValueError("P^2 != 4")
 
   if Ptot.x != 0:
-    op = Ptot.x * ops[1]
+    op1 = project_momentum(f_ops[2], Ptot/2, Ptot/2)
+    op2 = project_momentum(f_ops[3], Ptot/2, Ptot/2)
 
   elif Ptot.y != 0:
-    op = Ptot.y * ops[2]
+    op1 = project_momentum(f_ops[1], Ptot/2, Ptot/2)
+    op2 = project_momentum(f_ops[3], Ptot/2, Ptot/2)
 
   elif Ptot.z != 0:
-    op = Ptot.z * ops[3]
-
-  op = op.projectMomentum(Ptot/2, Ptot/2)
-
-  return [op]
-
-def P4_E1_A1_1_1(ops, Ptot):
-  if Ptot.psq != 4:
-    print("Invalid P^2 given")
-    return
-
-  if Ptot.x != 0:
-    op1 = ops[2].projectMomentum(Ptot/2, Ptot/2)
-    op2 = ops[3].projectMomentum(Ptot/2, Ptot/2)
-
-  elif Ptot.y != 0:
-    op1 = ops[1].projectMomentum(Ptot/2, Ptot/2)
-    op2 = ops[3].projectMomentum(Ptot/2, Ptot/2)
-
-  elif Ptot.z != 0:
-    op1 = ops[1].projectMomentum(Ptot/2, Ptot/2)
-    op2 = ops[2].projectMomentum(Ptot/2, Ptot/2)
+    op1 = project_momentum(f_ops[1], Ptot/2, Ptot/2)
+    op2 = project_momentum(f_ops[2], Ptot/2, Ptot/2)
 
   return [op1, op2]
 
-def test_irrep(ops, irrep, op_name, use_generators):
-  print("TESTING: {}".format(op_name))
+def _P4_LA1_E2_11(f_ops, Ptot):
+  if Ptot.sq != 4:
+    raise ValueError("P^2 != 4")
 
-  op_rep = OperatorRepresentation(*ops)
-  t_irrep = op_rep.littleGroupContents(True, use_generators)
+  op = project_momentum(f_ops[0], Ptot/2, Ptot/2)
 
-  if irrep != t_irrep:
-    print("\tFAILED - expected {}, transforms as {}".format(irrep, t_irrep))
-    return 0
-  else:
-    print("\tPASSED - expected {}, transforms as {}".format(irrep, t_irrep))
-    return 1
+  return [op]
 
 
-g = Gamma()
+############### Operator Test Class Instances #####################################################
 
-C5p = Array(g.chargeConj * g.five * g.parityPlus)
-C1p = Array(g.chargeConj * g.one * g.parityPlus)
-C2p = Array(g.chargeConj * g.two * g.parityPlus)
-C3p = Array(g.chargeConj * g.three * g.parityPlus)
+P0_A1p = OperatorTest("P0 A1p L=A1p", "A1g", 0, _P0_A1p)
 
-i = DiracIdx('i')
-j = DiracIdx('j')
+P0_A2p_LT2p = OperatorTest("P0 A2p L=T2p", "A2g", 0, _P0_A2p_LT2p)
+P0_LT2p_A2p = OperatorTest("P0 L=T2p A2p", "T2g", 0, _P0_LT2p_A2p)
 
-def flavor_term(fl1_i, fl2_i):
+P0_Ep_LEp_1 = OperatorTest("P0 Ep L=Ep (p_i^2 = 1)", "Eg", 0, _P0_Ep_LEp_1)
+P0_Ep_LEp_2 = OperatorTest("P0 Ep L=Ep (p_i^2 = 2)", "Eg", 0, _P0_Ep_LEp_2)
+P0_Ep_LT2p = OperatorTest("P0 Ep L=T2p (p_i^2 = 2)", "Eg", 0, _P0_Ep_LT2p)
+P0_LT2p_Ep = OperatorTest("P0 L=T2p Ep (p_i^2 = 2)", "Eg", 0, _P0_LT2p_Ep)
 
-  fl1_0_j = fl1_i * C5p[i,j]
-  fl1_1_j = fl1_i * C1p[i,j]
-  fl1_2_j = fl1_i * C2p[i,j]
-  fl1_3_j = fl1_i * C3p[i,j]
+P0_T1p_LA1p = OperatorTest("P0 T1p L=A1p", "T1g", 0, _P0_T1p_LA1p)
+P0_LA1p_T1p = OperatorTest("P0 L=A1p T1p", "A1g", 0, _P0_LA1p_T1p)
+P0_T1p_LEp_1 = OperatorTest("P0 T1p L=Ep (p_i^2 = 1)", "T1g", 0, _P0_T1p_LEp_1)
+P0_LEp_T1p_1 = OperatorTest("P0 L=Ep T1p (p_i^2 = 1)", "Eg", 0, _P0_LEp_T1p_1)
+P0_T1p_LEp_2 = OperatorTest("P0 T1p L=Ep (p_i^2 = 2)", "T1g", 0, _P0_T1p_LEp_2)
+P0_LEp_T1p_2 = OperatorTest("P0 L=Ep T1p (p_i^2 = 2)", "Eg", 0, _P0_LEp_T1p_2)
+P0_T1p_LT2p = OperatorTest("P0 T1p L=T2p (p_i^2 = 2)", "T1g", 0, _P0_T1p_LT2p)
+P0_LT2p_T1p = OperatorTest("P0 L=T2p T1p (p_i^2 = 2)", "T2g", 0, _P0_LT2p_T1p)
+P0_T1p_1 = OperatorTest("P0 T1p J=1 (p_i^2 = 2)", "T1g", 0, _P0_T1p_1)
+P0_T1p_3 = OperatorTest("P0 T1p J=3 (p_i^2 = 2)", "T1g", 0, _P0_T1p_3)
 
-  fl1_0_0_op = Operator(fl1_0_j.subs(j,0))
-  fl1_0_1_op = Operator(fl1_0_j.subs(j,1))
-  fl1_0_2_op = Operator(fl1_0_j.subs(j,2))
-  fl1_0_3_op = Operator(fl1_0_j.subs(j,3))
+P0_T2p_LEp_1 = OperatorTest("P0 T2p L=Ep (p_i^2 = 1)", "T2g", 0, _P0_T2p_LEp_1)
+P0_LEp_T2p_1 = OperatorTest("P0 L=Ep T2p (p_i^2 = 1)", "Eg", 0, _P0_LEp_T2p_1)
+P0_T2p_LT2p_0 = OperatorTest("P0 T2p L=T2p 0 (p_i^2 = 2)", "T2g", 0, _P0_T2p_LT2p_0)
+P0_T2p_LEp_2 = OperatorTest("P0 T2p L=Ep (p_i^2 = 2)", "T2g", 0, _P0_T2p_LEp_2)
+P0_LEp_T2p_2 = OperatorTest("P0 L=Ep T2p (p_i^2 = 2)", "Eg", 0, _P0_LEp_T2p_2)
+P0_T2p_LT2p_1 = OperatorTest("P0 T2p L=T2p 1 (p_i^2 = 2)", "T2g", 0, _P0_T2p_LT2p_1)
+P0_LT2p_T2p_1 = OperatorTest("P0 L=T2p T2p 1 (p_i^2 = 2)", "T2g", 0, _P0_LT2p_T2p_1)
+P0_T2p_2 = OperatorTest("P0 T2p J=2 (p_i^2 = 2)", "T2g", 0, _P0_T2p_2)
+P0_T2p_3 = OperatorTest("P0 T2p J=3 (p_i^2 = 2)", "T2g", 0, _P0_T2p_3)
 
-  fl1_1_0_op = Operator(fl1_1_j.subs(j,0))
-  fl1_1_1_op = Operator(fl1_1_j.subs(j,1))
-  fl1_1_2_op = Operator(fl1_1_j.subs(j,2))
-  fl1_1_3_op = Operator(fl1_1_j.subs(j,3))
+P0_A1m_LT1m = OperatorTest("P0 A1m L=T1m", "A1u", 0, _P0_A1m_LT1m)
+P0_LT1m_A1m = OperatorTest("P0 L=T1m A1m", "T1u", 0, _P0_LT1m_A1m)
 
-  fl1_2_0_op = Operator(fl1_2_j.subs(j,0))
-  fl1_2_1_op = Operator(fl1_2_j.subs(j,1))
-  fl1_2_2_op = Operator(fl1_2_j.subs(j,2))
-  fl1_2_3_op = Operator(fl1_2_j.subs(j,3))
+P0_A2m_LT2m = OperatorTest("P0 A2m L=T2m (p_i^2 = 2)", "A2u", 0, _P0_A2m_LT2m)
+P0_LT2m_A2m = OperatorTest("P0 L=T2m A2m (p_i^2 = 2)", "T2u", 0, _P0_LT2m_A2m)
 
-  fl1_3_0_op = Operator(fl1_3_j.subs(j,0))
-  fl1_3_1_op = Operator(fl1_3_j.subs(j,1))
-  fl1_3_2_op = Operator(fl1_3_j.subs(j,2))
-  fl1_3_3_op = Operator(fl1_3_j.subs(j,3))
+P0_Em_LT1m = OperatorTest("P0 Em L=T1m", "Eu", 0, _P0_Em_LT1m)
+P0_LT1m_Em = OperatorTest("P0 L=T1m Em", "T1u", 0, _P0_LT1m_Em)
+P0_Em_LT2m = OperatorTest("P0 Em L=T2m (p_i^2 = 2)", "Eu", 0, _P0_Em_LT2m)
+P0_LT2m_Em = OperatorTest("P0 L=T2m Em (p_i^2 = 2)", "T2u", 0, _P0_LT2m_Em)
+
+P0_T1m_LT1m_0 = OperatorTest("P0 T1m L=T1m 0", "T1u", 0, _P0_T1m_LT1m_0)
+P0_T1m_LT1m_1 = OperatorTest("P0 T1m L=T1m 1", "T1u", 0, _P0_T1m_LT1m_1)
+P0_LT1m_T1m_1 = OperatorTest("P0 L=T1m T1m 1", "T1u", 0, _P0_LT1m_T1m_1)
+P0_T1m_LT2m = OperatorTest("P0 T1m L=T2m (p_i^2 = 2)", "T1u", 0, _P0_T1m_LT2m)
+P0_LT2m_T1m = OperatorTest("P0 L=T2m T1m (p_i^2 = 2)", "T2u", 0, _P0_LT2m_T1m)
+
+P0_T2m_LT1m = OperatorTest("P0 T2m L=T1m", "T2u", 0, _P0_T2m_LT1m)
+P0_LT1m_T2m = OperatorTest("P0 L=T1m T2m", "T1u", 0, _P0_LT1m_T2m)
+P0_T2m_LT2m_1 = OperatorTest("P0 T2m L=T2m 1 (p_i^2 = 2)", "T2u", 0, _P0_T2m_LT2m_1)
+P0_LT2m_T2m_1 = OperatorTest("P0 L=T2m T2m 1 (p_i^2 = 2)", "T2u", 0, _P0_LT2m_T2m_1)
+P0_T2m_LT2m_0 = OperatorTest("P0 T2m L=T2m 0 (p_i^2 = 2)", "T2u", 0, _P0_T2m_LT2m_0)
+
+P1_A1_LA1_10 = OperatorTest("P1 A1 L=A1 (1,0)", "A1", 1, _P1_A1_LA1_10)
+P1_A1_LA1_21 = OperatorTest("P1 A1 L=A1 (2,1)", "A1", 1, _P1_A1_LA1_21)
+P1_A1_LE2_21 = OperatorTest("P1 A1 L=E2 (2,1)", "A1", 1, _P1_A1_LE2_21)
+P1_LE2_A1_21 = OperatorTest("P1 L=E2 A1 (2,1)", "E", 1, _P1_LE2_A1_21)
+
+P1_A2_LA1_10 = OperatorTest("P1 A2 L=A1 (1,0)", "A2", 1, _P1_A2_LA1_10)
+P1_LA1_A2_10 = OperatorTest("P1 L=A1 A2 (1,0)", "A1", 1, _P1_LA1_A2_10)
+P1_A2_LA1_21 = OperatorTest("P1 A2 L=A1 (2,1)", "A2", 1, _P1_A2_LA1_21)
+P1_LA1_A2_21 = OperatorTest("P1 L=A1 A2 (2,1)", "A1", 1, _P1_LA1_A2_21)
+P1_A2_LE2_21 = OperatorTest("P1 A2 L=E2 (2,1)", "A2", 1, _P1_A2_LE2_21)
+P1_LE2_A2_21 = OperatorTest("P1 L=E2 A2 (2,1)", "E", 1, _P1_LE2_A2_21)
+
+P1_B1_LB1_21 = OperatorTest("P1 B1 L=B1 (2,1)", "B1", 1, _P1_B1_LB1_21)
+P1_B1_LE2_21 = OperatorTest("P1 B1 L=E2 (2,1)", "B1", 1, _P1_B1_LE2_21)
+P1_LE2_B1_21 = OperatorTest("P1 L=E2 B1 (2,1)", "E", 1, _P1_LE2_B1_21)
+
+P1_B2_LB1_21 = OperatorTest("P1 B2 L=B1 (2,1)", "B2", 1, _P1_B2_LB1_21)
+P1_LB1_B2_21 = OperatorTest("P1 L=B1 B2 (2,1)", "B1", 1, _P1_LB1_B2_21)
+P1_B2_LE2_21 = OperatorTest("P1 B2 L=E2 (2,1)", "B2", 1, _P1_B2_LE2_21)
+P1_LE2_B2_21 = OperatorTest("P1 L=E2 B2 (2,1)", "E", 1, _P1_LE2_B2_21)
+
+P1_E2_LA1_10 = OperatorTest("P1 E2 L=A1 (1,0)", "E", 1, _P1_E2_LA1_10)
+P1_LA1_E2_10 = OperatorTest("P1 L=A1 E2 (1,0)", "A1", 1, _P1_LA1_E2_10)
+P1_E2_LE2_21_0 = OperatorTest("P1 E2 L=E2 0 (2,1)", "E", 1, _P1_E2_LE2_21_0)
+P1_E2_LA1_21 = OperatorTest("P1 E2 L=A1 (2,1)", "E", 1, _P1_E2_LA1_21)
+P1_LA1_E2_21 = OperatorTest("P1 L=A1 E2 (2,1)", "A1", 1, _P1_LA1_E2_21)
+P1_E2_LB1_21 = OperatorTest("P1 E2 L=B1 (2,1)", "E", 1, _P1_E2_LB1_21)
+P1_LB1_E2_21 = OperatorTest("P1 L=B1 E2 (2,1)", "B1", 1, _P1_LB1_E2_21)
+P1_E2_LE2_21_1 = OperatorTest("P1 E2 L=E2 1 (2,1)", "E", 1, _P1_E2_LE2_21_1)
+P1_LE2_E2_21_1 = OperatorTest("P1 L=E2 E2 1 (2,1)", "E", 1, _P1_LE2_E2_21_1)
+
+P2_A1_LA1_20 = OperatorTest("P2 A1 L=A1 (2,0)", "A1", 2, _P2_A1_LA1_20)
+P2_A1_LA1_11 = OperatorTest("P2 A1 L=A1 (1,1)", "A1", 2, _P2_A1_LA1_11)
+P2_A1_LB1_11 = OperatorTest("P2 A1 L=B1 (1,1)", "A1", 2, _P2_A1_LB1_11)
+P2_LB1_A1_11 = OperatorTest("P2 L=B1 A1 (1,1)", "B1", 2, _P2_LB1_A1_11)
+
+P2_A2_LA1_20 = OperatorTest("P2 A2 L=A1 (2,0)", "A2", 2, _P2_A2_LA1_20)
+P2_LA1_A2_20 = OperatorTest("P2 L=A1 A2 (2,0)", "A1", 2, _P2_LA1_A2_20)
+P2_A2_LB1_11 = OperatorTest("P2 A2 L=B1 (1,1)", "A2", 2, _P2_A2_LB1_11)
+P2_LB1_A2_11 = OperatorTest("P2 L=B1 A2 (1,1)", "B1", 2, _P2_LB1_A2_11)
+P2_A2_LA1_11 = OperatorTest("P2 A2 L=A1 (1,1)", "A2", 2, _P2_A2_LA1_11)
+P2_LA1_A2_11 = OperatorTest("P2 L=A1 A2 (1,1)", "A1", 2, _P2_LA1_A2_11)
+
+P2_B1_LA1_20 = OperatorTest("P2 B1 L=A1 (2,0)", "B2", 2, _P2_B1_LA1_20)
+P2_LA1_B1_20 = OperatorTest("P2 L=A1 B1 (2,0)", "A1", 2, _P2_LA1_B1_20)
+P2_B1_LA1_11 = OperatorTest("P2 B1 L=A1 (1,1)", "B2", 2, _P2_B1_LA1_11)
+P2_LA1_B1_11 = OperatorTest("P2 L=A1 B1 (1,1)", "A1", 2, _P2_LA1_B1_11)
+P2_B1_LB1_11 = OperatorTest("P2 B1 L=B1 (1,1)", "B2", 2, _P2_B1_LB1_11)
+
+P2_B2_LA1_20 = OperatorTest("P2 B2 L=A1 (2,0)", "B1", 2, _P2_B2_LA1_20)
+P2_LA1_B2_20 = OperatorTest("P2 L=A1 B2 (2,0)", "A1", 2, _P2_LA1_B2_20)
+P2_B2_LB1_11 = OperatorTest("P2 B2 L=B1 (1,1)", "B1", 2, _P2_B2_LB1_11)
+P2_LB1_B2_11 = OperatorTest("P2 L=B1 B2 (1,1)", "B2", 2, _P2_LB1_B2_11)
+P2_B2_LA1_11 = OperatorTest("P2 B2 L=A1 (1,1)", "B1", 2, _P2_B2_LA1_11)
+P2_LA1_B2_11 = OperatorTest("P2 L=A1 B2 (1,1)", "A1", 2, _P2_LA1_B2_11)
 
 
-  fl2_0_op = Operator(fl2_i.subs(i,0))
-  fl2_1_op = Operator(fl2_i.subs(i,1))
-  fl2_2_op = Operator(fl2_i.subs(i,2))
-  fl2_3_op = Operator(fl2_i.subs(i,3))
+P3_A1_LA1_30 = OperatorTest("P3 A1 L=A1 (3,0)", "A1", 3, _P3_A1_LA1_30)
+P3_A1_LA1_21 = OperatorTest("P3 A1 L=A1 (2,1)", "A1", 3, _P3_A1_LA1_21)
+P3_A1_LE2_21 = OperatorTest("P3 A1 L=E2 (2,1)", "A1", 3, _P3_A1_LE2_21)
+P3_LE2_A1_21 = OperatorTest("P3 L=E2 A1 (2,1)", "E", 3, _P3_LE2_A1_21)
 
+P3_A2_LA1_30 = OperatorTest("P3 A2 L=A1 (3,0)", "A2", 3, _P3_A2_LA1_30)
+P3_LA1_A2_30 = OperatorTest("P3 L=A1 A2 (3,0)", "A1", 3, _P3_LA1_A2_30)
+P3_A2_LA1_21 = OperatorTest("P3 A2 L=A1 (2,1)", "A2", 3, _P3_A2_LA1_21)
+P3_LA1_A2_21 = OperatorTest("P3 L=A1 A2 (2,1)", "A1", 3, _P3_LA1_A2_21)
+P3_A2_LE2_21 = OperatorTest("P3 A2 L=E2 (2,1)", "A2", 3, _P3_A2_LE2_21)
+P3_LE2_A2_21 = OperatorTest("P3 L=E2 A2 (2,1)", "E", 3, _P3_LE2_A2_21)
 
-  op_0 = fl1_0_0_op*fl2_0_op + fl1_0_1_op*fl2_1_op + fl1_0_2_op*fl2_2_op + fl1_0_3_op*fl2_3_op
-  op_1 = fl1_1_0_op*fl2_0_op + fl1_1_1_op*fl2_1_op + fl1_1_2_op*fl2_2_op + fl1_1_3_op*fl2_3_op
-  op_2 = fl1_2_0_op*fl2_0_op + fl1_2_1_op*fl2_1_op + fl1_2_2_op*fl2_2_op + fl1_2_3_op*fl2_3_op
-  op_3 = fl1_3_0_op*fl2_0_op + fl1_3_1_op*fl2_1_op + fl1_3_2_op*fl2_2_op + fl1_3_3_op*fl2_3_op
+P3_E2_LA1_30 = OperatorTest("P3 E2 L=A1 (3,0)", "E", 3, _P3_E2_LA1_30)
+P3_LA1_E2_30 = OperatorTest("P3 L=A1 E2 (3,0)", "A1", 3, _P3_LA1_E2_30)
+P3_E2_LA1_21 = OperatorTest("P3 E2 L=A1 (2,1)", "E", 3, _P3_E2_LA1_21)
+P3_LA1_E2_21 = OperatorTest("P3 L=A1 E2 (2,1)", "A1", 3, _P3_LA1_E2_21)
+P3_E2_LE2_21_0 = OperatorTest("P3 E2 L=E2 0 (2,1)", "E", 3, _P3_E2_LE2_21_0)
+P3_E2_LE2_21_1L = OperatorTest("P3 E2 L=E2 1L (2,1)", "E", 3, _P3_E2_LE2_21_1L)
+P3_LE2_E2_21_1L = OperatorTest("P3 L=E2 E2 1L (2,1)", "E", 3, _P3_LE2_E2_21_1L)
+P3_E2_LE2_21_1T = OperatorTest("P3 E2 L=E2 1T (2,1)", "E", 3, _P3_E2_LE2_21_1T)
+P3_LE2_E2_21_1T = OperatorTest("P3 L=E2 E2 1T (2,1)", "E", 3, _P3_LE2_E2_21_1T)
 
-  return [op_0, op_1, op_2, op_3]
+P4_A1_LA1_11 = OperatorTest("P4 A1 L=A1 (1,1)", "A1", 4, _P4_A1_LA1_11)
+P4_A2_LA1_11 = OperatorTest("P4 A2 L=A1 (1,1)", "A2", 4, _P4_A2_LA1_11)
+P4_LA1_A2_11 = OperatorTest("P4 L=A1 A2 (1,1)", "A1", 4, _P4_LA1_A2_11)
+P4_E2_LA1_11 = OperatorTest("P4 E2 L=A1 (1,1)", "E", 4, _P4_E2_LA1_11)
+P4_LA1_E2_11 = OperatorTest("P4 L=A1 E2 (1,1)", "A1", 4, _P4_LA1_E2_11)
 
-
-def Baryon(q1, q2, q3, alpha):
-  aB = ColorIdx('aB')
-  bB = ColorIdx('bB')
-  cB = ColorIdx('cB')
-
-  iB = DiracIdx('iB')
-  jB = DiracIdx('jB')
-
-  baryon = Eijk(aB, bB, cB) * q2[aB,iB] * C5p[iB,jB] * q3[bB,jB] * q1[cB,alpha]
-  return baryon
-
-
-if __name__ == "__main__":
-  main()

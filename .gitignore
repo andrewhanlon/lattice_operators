@@ -89,4 +89,7 @@ ENV/
 
 # Custom
 XMLDAT
+doc/*.aux
+doc/*.out
+doc/*.pdf
 

@@ -4,13 +4,11 @@ from functools import reduce
 
 from sortedcontainers import SortedSet
 
-from sympy.functions.elementary.miscellaneous import sqrt
-from sympy.matrices import eye, Identity, MatrixSymbol
-from sympy import pi, Array, Matrix
+from sympy import sqrt, cos, sin, pi
+from sympy import eye, Identity, MatrixSymbol, Array, Matrix
 from sympy import tensorcontraction, tensorproduct
-from sympy import cos, sin, sqrt
 
-from .tensors import GammaRep, Gamma
+from .gamma import GammaRep, Gamma
 
 
 @unique
@@ -199,7 +197,7 @@ class CubicRotation:
       return res_mat
 
     elif isinstance(other, Momentum):
-      return Momentum(tensorcontraction(tensorproduct(self.matrix, other), (1,2)))
+      return Momentum(*tensorcontraction(tensorproduct(self.matrix, other), (1,2)))
 
     return NotImplemented
 
@@ -447,10 +445,17 @@ _POINT_GROUP = SortedSet([cubic_rotation for cubic_rotation in _ROTATIONS.keys()
 
 class Momentum(Array):
 
-  def __init__(self, momentum=[0,0,0]):
-    self._p_x = momentum[0]
-    self._p_y = momentum[1]
-    self._p_z = momentum[2]
+  def __init__(self, *momentum):
+    if not isinstance(momentum[0], Momentum):
+      self._p_x = momentum[0]
+      self._p_y = momentum[1]
+      self._p_z = momentum[2]
+
+  def __new__(cls, *momentum):
+    if isinstance(momentum[0], Momentum):
+      return momentum[0]
+
+    return super().__new__(cls, momentum)
 
   @property
   def x(self):
@@ -465,28 +470,35 @@ class Momentum(Array):
     return self._p_z
 
   @property
-  def psq(self):
+  def sq(self):
     return self._p_x**2 + self._p_y**2 + self._p_z**2
 
   @property
   def pref(self):
-    return Momentum(sorted([abs(pi) for pi in self]))
+    return Momentum(*sorted([abs(pi) for pi in self]))
 
   @property
   def reduced_pref(self):
-    if self.psq == 0:
+    if self.sq == 0:
       return self
 
     factor = reduce(lambda x,y: gcd(x,y), self.pref)
-    return Momentum([self.pref.x//factor, self.pref.y//factor, self.pref.z//factor])
+    return Momentum(self.pref.x//factor, self.pref.y//factor, self.pref.z//factor)
 
   @property
   def reduced(self):
-    if self.psq == 0:
+    if self.sq == 0:
       return self
 
     factor = reduce(lambda x,y: gcd(x,y), self)
-    return Momentum([self.x//factor, self.y//factor, self.z//factor])
+    return Momentum(self.x//factor, self.y//factor, self.z//factor)
+
+  def __getitem__(self, i):
+    if i in range(1,4):
+      return super().__getitem__(i-1)
+    else:
+      raise IndexError("Index out of range")
+      
 
   def __str__(self):
     return "P=({},{},{})".format(self.x, self.y, self.z)
@@ -506,11 +518,11 @@ class Momentum(Array):
     return not self.__eq__(other)
 
   def __neg__(self):
-    return Momentum([-self.x, -self.y, -self.z])
+    return Momentum(-self.x, -self.y, -self.z)
 
   def __add__(self, other):
     if isinstance(other, self.__class__):
-      return Momentum([self.x + other.x, self.y + other.y, self.z + other.z])
+      return Momentum(self.x + other.x, self.y + other.y, self.z + other.z)
     return NotImplemented
   
   def __sub__(self, other):
@@ -521,99 +533,116 @@ class Momentum(Array):
       px = self.y*other.z - self.z*other.y
       py = self.z*other.x - self.x*other.z
       pz = self.x*other.y - self.y*other.x
-      return Momentum([px, py, pz])
+      return Momentum(px, py, pz)
 
     else:
-      return Momentum([self.x * other, self.y * other, self.z * other])
+      return Momentum(self.x * other, self.y * other, self.z * other)
 
-  def __rmul(self, other):
-    return Momentum([other * self.x, other * self.y, other * self.z])
+  def __rmul__(self, other):
+    return Momentum(other * self.x, other * self.y, other * self.z)
 
   def __truediv__(self, other):
-    return Momentum([self.x // other, self.y // other, self.z // other])
+    return Momentum(self.x // other, self.y // other, self.z // other)
 
   def __rtruediv__(self, other):
-    return Momentum([self.x // other, self.y // other, self.z // other])
+    return Momentum(self.x // other, self.y // other, self.z // other)
 
 
 P = Momentum
-P0 = Momentum([0,0,0])
+P0 = P(0,0,0)
+
+# TODO: It'd be nice to have something a little more advanced than this...
+#       I.e. arbitrarily large n
+P1 = [P(0,0,1), P(0,1,0), P(1,0,0), P(0,0,-1), P(0,-1,0), P(-1,0,0)]
+P2 = [P(0,1,1), P(1,0,1), P(1,1,0), P(0,1,-1), P(1,0,-1), P(1,-1,0),
+      P(0,-1,1), P(-1,0,1), P(-1,1,0), P(0,-1,-1), P(-1,0,-1), P(-1,-1,0)]
+P3 = [P(1,1,1), P(1,1,-1), P(1,-1,1), P(-1,1,1), P(1,-1,-1), P(-1,1,-1), P(-1,-1,1), P(-1,-1,-1)]
+P4 = [P(0,0,2), P(0,2,0), P(2,0,0), P(0,0,-2), P(0,-2,0), P(-2,0,0)]
+
+
+MOMENTA = {
+    0: [P0],
+    1: P1,
+    2: P2,
+    3: P3,
+    4: P4
+}
+
 
 # @ADH - add the C_S refs
-# @ADH - Is this cheating?
 _REFERENCE_ROTATIONS = {
-    P([ 0, 0, 0]): E,
-    P([ 0, 0, 1]): E,
-    P([ 0, 0,-1]): C2x,
-    P([ 1, 0, 0]): C4y,
-    P([-1, 0, 0]): C4yi,
-    P([ 0,-1, 0]): C4x,
-    P([ 0, 1, 0]): C4xi,
-    P([ 0, 1, 1]): E,
-    P([ 0,-1,-1]): C2x,
-    P([ 0, 1,-1]): C4xi,
-    P([ 0,-1, 1]): C4x,
-    P([ 1, 0, 1]): C4zi,
-    P([-1, 0,-1]): C2b,
-    P([ 1, 0,-1]): C2a,
-    P([-1, 0, 1]): C4z,
-    P([ 1, 1, 0]): C4y,
-    P([-1,-1, 0]): C2d,
-    P([ 1,-1, 0]): C2c,
-    P([-1, 1, 0]): C4yi,
-    P([ 1, 1, 1]): E,
-    P([ 1, 1,-1]): C4y,
-    P([ 1,-1, 1]): C4x,
-    P([ 1,-1,-1]): C2x,
-    P([-1, 1, 1]): C4z,
-    P([-1, 1,-1]): C2y,
-    P([-1,-1, 1]): C2z,
-    P([-1,-1,-1]): C2d,
+    P( 0, 0, 0): E,
+    P( 0, 0, 1): E,
+    P( 0, 0,-1): C2x,
+    P( 1, 0, 0): C4y,
+    P(-1, 0, 0): C4yi,
+    P( 0,-1, 0): C4x,
+    P( 0, 1, 0): C4xi,
+    P( 0, 1, 1): E,
+    P( 0,-1,-1): C2x,
+    P( 0, 1,-1): C4xi,
+    P( 0,-1, 1): C4x,
+    P( 1, 0, 1): C4zi,
+    P(-1, 0,-1): C2b,
+    P( 1, 0,-1): C2a,
+    P(-1, 0, 1): C4z,
+    P( 1, 1, 0): C4y,
+    P(-1,-1, 0): C2d,
+    P( 1,-1, 0): C2c,
+    P(-1, 1, 0): C4yi,
+    P( 1, 1, 1): E,
+    P( 1, 1,-1): C4y,
+    P( 1,-1, 1): C4x,
+    P( 1,-1,-1): C2x,
+    P(-1, 1, 1): C4z,
+    P(-1, 1,-1): C2y,
+    P(-1,-1, 1): C2z,
+    P(-1,-1,-1): C2d,
 }
 
 _BOSONIC_LITTLE_GROUP_IRREPS = {
-    P([0,0,0]): ["A1g", "A2g", "Eg", "T1g", "T2g", "A1u", "A2u", "Eu", "T1u", "T2u"],
-    P([0,0,1]): ["A1", "A2", "B1", "B2", "E"],
-    P([0,1,1]): ["A1", "A2", "B1", "B2"],
-    P([1,1,1]): ["A1", "A2", "E"],
-    P([0,1,2]): ["A1", "A2"],
-    P([1,1,2]): ["A1", "A2"]
+    P(0,0,0): ["A1g", "A2g", "Eg", "T1g", "T2g", "A1u", "A2u", "Eu", "T1u", "T2u"],
+    P(0,0,1): ["A1", "A2", "B1", "B2", "E"],
+    P(0,1,1): ["A1", "A2", "B1", "B2"],
+    P(1,1,1): ["A1", "A2", "E"],
+    P(0,1,2): ["A1", "A2"],
+    P(1,1,2): ["A1", "A2"]
 }
 
 _BOSONIC_LITTLE_GROUPS = {
-    P([0,0,0]): "O_h",
-    P([0,0,1]): "C_{4v}",
-    P([0,1,1]): "C_{2v}",
-    P([1,1,1]): "C_{3v}",
-    P([0,1,2]): "C_S",
-    P([1,1,2]): "C_S"
+    P(0,0,0): "O_h",
+    P(0,0,1): "C_{4v}",
+    P(0,1,1): "C_{2v}",
+    P(1,1,1): "C_{3v}",
+    P(0,1,2): "C_S",
+    P(1,1,2): "C_S"
 }
 
 _FERMIONIC_LITTLE_GROUP_IRREPS = {
-    P([0,0,0]): ["G1g", "G2g", "Hg", "G1u", "G2u", "Hu"],
-    P([0,0,1]): ["G1", "G2"],
-    P([0,1,1]): ["G"],
-    P([1,1,1]): ["F1", "F2", "G"],
-    P([0,1,2]): ["F1", "F2"],
-    P([1,1,2]): ["F1", "F2"]
+    P(0,0,0): ["G1g", "G2g", "Hg", "G1u", "G2u", "Hu"],
+    P(0,0,1): ["G1", "G2"],
+    P(0,1,1): ["G"],
+    P(1,1,1): ["F1", "F2", "G"],
+    P(0,1,2): ["F1", "F2"],
+    P(1,1,2): ["F1", "F2"]
 }
 
 _FERMIONIC_LITTLE_GROUPS = {
-    P([0,0,0]): "O_h^D",
-    P([0,0,1]): "C_{4v}^D",
-    P([0,1,1]): "C_{2v}^D",
-    P([1,1,1]): "C_{3v}^D",
-    P([0,1,2]): "C_S^D",
-    P([1,1,2]): "C_S^D"
+    P(0,0,0): "O_h^D",
+    P(0,0,1): "C_{4v}^D",
+    P(0,1,1): "C_{2v}^D",
+    P(1,1,1): "C_{3v}^D",
+    P(0,1,2): "C_S^D",
+    P(1,1,2): "C_S^D"
 }
 
 _LITTLE_GROUPS = {
-    P([0,0,0]): "Oh",
-    P([0,0,1]): "C4v",
-    P([0,1,1]): "C2v",
-    P([1,1,1]): "C3v",
-    P([0,1,2]): "CS",
-    P([1,1,2]): "CS"
+    P(0,0,0): "Oh",
+    P(0,0,1): "C4v",
+    P(0,1,1): "C2v",
+    P(1,1,1): "C3v",
+    P(0,1,2): "CS",
+    P(1,1,2): "CS"
 }
 
 
@@ -891,7 +920,7 @@ class LittleGroup:
   def __init__(self, bosonic, momentum=P0):
     self._momentum = momentum
     self._bosonic = bosonic
-    self._elements = set()
+    self._elements = SortedSet()
     self._ref_elements = dict()
     self._conj_class = dict()
 
