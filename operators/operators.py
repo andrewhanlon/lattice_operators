@@ -111,23 +111,25 @@ class OperatorRepresentation:
   def littleGroupContents(self, nice=False, use_generators=True):
     contents = dict()
     for lgIrrep in self.little_group.irreps:
-      #print(lgIrrep)
       occurences = S.Zero
       for element in self.little_group.elements:
         occurences += self.getCharacter(element, use_generators) * conjugate(self.little_group.getCharacter(lgIrrep, element))
 
       occurences = simplify(occurences)   # @ADH - I don't like that this was necessary
       occurences /= self.little_group.order
+      '''
       contents[lgIrrep] = int(occurences)
       if occurences != contents[lgIrrep]:
         raise ValueError("Occurence is not an integer")
+      '''
+      contents[lgIrrep] = occurences
 
     if nice:
       nice_str = ""
       for irrep, occurences in contents.items():
         if occurences == 1:
           nice_str += "{} + ".format(irrep)
-        elif occurences > 1:
+        elif occurences != 0:
           nice_str += "{} {} + ".format(occurences, irrep)
 
       nice_str = nice_str[:-3]
@@ -569,8 +571,10 @@ class OperatorMul:
 
   def __init__(self, *operators):
 
+    '''
     if len(operators) > 2:
       raise ValueError("3-particle and higher operators not currently supported")
+    '''
 
     all_operators = all(isinstance(op, Operator) for op in operators)
     if not all_operators:
@@ -642,8 +646,12 @@ class OperatorMul:
     return self._raw_terms
 
   
+  @staticmethod
+  def term_rep(term):
+    return "{}__{}".format(term[0].__repr__(), term[1].__repr__())
 
-  # @ADH - ONLY WORKS ASSUMING TWO-BARYON OPERATORS
+  # @ADH - ONLY WORKS ASSUMING TWO-BARYON OPERATORS - OLD
+  # @ADH - ONLY WORKS ASSUMING MESON OPERTORS
   @property
   def coefficients(self):
     if self._coefficients is None:
@@ -654,19 +662,14 @@ class OperatorMul:
       coeffs_dict = defaultdict(int)
 
       for term in self.raw_terms:
-        if term[0] == term[1]:
-          continue
+        coeff = S.One
+        for op_coeff, term_term in zip(op_coeffs, term):
+          coeff *= op_coeff[term_term]
 
-        str_rep1 = "{}__{}".format(term[0][0].__repr__(), term[0][1].__repr__())
-        str_rep2 = "{}__{}".format(term[1][0].__repr__(), term[1][1].__repr__())
-        
-        coeff = op_coeffs[0][term[0]] * op_coeffs[1][term[1]]
+        term_list = list(term)
+        term_list.sort(key=OperatorMul.term_rep)
 
-        new_term = term
-        if str_rep1 < str_rep2:
-          coeff = -coeff
-          new_term = tuple([term[1], term[0]])
-
+        new_term = tuple(term_list)
         if new_term in coeffs_dict:
           coeffs_dict[new_term] += coeff
         else:
