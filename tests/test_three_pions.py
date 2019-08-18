@@ -1,19 +1,15 @@
-from sympy import *
-import os
-from math import isclose
+#!/usr/bin/env python
 
-from collections import namedtuple
+from math import isclose
+from sympy import KroneckerDelta, Array, S
+import argparse
 
 from context import operators
 
-from operators.operators import *
-from operators.cubic_rotations import *
+from operators.operators import QuarkField, AntiQuarkField, DiracIdx, ColorIdx, Operator, \
+    OperatorRepresentation
 from operators.tensors import Gamma
-
-base_dir = "/home/ahanlon/research/"
-ops_file = "mmmOps/README.selOps"
-
-operator = namedtuple('operator', ['opfiles', 'atrest', 'irrep'])
+from operators.cubic_rotations import P, P0
 
 g = Gamma()
 
@@ -27,43 +23,20 @@ j = DiracIdx('j')
 
 pion = KroneckerDelta(a, b)*dbar[a,i]*Array(g.five)[i,j]*u[b,j]
 
+
 def main():
+  parser = argparse.ArgumentParser(description="Check a pi-pi-pi operator")
+  parser.add_argument('op_files', metavar='OP_FILES', type=str, nargs='+',
+                      help="Specify operator files")
 
-  ops_fullfile = os.path.join(base_dir, ops_file)
-  f_handler = open(ops_fullfile, 'r')
-  op_files = list()
-  for op_file in f_handler:
-    op_fullfile = os.path.join(base_dir, op_file.strip())
-    tokens = op_fullfile.split('/')
-    irrep, irreprow = tokens[-2].split('_')
-    irrep = irrep[:-1]
-    mom_ray = tokens[-3]
-    atrest = False
-    if mom_ray == "mom_ray_000":
-      atrest = True
+  args = parser.parse_args()
 
-    if irreprow == "1":
-      op = operator([op_fullfile], atrest, irrep)
-      op_files.append(op)
-    else:
-      op_files[-1].opfiles.append(op_fullfile)
-
-  f_handler.close()
-
-  passed = 0
-  tests = 0
-  for op_file_list in op_files:
-    passed += check_operator(op_file_list)
-    tests += 1
-
-  print()
-  print(f"PASSED {passed}/{tests} tests!")
+  check_operator(args.op_files)
 
 
-
-def check_operator(op):
+def check_operator(op_files):
   ops = list()
-  for op_file in op.opfiles:
+  for op_file in op_files:
     f_handler = open(op_file, 'r')
     num_ops = int(f_handler.readline().strip())
     operator = S.Zero
@@ -72,9 +45,9 @@ def check_operator(op):
 
     ops.append(operator)
 
-  print(f"TESTING: {op.opfiles}")
   op_rep = OperatorRepresentation(*ops)
-  rep_contents = op_rep.littleGroupContents(False, False)
+  use_generators = op_rep.momentum == P0
+  rep_contents = op_rep.littleGroupContents(False, use_generators)
 
   nice_str = ""
   for irrep, occurences in rep_contents.items():
@@ -84,13 +57,8 @@ def check_operator(op):
       nice_str += "{} {} + ".format(occurences, irrep)
 
   nice_str = nice_str[:-3]
+  print(nice_str)
 
-  if nice_str != op.irrep:
-    print(f"FAILED: Transforms as {nice_str}!")
-    return 0
-  else:
-    print("PASSED")
-    return 1
 
 def get_operator(op_line):
   op_line = op_line.split()
