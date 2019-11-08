@@ -81,6 +81,10 @@ class OperatorRepresentation:
     self._basis = OperatorBasis(*operators)
     self._little_group = LittleGroup(self.basis.bosonic, self.basis.momentum)
 
+    for operator in operators:
+      if operator.zero:
+        raise ValueError("Input a zero operator to OperatorRepresentation")
+
     self._rep_matrices = dict()
     self._characters = dict()
 
@@ -686,6 +690,9 @@ class OperatorMul:
 
     return self._terms
 
+  @property
+  def zero(self):
+    return not len(self.coefficients)
         
   @property
   def bosonic(self):
@@ -934,6 +941,9 @@ class OperatorAdd:
 
     return self._coefficients
 
+  @property
+  def zero(self):
+    return not len(self.coefficients)
 
   # @ADH - add more checks?
   def __add__(self, other):
