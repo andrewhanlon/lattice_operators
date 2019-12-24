@@ -3,12 +3,15 @@ from sortedcontainers import SortedSet
 from collections import OrderedDict
 from collections import defaultdict
 
+from math import isclose
+
 from sympy import zeros, Expr, Idx, get_indices, Array, conjugate, Matrix, Transpose, IndexedBase, trace, Indexed
 from sympy import eye, Integer, S
 from sympy import simplify
 from sympy import Add
 from sympy import Sum
 from sympy import expand
+from sympy import re, im, N
 
 from .cubic_rotations import spinor_representation, LittleGroup, E
 from .cubic_rotations import _GENERATORS as GENERATORS
@@ -74,6 +77,18 @@ class ColorIdx(Idx):
 class OperatorRepresentation:
   
   def __init__(self, *operators):
+    for op in operators:
+      non_zero = False
+      for val in op.coefficients.values():
+        sim_val = N(val)
+        re_close = isclose(re(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
+        im_close = isclose(im(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
+        if not re_close or not im_close:
+          non_zero = True
+
+      if not non_zero:
+        raise ValueError("Zero operator")
+
 
     if not operators:
       raise ValueError("Must provide at least one basis operator")
@@ -118,6 +133,12 @@ class OperatorRepresentation:
       occurences = S.Zero
       for element in self.little_group.elements:
         occurences += self.getCharacter(element, use_generators) * conjugate(self.little_group.getCharacter(lgIrrep, element))
+        '''
+        import pprint
+        print(element)
+        pprint.pprint(self._rep_matrices[element])
+        print()
+        '''
 
       occurences = simplify(occurences)   # @ADH - I don't like that this was necessary
       occurences /= self.little_group.order
@@ -249,7 +270,13 @@ class OperatorBasis:
           _vector.append(0)
 
       if coeffs_dict:
-        raise ValueError("Basis is not complete")
+        for val in coeffs_dict.values():
+          sim_val = N(val)
+          re_close = isclose(re(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
+          im_close = isclose(im(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
+          if not re_close or not im_close:
+            print(list(coeffs_dict.values()))
+            raise ValueError("Basis is not complete")
 
       self._vectors[operator] = _vector
 
