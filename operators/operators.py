@@ -275,7 +275,7 @@ class OperatorBasis:
           re_close = isclose(re(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
           im_close = isclose(im(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
           if not re_close or not im_close:
-            print(list(coeffs_dict.values()))
+            #print(list(coeffs_dict.values()))
             raise ValueError("Basis is not complete")
 
       self._vectors[operator] = _vector

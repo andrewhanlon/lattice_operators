@@ -13,15 +13,21 @@ from operators.cubic_rotations import P, P0
 
 g = Gamma()
 
-u = QuarkField.create('u')
-dbar = AntiQuarkField.create('d')
+u1 = QuarkField.create('u1')
+d1bar = AntiQuarkField.create('d1')
+u2 = QuarkField.create('u2')
+d2bar = AntiQuarkField.create('d2')
+u3 = QuarkField.create('u3')
+d3bar = AntiQuarkField.create('d3')
 
 a = ColorIdx('a')
 b = ColorIdx('b')
 i = DiracIdx('i')
 j = DiracIdx('j')
 
-pion = KroneckerDelta(a, b)*dbar[a,i]*Array(g.five)[i,j]*u[b,j]
+pion1 = KroneckerDelta(a, b)*d1bar[a,i]*Array(g.five)[i,j]*u1[b,j]
+pion2 = KroneckerDelta(a, b)*d2bar[a,i]*Array(g.five)[i,j]*u2[b,j]
+pion3 = KroneckerDelta(a, b)*d3bar[a,i]*Array(g.five)[i,j]*u3[b,j]
 
 
 def main():
@@ -71,7 +77,7 @@ def get_operator(op_line):
 
   coeff = coeff_re + coeff_im*1j
 
-  op = coeff*Operator(pion, mom_1)*Operator(pion, mom_2)*Operator(pion, mom_3)
+  op = coeff*Operator(pion1, mom_1)*Operator(pion2, mom_2)*Operator(pion3, mom_3)
 
   return op
 
