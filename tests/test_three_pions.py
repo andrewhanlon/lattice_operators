@@ -77,7 +77,7 @@ def get_operator(op_line):
 
   coeff = coeff_re + coeff_im*1j
 
-  op = coeff*Operator(pion1, mom_1)*Operator(pion2, mom_2)*Operator(pion3, mom_3)
+  op = coeff*Operator(pion1, mom_1)*Operator(pion1, mom_2)*Operator(pion1, mom_3)
 
   return op
 

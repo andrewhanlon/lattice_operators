@@ -78,17 +78,8 @@ class OperatorRepresentation:
   
   def __init__(self, *operators):
     for op in operators:
-      non_zero = False
-      for val in op.coefficients.values():
-        sim_val = N(val)
-        re_close = isclose(re(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
-        im_close = isclose(im(sim_val), 0., rel_tol=1e-09, abs_tol=1e-08)
-        if not re_close or not im_close:
-          non_zero = True
-
-      if not non_zero:
+      if op.is_nearly_zero:
         raise ValueError("Zero operator")
-
 
     if not operators:
       raise ValueError("Must provide at least one basis operator")
@@ -369,6 +360,15 @@ class Operator:
   @property
   def zero(self):
     return self.simplified == S.Zero
+
+  def is_nearly_zero(self, REL_TOL=1e-09, ABS_TOL=1e-08):
+    for val in self.coefficients.values():
+      sim_val = N(val)
+      re_zero = isclose(re(sim_val), 0., rel_tol=REL_TOL, abs_tol=ABS_TOL)
+      im_zero = isclose(im(sim_val), 0., rel_tol=REL_TOL, abs_tol=ABS_TOL)
+      if not re_zero or not im_zero:
+        return False
+    return True
 
   def projectMomentum(self, momentum):
     return self.__class__(self.operator, momentum)
@@ -720,6 +720,15 @@ class OperatorMul:
   @property
   def zero(self):
     return not len(self.coefficients)
+
+  def is_nearly_zero(self, REL_TOL=1e-09, ABS_TOL=1e-08):
+    for val in self.coefficients.values():
+      sim_val = N(val)
+      re_zero = isclose(re(sim_val), 0., rel_tol=REL_TOL, abs_tol=ABS_TOL)
+      im_zero = isclose(im(sim_val), 0., rel_tol=REL_TOL, abs_tol=ABS_TOL)
+      if not re_zero or not im_zero:
+        return False
+    return True
         
   @property
   def bosonic(self):
@@ -972,6 +981,15 @@ class OperatorAdd:
   def zero(self):
     return not len(self.coefficients)
 
+  def is_nearly_zero(self, REL_TOL=1e-09, ABS_TOL=1e-08):
+    for val in self.coefficients.values():
+      sim_val = N(val)
+      re_zero = isclose(re(sim_val), 0., rel_tol=REL_TOL, abs_tol=ABS_TOL)
+      im_zero = isclose(im(sim_val), 0., rel_tol=REL_TOL, abs_tol=ABS_TOL)
+      if not re_zero or not im_zero:
+        return False
+    return True
+
   # @ADH - add more checks?
   def __add__(self, other):
     if isinstance(other, Operator) and self.momentum == other.momentum and self.bosonic == other.bosonic:
@@ -985,7 +1003,7 @@ class OperatorAdd:
 
     elif other == S.Zero:
       return self
-
+      
     return NotImplemented
 
   def __radd__(self, other):
