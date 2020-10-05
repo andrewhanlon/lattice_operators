@@ -77,19 +77,25 @@ class ColorIdx(Idx):
 class OperatorRepresentation:
   
   def __init__(self, *operators):
-    for op in operators:
-      if op.is_nearly_zero:
-        raise ValueError("Zero operator")
-
     if not operators:
       raise ValueError("Must provide at least one basis operator")
 
-    self._basis = OperatorBasis(*operators)
+    non_zero_ops = list()
+    for op in operators:
+      if not op.is_nearly_zero():
+        non_zero_ops.append(op)
+
+    if not non_zero_ops:
+      raise ValueError("Zero operator")
+
+    self._basis = OperatorBasis(*non_zero_ops)
     self._little_group = LittleGroup(self.basis.bosonic, self.basis.momentum)
 
+    '''
     for operator in operators:
       if operator.zero:
         raise ValueError("Input a zero operator to OperatorRepresentation")
+    '''
 
     self._rep_matrices = dict()
     self._characters = dict()
@@ -120,7 +126,8 @@ class OperatorRepresentation:
 
   def littleGroupContents(self, nice=False, use_generators=True):
     contents = dict()
-    for lgIrrep in self.little_group.irreps:
+    import tqdm
+    for lgIrrep in tqdm.tqdm(self.little_group.irreps):
       occurences = S.Zero
       for element in self.little_group.elements:
         occurences += self.getCharacter(element, use_generators) * conjugate(self.little_group.getCharacter(lgIrrep, element))
@@ -692,6 +699,7 @@ class OperatorMul:
 
       coeffs_dict = defaultdict(int)
 
+      # Mesons
       for term in self.raw_terms:
         coeff = S.One
         for op_coeff, term_term in zip(op_coeffs, term):
@@ -705,6 +713,27 @@ class OperatorMul:
           coeffs_dict[new_term] += coeff
         else:
           coeffs_dict[new_term] = coeff
+      '''
+      # Baryons
+      for term in self.raw_terms:
+        if term[0] == term[1]:
+          continue
+
+        str_rep1 = "{}__{}".format(term[0][0].__repr__(), term[0][1].__repr__())
+        str_rep2 = "{}__{}".format(term[1][0].__repr__(), term[1][1].__repr__())
+
+        coeff = op_coeffs[0][term[0]] * op_coeffs[1][term[1]]
+
+        new_term = term
+        if str_rep1 < str_rep2:
+          coeff = -coeff
+          new_term = tuple([term[1], term[0]])
+
+        if new_term in coeffs_dict:
+          coeffs_dict[new_term] += coeff
+        else:
+          coeffs_dict[new_term] = coeff
+      '''
 
       self._coefficients = { k:v for k, v in coeffs_dict.items() if expand(v) }  # @ADH - do you think expand is best here?
 

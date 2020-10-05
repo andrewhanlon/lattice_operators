@@ -1,33 +1,15 @@
 #!/usr/bin/env python
 
 from math import isclose
-from sympy import KroneckerDelta, Array, S
+from sympy import S
 import argparse
+
+import single_hadrons as sh
 
 from context import operators
 
-from operators.operators import QuarkField, AntiQuarkField, DiracIdx, ColorIdx, Operator, \
-    OperatorRepresentation
-from operators.tensors import Gamma
+from operators.operators import Operator, OperatorRepresentation
 from operators.cubic_rotations import P, P0
-
-g = Gamma()
-
-u1 = QuarkField.create('u1')
-d1bar = AntiQuarkField.create('d1')
-u2 = QuarkField.create('u2')
-d2bar = AntiQuarkField.create('d2')
-u3 = QuarkField.create('u3')
-d3bar = AntiQuarkField.create('d3')
-
-a = ColorIdx('a')
-b = ColorIdx('b')
-i = DiracIdx('i')
-j = DiracIdx('j')
-
-pion1 = KroneckerDelta(a, b)*d1bar[a,i]*Array(g.five)[i,j]*u1[b,j]
-pion2 = KroneckerDelta(a, b)*d2bar[a,i]*Array(g.five)[i,j]*u2[b,j]
-pion3 = KroneckerDelta(a, b)*d3bar[a,i]*Array(g.five)[i,j]*u3[b,j]
 
 
 def main():
@@ -69,15 +51,30 @@ def check_operator(op_files):
 def get_operator(op_line):
   op_line = op_line.split()
   mom_1 = P([int(op_line[0]), int(op_line[1]), int(op_line[2])])
+  strange_1 = int(op_line[3])
+  row_1 = int(op_line[4])
   mom_2 = P([int(op_line[5]), int(op_line[6]), int(op_line[7])])
+  strange_2 = int(op_line[8])
+  row_2 = int(op_line[9])
   mom_3 = P([int(op_line[10]), int(op_line[11]), int(op_line[12])])
+  strange_3 = int(op_line[13])
+  row_3 = int(op_line[14])
+
+  if row_1 != 1 or row_2 != 1 or row_3 != 1:
+    print("operator with irrep row > 1")
+    exit()
+
+  if strange_1 != 1 and strange_2 != 0 and strange_3 != 0:
+    print("operator has wrong strangeness")
+    exit()
+
 
   coeff_re = float(op_line[15])
   coeff_im = float(op_line[16])
 
   coeff = coeff_re + coeff_im*1j
 
-  op = coeff*Operator(pion1, mom_1)*Operator(pion1, mom_2)*Operator(pion1, mom_3)
+  op = coeff*Operator(sh.kaon_p, mom_1)*Operator(sh.pion_p, mom_2)*Operator(sh.pion_p, mom_3)
 
   return op
 
